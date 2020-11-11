@@ -14,13 +14,13 @@ matrix:
     include:
 
     - os: linux
-          env:
-            - TEST="test build"
-          script:
-            - mkdir build
-            - cd build/
-            - cmake ..
-            - make
-            - ./ClasterProg
-            - cd ..
-            - rm -rf build/
+      env:
+        - TEST="test build"
+      script:
+        - mkdir build
+        - cd build/
+        - cmake ..
+        - make
+        - ./ClasterProg
+        - cd ..
+        - rm -rf build/
