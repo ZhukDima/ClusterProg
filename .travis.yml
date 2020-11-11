@@ -9,7 +9,7 @@ compiler:
 before_script:
     - |
       if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-        apt-get install -u cmake
+        sudo apt-get install -y cmake
       fi
 
 
