@@ -5,3 +5,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(ClusterProg src/main.cpp)
 
+target_include_directories(ClusterProg PUBLIC include)
