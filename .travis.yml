@@ -16,7 +16,6 @@ before_script:
         ./cmake-*-Linux-x86_64.sh --exclude-subdir --skip-license
         export PATH="${PWD}/bin:$PATH"
         popd
-        python3 set_test_files.py
       fi
 
 
