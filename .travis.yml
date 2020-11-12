@@ -1,22 +1,13 @@
-dist:   trusty
+dist:   focal
 sudo:   required
 
 language:   c++
 
 compiler:
-    - g++
+    - gcc
 
 before_script:
-    - |
-      if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-        mkdir -p external/cmake
-        pushd external/cmake
-        wget https://cmake.org/files/v3.19/cmake-3.19.0-rc1-Linux-x86_64.sh
-        chmod +x cmake-*-Linux-x86_64.sh
-        ./cmake-*-Linux-x86_64.sh --exclude-subdir --skip-license
-        export PATH="${PWD}/bin:$PATH"
-        popd
-      fi
+    - sudo apt-get install -y cmake
 
 
 env:
