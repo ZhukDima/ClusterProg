@@ -1,0 +1,8 @@
+/home/anton/clion-2020.2.3/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/anton/tehnopark_cxx/ClusterProg
+CMake Error at CMakeLists.txt:7 (target_include_directories):
+  Cannot specify include directories for target "ClusterProg" which is not
+  built by this project.
+
+
+-- Configuring incomplete, errors occurred!
+See also "/home/anton/tehnopark_cxx/ClusterProg/cmake-build-debug/CMakeFiles/CMakeOutput.log".
