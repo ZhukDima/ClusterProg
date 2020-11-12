@@ -3,7 +3,14 @@ project(ClusterProg)
 
 set(CMAKE_CXX_STANDARD 14)
 
+link_directories(
+        ${GTKMM_LIBRARY_DIRS}  )
 
+include_directories(
+        ${GTKMM_INCLUDE_DIRS}  )
+
+target_link_libraries(example
+        ${GTKMM_LIBRARIES}  )
 
 add_executable(ClusterProg src/main.cpp)
 target_include_directories(ClusterProg PUBLIC include)
