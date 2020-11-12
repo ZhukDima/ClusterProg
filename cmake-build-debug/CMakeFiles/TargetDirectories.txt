@@ -1,3 +1,0 @@
-/home/anton/tehnopark_cxx/ClusterProg/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/anton/tehnopark_cxx/ClusterProg/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/anton/tehnopark_cxx/ClusterProg/cmake-build-debug/CMakeFiles/ClusterProg.dir
