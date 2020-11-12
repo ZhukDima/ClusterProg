@@ -5,7 +5,6 @@ class GraphicInterface{
 private:
     Analizer analizer;
     Glib::RefPtr<Gtk::Application> app;
-    Gtk::Window window;
 public:
     GraphicInterface();
     void buttonChooseDir();
