@@ -1,8 +1,9 @@
+#ifndef FILEREADER_H
+#define FILEREADER_H
+
+class FileReaderImpl;
+
 class FileReader {
-private:
-    std::string pathToFile;
-    std::fstream in;
-    std::string readAccepted(bool(*accept)(char));
 public:
     FileReader(std::string _pathToFile);
     FileReader(const FileReader &obj) = delete;
@@ -10,4 +11,8 @@ public:
     bool hasNextWord();
     std::string getNextWord();
     ~FileReader();
+private:
+    FileReaderImpl* impl = nullptr;
 };
+
+#endif
