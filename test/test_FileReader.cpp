@@ -13,3 +13,7 @@ TEST(constructor, failed) {
         EXPECT_EQ(eq.compare(err), 0);
     }
 }
+
+TEST(constructor, correct_creation) {
+    EXPECT_NO_THROW(FileReader("../test.txt"));
+}
