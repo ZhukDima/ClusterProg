@@ -19,12 +19,13 @@ matrix:
 
     - os: linux
       env:
-        - TEST="test build"
+        - TEST="run tests"
       script:
         - mkdir build
         - cd build/
         - cmake ..
         - make
         - ./ClusterProg
+        - ctest
         - cd ..
         - rm -rf build/
