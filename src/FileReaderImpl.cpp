@@ -1,5 +1,4 @@
 #include "FileReaderImpl.h"
-#include <iostream>
 
 FileReaderImpl::FileReaderImpl(std::string _pathToFile): pathToFile(_pathToFile){
     in.open(pathToFile, std::ios_base::in);

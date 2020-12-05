@@ -1,6 +1,5 @@
 #include <string>
 #include <cctype>
-#include <algorithm>
 #include <functional>
 #include "FileReader.h"
 #include "FileReaderImpl.h"
