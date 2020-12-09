@@ -29,6 +29,8 @@ add_subdirectory(test)
 ##
 
 
-add_executable(ClusterProg src/main.cpp src/FileReaderImpl.cpp src/FileReader.cpp src/FileInfo.cpp src/FileInfoImpl.cpp src/DirHandler.cpp)
-
+add_executable(ClusterProg src/main.cpp)
 target_include_directories(ClusterProg PUBLIC include src)
+include_directories(include)
+add_library(cluster_prog_lib STATIC src/FileReaderImpl.cpp src/FileReader.cpp src/FileInfo.cpp src/FileInfoImpl.cpp src/DirHandler.cpp)
+target_link_libraries(ClusterProg PRIVATE cluster_prog_lib)
