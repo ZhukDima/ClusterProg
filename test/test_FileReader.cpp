@@ -27,7 +27,9 @@ TEST(hasNextWord, return_false) {
 }
 TEST(getNextWord, read_empty_file) {
     FileReader a("../empty.txt");
-    EXPECT_NO_THROW(a.getNextWord());
+    std::string answ;
+    EXPECT_NO_THROW(answ = a.getNextWord());
+    EXPECT_EQ(answ, "");
     EXPECT_THROW(a.getNextWord(), const char*);
     try {
         a.getNextWord();
@@ -38,11 +40,17 @@ TEST(getNextWord, read_empty_file) {
 }
 TEST(getNextWord, read_lorem) {
     FileReader a("../test.txt");
+    std::string lorem = "lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum ";
     int cnt = 0;
+    std::string answ = "";
     while (a.hasNextWord()) {
         std::string word;
         EXPECT_NO_THROW(word = a.getNextWord());
-        if (word != "") ++cnt;
+        if (word != "") {
+            ++cnt;
+            answ += word + " ";
+        }
     }
     EXPECT_EQ(cnt, 69);
+    EXPECT_EQ(lorem, answ);
 }

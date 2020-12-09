@@ -29,6 +29,6 @@ add_subdirectory(test)
 ##
 
 
-add_executable(ClusterProg src/main.cpp src/FileReaderImpl.cpp src/FileReader.cpp)
+add_executable(ClusterProg src/main.cpp src/FileReaderImpl.cpp src/FileReader.cpp src/FileInfo.cpp src/FileInfoImpl.cpp)
 
 target_include_directories(ClusterProg PUBLIC include src)
