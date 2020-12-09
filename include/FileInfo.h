@@ -8,16 +8,18 @@ class FileInfo {
 private:
     FileInfoImpl *impl = nullptr;
 public:
-    FileInfo() = delete;
+    FileInfo();
     FileInfo(std::string _pathToFile, const std::map<std::string, double>& _metric);
     FileInfo(std::string _pathToFile);
-    FileInfo(const FileInfo& obj) = delete;
-    FileInfo& operator=(const FileInfo& obj) = delete;
+    FileInfo(const FileInfo& obj);
+    FileInfo& operator=(const FileInfo& obj);
     ~FileInfo();
 
-    std::string getPath();
-    int getAmountOfWords();
-    const std::map<std::string, double>& getAllMetric();
+    std::string getPath() const;
+    int getAmountOfWords() const;
+    const std::map<std::string, double>& getAllMetric() const;
+    void setMetric(std::string key, double value);
+    FileInfoImpl getImpl() const;
 };
 
 #endif

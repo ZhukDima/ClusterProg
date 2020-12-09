@@ -7,16 +7,17 @@ private:
     std::map<std::string, double> metric;
     int amountOfWords = 0;
 public:
-    FileInfoImpl() = delete;
+    FileInfoImpl();
     FileInfoImpl(std::string _pathToFile);
     FileInfoImpl(std::string _pathToFile, const std::map<std::string, double>& _metric);
-    FileInfoImpl(const FileInfoImpl& obj) = delete;
-    FileInfoImpl& operator=(const FileInfoImpl& obj) = delete;
+    FileInfoImpl(const FileInfoImpl& obj);
+    FileInfoImpl& operator=(const FileInfoImpl& obj);
     ~FileInfoImpl() = default;
 
-    std::string getPath();
-    int getAmountOfWords();
-    const std::map<std::string, double>& getAllMetric();
+    std::string getPath() const;
+    int getAmountOfWords() const;
+    const std::map<std::string, double>& getAllMetric() const;
+    void setMetric(std::string key, double value);
 };
 
 #endif

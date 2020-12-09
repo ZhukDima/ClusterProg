@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(ClusterProg)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wpedantic")
 
 include(ExternalProject)
@@ -29,6 +29,6 @@ add_subdirectory(test)
 ##
 
 
-add_executable(ClusterProg src/main.cpp src/FileReaderImpl.cpp src/FileReader.cpp src/FileInfo.cpp src/FileInfoImpl.cpp)
+add_executable(ClusterProg src/main.cpp src/FileReaderImpl.cpp src/FileReader.cpp src/FileInfo.cpp src/FileInfoImpl.cpp src/DirHandler.cpp)
 
 target_include_directories(ClusterProg PUBLIC include src)
