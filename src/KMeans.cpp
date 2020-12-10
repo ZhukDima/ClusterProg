@@ -88,7 +88,7 @@ std::vector<std::set<std::string>> KMeans::calculate(size_t k)
         {
             int indexBestCentroid = 0;
             double deltaBestCentroid = deltaBetweenTFIDF(v->getAllMetric(), centroids[indexBestCentroid]);
-            for (int i = 1; i < k; i++)
+            for (size_t i = 1; i < k; i++)
             {
                 double newDeltaCentroid = deltaBetweenTFIDF(v->getAllMetric(), centroids[i]);
                 if (newDeltaCentroid < deltaBestCentroid)
@@ -105,7 +105,7 @@ std::vector<std::set<std::string>> KMeans::calculate(size_t k)
             }
         }
 
-        for (int i = 0; i < k; i++)
+        for (size_t i = 0; i < k; i++)
         {
             for (auto p = newCentroids[i].begin(); p != newCentroids[i].end(); ++p)
             {
@@ -129,7 +129,7 @@ std::vector<std::set<std::string>> KMeans::calculate(size_t k)
     {
         int indexBestCentroid = 0;
         double deltaBestCentroid = deltaBetweenTFIDF(v->getAllMetric(), centroids[indexBestCentroid]);
-        for (int i = 1; i < k; i++)
+        for (size_t i = 1; i < k; i++)
         {
             double newDeltaCentroid = deltaBetweenTFIDF(v->getAllMetric(), centroids[i]);
             if (newDeltaCentroid < deltaBestCentroid)
