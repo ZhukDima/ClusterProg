@@ -1,3 +1,6 @@
+#ifndef TFIDF_H
+#define TFIDF_H
+
 #include "fileinfo.h"
 #include "vector"
 
@@ -12,3 +15,5 @@ public:
     double calculate(const std::string &word, const std::string &path) const;
     std::map<std::string, double> mapTFIDFforFile(const std::string &path) const;
 };
+
+#endif

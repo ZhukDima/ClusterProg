@@ -1,3 +1,6 @@
+#ifndef KMEANS_H
+#define KMEANS_H
+
 #include "tf-idf.h"
 #include <set>
 
@@ -15,3 +18,5 @@ public:
     KMeans(const std::vector<FileInfo> &_vecFileInfo);
     std::vector<std::set<std::string>> calculate(size_t k);
 };
+
+#endif
