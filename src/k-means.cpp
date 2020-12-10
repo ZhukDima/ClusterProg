@@ -4,12 +4,13 @@
 double KMeans::deltaBetweenTFIDF(const std::map<std::string, double> &m1, const std::map<std::string, double> &m2) const
 {
     double result = 0;
-    for (auto &p : m1)
+
+    for (auto p = m1.begin(); p != m1.end(); ++p)
     {
-        auto v = m2.find(p.first);
+        auto v = m2.find(p->first);
         if (v != m2.end())
         {
-            result += std::pow(p.second - v->second, 2);
+            result += std::pow(p->second - v->second, 2);
         }
     }
     return result;
@@ -22,8 +23,7 @@ bool KMeans::equalCentroid(const std::map<std::string, double> &l, const std::ma
         return false;
     }
 
-    std::map<std::string, double>::const_iterator i, j;
-    for (i = l.begin(), j = r.begin(); i != l.end(); ++i, ++j)
+    for (auto i = l.begin(), j = r.begin(); i != l.end(); ++i, ++j)
     {
         if (*i != *j)
         {
@@ -41,9 +41,9 @@ bool KMeans::equalCentroidsWithBase(const std::vector<std::map<std::string, doub
         return false;
     }
 
-    for (int i = 0; i < centroids.size(); i++)
+    for (auto i = centroids.begin(), j = newCentroids.begin(); i != centroids.end(); ++i, ++j)
     {
-        if (!equalCentroid(centroids[i], newCentroids[i]))
+        if (!equalCentroid(*i, *j))
         {
             return false;
         }
@@ -54,17 +54,16 @@ bool KMeans::equalCentroidsWithBase(const std::vector<std::map<std::string, doub
 KMeans::KMeans(const std::vector<FileInfo> &_vecFileInfo)
 {
     TFIDF ti(_vecFileInfo);
-    for (auto &v : vecFileInfo)
+    for (auto i = _vecFileInfo.begin(); i != _vecFileInfo.end(); ++i)
     {
-        vecFileInfo.push_back(FileInfo(v.getPath(), ti.mapTFIDFforFile(v.getPath())));
+        vecFileInfo.push_back(FileInfo(i->getPath(), ti.mapTFIDFforFile(i->getPath())));
     }
 }
 
 std::vector<std::set<std::string>> KMeans::calculate(size_t k)
 {
     // 1 step
-    centroids.resize(0);
-    centroids.resize(k);
+    centroids = std::vector<std::map<std::string, double>>(k);
 
     {
         std::set<size_t> s;
@@ -73,9 +72,9 @@ std::vector<std::set<std::string>> KMeans::calculate(size_t k)
             s.insert(std::rand() % vecFileInfo.size());
         }
         int j = 0;
-        for (size_t i : s)
+        for (auto i = s.begin(); i != s.end(); ++i)
         {
-            centroids[j] = vecFileInfo[i].getAllMetric();
+            centroids[j] = vecFileInfo[*i].getAllMetric();
         }
     }
 
@@ -85,13 +84,13 @@ std::vector<std::set<std::string>> KMeans::calculate(size_t k)
         std::vector<std::map<std::string, double>> newCentroids(k);
         std::vector<int> countElemAtCentroids(k);
 
-        for (auto &v : vecFileInfo)
+        for (auto v = vecFileInfo.begin(); v != vecFileInfo.end(); ++v)
         {
             int indexBestCentroid = 0;
-            double deltaBestCentroid = deltaBetweenTFIDF(v.getAllMetric(), centroids[indexBestCentroid]);
+            double deltaBestCentroid = deltaBetweenTFIDF(v->getAllMetric(), centroids[indexBestCentroid]);
             for (int i = 1; i < k; i++)
             {
-                double newDeltaCentroid = deltaBetweenTFIDF(v.getAllMetric(), centroids[i]);
+                double newDeltaCentroid = deltaBetweenTFIDF(v->getAllMetric(), centroids[i]);
                 if (newDeltaCentroid < deltaBestCentroid)
                 {
                     indexBestCentroid = i;
@@ -100,21 +99,21 @@ std::vector<std::set<std::string>> KMeans::calculate(size_t k)
             }
 
             countElemAtCentroids[indexBestCentroid] += 1;
-            for (auto &p : v.getAllMetric())
+            for (auto p = v->getAllMetric().begin(); p != v->getAllMetric().end(); ++p)
             {
-                newCentroids[indexBestCentroid][p.first] += p.second;
+                newCentroids[indexBestCentroid][p->first] += p->second;
             }
         }
 
         for (int i = 0; i < k; i++)
         {
-            for (auto &p : newCentroids[i])
+            for (auto p = newCentroids[i].begin(); p != newCentroids[i].end(); ++p)
             {
-                p.second /= countElemAtCentroids[i];
+                p->second /= countElemAtCentroids[i];
             }
         }
 
-        std::swap(centroids, newCentroids);
+        centroids.swap(newCentroids);
 
         // 3 step
         if (!equalCentroidsWithBase(newCentroids))
@@ -126,13 +125,13 @@ std::vector<std::set<std::string>> KMeans::calculate(size_t k)
     // 4 step
     std::vector<std::set<std::string>> resualt(k);
 
-    for (auto &v : vecFileInfo)
+    for (auto v = vecFileInfo.begin(); v != vecFileInfo.end(); ++v)
     {
         int indexBestCentroid = 0;
-        double deltaBestCentroid = deltaBetweenTFIDF(v.getAllMetric(), centroids[indexBestCentroid]);
+        double deltaBestCentroid = deltaBetweenTFIDF(v->getAllMetric(), centroids[indexBestCentroid]);
         for (int i = 1; i < k; i++)
         {
-            double newDeltaCentroid = deltaBetweenTFIDF(v.getAllMetric(), centroids[i]);
+            double newDeltaCentroid = deltaBetweenTFIDF(v->getAllMetric(), centroids[i]);
             if (newDeltaCentroid < deltaBestCentroid)
             {
                 indexBestCentroid = i;
@@ -140,7 +139,7 @@ std::vector<std::set<std::string>> KMeans::calculate(size_t k)
             }
         }
 
-        resualt[indexBestCentroid].insert(v.getPath());
+        resualt[indexBestCentroid].insert(v->getPath());
     }
 
     return resualt;
