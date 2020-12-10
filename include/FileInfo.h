@@ -13,7 +13,7 @@ public:
     FileInfo(std::string _pathToFile);
     FileInfo(const FileInfo& obj);
     FileInfo& operator=(const FileInfo& obj);
-    ~FileInfo();
+    ~FileInfo() = default;
 
     std::string getPath() const;
     int getAmountOfWords() const;

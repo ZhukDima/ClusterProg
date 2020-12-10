@@ -14,7 +14,7 @@ public:
     DirHandler(std::string _pathToDir);
     DirHandler(const DirHandler& obj) = delete;
     DirHandler& operator=(const DirHandler& obj) = delete;
-    ~DirHandler();
+    ~DirHandler() = default;
 
     std::string getPath() const;
     std::vector<FileInfo>& getFiles();

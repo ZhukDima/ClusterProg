@@ -1,14 +1,13 @@
 #include <iostream>
-#include "FileReader.h"
+#include "Analizer.h"
 
 using namespace std;
 
 int main() {
-    FileReader file("test.txt");
-    string str = "";
-    while (file.hasNextWord()) {
-        str += file.getNextWord() + " ";
-    }
-    cout << str;
+    Analizer analizer;
+    analizer.setPathToData("../test_files");
+    analizer.setCountDirectory(3);
+    analizer.setPathToResult("../output");
+    analizer.analize();
     return 0;
 }

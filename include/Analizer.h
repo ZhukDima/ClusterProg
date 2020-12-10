@@ -15,7 +15,7 @@ class Analizer {
 public:
     Analizer();
 
-    ~Analizer();
+    ~Analizer() = default;
 
     void setCountDirectory(size_t inputCountDirectory);
 

@@ -60,6 +60,6 @@ std::vector<FileInfo>& DirHandler::getFiles() {
     return impl->getFiles();
 }
 
-DirHandler::~DirHandler() {
-    delete impl;
-}
+// DirHandler::~DirHandler() {
+//     delete impl;
+// }

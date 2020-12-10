@@ -10,7 +10,7 @@ public:
     FileReader& operator=(const FileReader &obj) = delete;
     bool hasNextWord();
     std::string getNextWord();
-    ~FileReader();
+    ~FileReader() = default;
 private:
     FileReaderImpl* impl = nullptr;
 };

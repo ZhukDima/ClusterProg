@@ -30,6 +30,6 @@ std::string FileReader::getNextWord() {
     return word;
 }
 
-FileReader::~FileReader() {
-    delete impl;
-}
+// FileReader::~FileReader() {
+//     delete impl;
+// }

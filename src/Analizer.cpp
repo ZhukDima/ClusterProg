@@ -3,7 +3,7 @@
 
 Analizer::Analizer() : impl(new AnalizerImpl) {}
 
-Analizer::~Analizer() { delete impl; }
+// Analizer::~Analizer() { delete impl; }
 
 void Analizer::setCountDirectory(size_t inputCountDirectory) {
     impl->setCountDirectory(inputCountDirectory);
