@@ -15,6 +15,10 @@ private:
     bool equalCentroidsWithBase(const std::vector<std::map<std::string, double>> &newCentroids) const;
 
 public:
+    KMeans() = delete;
+    KMeans(const KMeans &obj) = delete;
+    KMeans &operator=(const KMeans &obj) = delete;
+
     KMeans(const std::vector<FileInfo> &_vecFileInfo);
     std::vector<std::set<std::string>> calculate(size_t k);
 };
