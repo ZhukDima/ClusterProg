@@ -1,7 +1,7 @@
 #ifndef TFIDF_H
 #define TFIDF_H
 
-#include "fileinfo.h"
+#include "FileInfo.h"
 #include <vector>
 
 class TFIDF
