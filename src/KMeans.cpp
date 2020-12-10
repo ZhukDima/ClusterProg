@@ -1,4 +1,4 @@
-#include "k-means.h"
+#include "KMeans.h"
 #include <cmath> // pow
 
 double KMeans::deltaBetweenTFIDF(const std::map<std::string, double> &m1, const std::map<std::string, double> &m2) const

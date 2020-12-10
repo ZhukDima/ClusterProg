@@ -1,4 +1,4 @@
-#include "tf-idf.h"
+#include "TFIDF.h"
 #include <math.h> // log
 
 TFIDF::TFIDF(const std::vector<FileInfo> &vecFileInfo)

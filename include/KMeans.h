@@ -1,7 +1,7 @@
 #ifndef KMEANS_H
 #define KMEANS_H
 
-#include "tf-idf.h"
+#include "TFIDF.h"
 #include <set>
 
 class KMeans
