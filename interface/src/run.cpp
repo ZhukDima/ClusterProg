@@ -1,8 +1,6 @@
-#include "mainwindow.h"
+#include "run.h"
 
-#include <QApplication>
-
-int main(int argc, char *argv[])
+int Run::run(int argc, char* argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
