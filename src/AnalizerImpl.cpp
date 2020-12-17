@@ -33,9 +33,12 @@ std::vector<Group> AnalizerImpl::categorize() {
     std::vector<Group> result;
     size_t count = 0;
     for (auto group : groups) {
+        if (group.size() == 0) {
+            continue;
+        }
         Group tempGroup;
         for (auto filename : group) {
-            tempGroup.addFile(cutName(filename));
+            tempGroup.addFile(filename);
         }
         result.push_back(tempGroup);
         result[count].setGroupName("group_" + std::to_string(count));
@@ -50,7 +53,7 @@ void AnalizerImpl::move() {
     for (const auto &group : groups) {
         mover.createDir(pathToResult + "/" + group.getGroupName());
         for (auto filename : group.getFiles()) {
-            mover.moveFile(filename, pathToResult + "/" + group.getGroupName() + "/" + filename);
+            mover.moveFile(filename, pathToResult + "/" + group.getGroupName() + "/" + cutName(filename));
         }
     }
 }

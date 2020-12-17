@@ -8,10 +8,24 @@ void GroupImpl::addFile(const std::string &fileName) {
     files.push_back(fileName);
 }
 
-const std::string &GroupImpl::getGroupName() const {
+std::string GroupImpl::getGroupName() const {
     return groupName;
 }
 
-const std::vector<std::string> &GroupImpl::getFiles() const {
+const std::vector<std::string>& GroupImpl::getFiles() const {
     return files;
+}
+
+GroupImpl::GroupImpl(const GroupImpl& obj) {
+    groupName = obj.getGroupName();
+    files = obj.getFiles();
+}
+
+GroupImpl& GroupImpl::operator=(const GroupImpl& obj){
+    if (this == &obj) {
+        return *this;
+    }
+    groupName = obj.getGroupName();
+    files = obj.getFiles();
+    return *this;
 }

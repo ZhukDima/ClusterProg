@@ -6,16 +6,17 @@
 class GroupImpl {
 public:
     GroupImpl() = default;
-
+    GroupImpl(const GroupImpl& obj);
+    GroupImpl& operator=(const GroupImpl& obj);
     ~GroupImpl() = default;
 
     void setGroupName(const std::string &inputGroupName);
 
     void addFile(const std::string &fileName);
 
-    const std::string &getGroupName() const;
+    std::string getGroupName() const;
 
-    const std::vector<std::string> &getFiles() const;
+    const std::vector<std::string>& getFiles() const;
 
 private:
     std::string groupName;

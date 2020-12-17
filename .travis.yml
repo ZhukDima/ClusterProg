@@ -22,6 +22,8 @@ matrix:
         - TEST="run tests"
       script:
         - mkdir build
+        - python3 tests_file.py
+        - mkdir output
         - cd build/
         - cmake ..
         - make
@@ -31,3 +33,5 @@ matrix:
         - ctest
         - cd ..
         - rm -rf build/
+        - rm -rf test_files/
+        - rm -rf output/

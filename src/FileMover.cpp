@@ -12,7 +12,7 @@ void FileMover::createDir(std::string path) {
         closedir(dir);
         return;
     }
-    const int dir_err = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    const int dir_err = mkdir(path.c_str(), ACCESSPERMS);
     if (dir_err == -1) {
         throw "Unable to create dir " + path;
     }
