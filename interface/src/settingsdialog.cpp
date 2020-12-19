@@ -30,11 +30,7 @@ void SettingsDialog::setActualChoosenFiles(const QStringList &files)
     choosenFiles = files;
     ui->choosenFiles->clear();
     ui->choosenFiles->addItems(choosenFiles);
-}
-
-void SettingsDialog::on_SettingsDialog_rejected()
-{
-    qDebug() << parent();
+    ui->choosenFiles->setStyleSheet("background: #fff;");
 }
 
 void SettingsDialog::on_chooseFilesButton_clicked()
@@ -47,14 +43,33 @@ void SettingsDialog::on_chooseFilesButton_clicked()
         return;
 
     choosenFiles = files;
-    //qDebug() << choosenFiles;
 
     ui->choosenFiles->clear();
     ui->choosenFiles->addItems(choosenFiles);
+    ui->choosenFiles->setStyleSheet("background: rgba(245, 189, 189, 0.562); border: 1px solid rgb(126, 18, 18);");
 }
 
 void SettingsDialog::on_saveSettingsButton_clicked()
 {
     emit sendChoosenFiles(choosenFiles);
     QMessageBox::information(this, "Saved", "Changes are saved");
+    ui->choosenFiles->setStyleSheet("background: rgba(189, 245, 208, 0.562); border: 1px solid green;");
+}
+
+void SettingsDialog::on_clearChoosenFiles_clicked()
+{
+    QMessageBox msgBox;
+    msgBox.setInformativeText("Do you really want to discard settings?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setDefaultButton(QMessageBox::No);
+
+    int ans = msgBox.exec();
+
+    if (ans == QMessageBox::Yes) {
+        choosenFiles.clear();
+        ui->choosenFiles->clear();
+        ui->choosenFiles->setStyleSheet("background: #fff;");
+        emit sendChoosenFiles(choosenFiles);
+    }
 }

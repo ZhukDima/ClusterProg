@@ -22,11 +22,11 @@ public:
     void setActualChoosenFiles(const QStringList &files);
 
 private slots:
-    void on_SettingsDialog_rejected();
-
     void on_chooseFilesButton_clicked();
 
     void on_saveSettingsButton_clicked();
+
+    void on_clearChoosenFiles_clicked();
 
 signals:
     void sendChoosenFiles(const QStringList &files);

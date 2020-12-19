@@ -34,6 +34,7 @@ private slots:
 
 signals:
     void sendStartDir(const QString& dir);
+    
     void sendActualChoosenFiles(const QStringList& files);
 
 private:
@@ -42,4 +43,5 @@ private:
     QProgressBar* processProgress;
     Settings settings;
 };
+
 #endif // MAINWINDOW_H

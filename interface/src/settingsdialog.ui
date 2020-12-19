@@ -33,6 +33,18 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="clearChoosenFiles">
+       <property name="styleSheet">
+        <string notr="true">font-size: 20px;
+padding: 30px;
+margin: 5px;</string>
+       </property>
+       <property name="text">
+        <string>Clear Choosen Files</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="saveSettingsButton">
        <property name="styleSheet">
         <string notr="true">font-size: 20px;

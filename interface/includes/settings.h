@@ -4,7 +4,6 @@
 #include <QString>
 #include <QStringList>
 
-
 class Settings
 {
 public:
@@ -15,7 +14,5 @@ public:
     QStringList choosenFiles;
     QString startDir;
 };
-
-
 
 #endif // SETTINGS_H

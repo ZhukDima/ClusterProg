@@ -1,4 +1,5 @@
 #include "run.h"
+#include <QApplication>
 
 int Run::run(int argc, char* argv[])
 {
