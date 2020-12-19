@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //CONNECTS
     QObject::connect(this, &MainWindow::sendStartDir, this->settingsWindow, &SettingsDialog::setStartDir);
+    QObject::connect(this, &MainWindow::sendActualChoosenFiles, this->settingsWindow, &SettingsDialog::setActualChoosenFiles);
     QObject::connect(this->settingsWindow, &SettingsDialog::sendChoosenFiles, this, &MainWindow::setChoosenFiles);
 
     setWindowTitle("ClusterProg");
@@ -57,6 +58,7 @@ void MainWindow::on_InfoButton_clicked()
 void MainWindow::on_settingsButton_clicked()
 {
     emit sendStartDir(settings.startDir);
+    emit sendActualChoosenFiles(settings.choosenFiles);
     settingsWindow->show();
 }
 

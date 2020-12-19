@@ -25,6 +25,13 @@ void SettingsDialog::setStartDir(const QString &dir)
     qDebug() << startDir;
 }
 
+void SettingsDialog::setActualChoosenFiles(const QStringList &files)
+{
+    choosenFiles = files;
+    ui->choosenFiles->clear();
+    ui->choosenFiles->addItems(choosenFiles);
+}
+
 void SettingsDialog::on_SettingsDialog_rejected()
 {
     qDebug() << parent();

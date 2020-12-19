@@ -17,7 +17,9 @@ public:
     explicit SettingsDialog(QWidget *parent = nullptr);
     ~SettingsDialog();
 
-    void setStartDir(const QString& dir);
+    void setStartDir(const QString &dir);
+
+    void setActualChoosenFiles(const QStringList &files);
 
 private slots:
     void on_SettingsDialog_rejected();
@@ -27,7 +29,7 @@ private slots:
     void on_saveSettingsButton_clicked();
 
 signals:
-    void sendChoosenFiles(const QStringList& files);
+    void sendChoosenFiles(const QStringList &files);
 
 private:
     Ui::SettingsDialog *ui;
