@@ -10,15 +10,10 @@ class Settings
 public:
     Settings();
     ~Settings() {}
-    const Settings& operator=(const Settings& other) = delete;
-    void setDir(const QString& dir);
-    void setFiles(const QStringList& files);
-    QString getStartDir() const;
-    QStringList getChoosenFiles() const;
+    Settings& operator=(const Settings& other) = delete;
 
-private:
-    QStringList files;
-    QString dir;
+    QStringList choosenFiles;
+    QString startDir;
 };
 
 

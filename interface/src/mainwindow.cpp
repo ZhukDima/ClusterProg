@@ -32,19 +32,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::setChoosenFiles(const QStringList &files)
 {
-    settings.setFiles(files);
-    qDebug() << settings.getChoosenFiles();
+    settings.choosenFiles = files;
+    qDebug() << settings.choosenFiles;
 }
 
 void MainWindow::on_chooseDirButton_clicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                    settings.getStartDir(),
+                                                    settings.startDir,
                                                     QFileDialog::ShowDirsOnly
                                                     | QFileDialog::DontResolveSymlinks);
     if (!dir.isEmpty()) {
         ui->chooseDirLabel->setText(dir);
-        settings.setDir(dir);
+        settings.startDir = dir;
     }
 }
 
@@ -56,7 +56,7 @@ void MainWindow::on_InfoButton_clicked()
 
 void MainWindow::on_settingsButton_clicked()
 {
-    emit sendStartDir(settings.getStartDir());
+    emit sendStartDir(settings.startDir);
     settingsWindow->show();
 }
 

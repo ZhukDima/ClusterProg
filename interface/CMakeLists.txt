@@ -1,23 +1,35 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(SOURCE_FILES
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(HEADER_FILES
+    includes/mainwindow.h
+    includes/settingsdialog.h
+    includes/settings.h
+    includes/run.h
+)
+
+set(UI_FILES
     src/mainwindow.ui
     src/settingsdialog.ui
+)
+
+set(SOURCE_FILES
     src/mainwindow.cpp
-    includes/mainwindow.h
     src/settingsdialog.cpp
-    includes/settingsdialog.h
     src/settings.cpp
-    includes/settings.h
     src/run.cpp
-    includes/run.h
-    )
+)
 
 include_directories(includes)
 
 add_library(
     InterfaceLib
     ${SOURCE_FILES}
+    ${HEADER_FILES}
+    ${UI_FILES}
 )
 
 
