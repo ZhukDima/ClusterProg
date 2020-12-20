@@ -1,9 +1,10 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-#include <QDialog>
-#include <QFileDialog>
 #include <QMessageBox>
+
+#include "settings.h"
+#include "settingspresenter.h"
 
 namespace Ui {
 class SettingsDialog;
@@ -14,12 +15,8 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget *parent = nullptr);
+    SettingsDialog(QWidget *parent = nullptr, SettingsPresenter *presenter = nullptr);
     ~SettingsDialog();
-
-    void setStartDir(const QString &dir);
-
-    void setActualChoosenFiles(const QStringList &files);
 
 private slots:
     void on_chooseFilesButton_clicked();
@@ -28,13 +25,11 @@ private slots:
 
     void on_clearChoosenFiles_clicked();
 
-signals:
-    void sendChoosenFiles(const QStringList &files);
-
 private:
     Ui::SettingsDialog *ui;
-    QString startDir;
-    QStringList choosenFiles;
+
+    Settings settings;
+    SettingsPresenter *settingsPresenter;
 };
 
 #endif // SETTINGSDIALOG_H

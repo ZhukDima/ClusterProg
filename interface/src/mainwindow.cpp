@@ -2,11 +2,12 @@
 #include "./ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    settingsPresenter(new SettingsPresenter(settings))
 {
     ui->setupUi(this);
-    settingsWindow = new SettingsDialog(this);
+    settingsWindow = new SettingsDialog(this, settingsPresenter);
     settingsWindow->setModal(true);
     processProgress = new QProgressBar;
     statusBar()->addPermanentWidget(processProgress);
@@ -16,11 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
                                    "selection-background-color: #94E494;");
     processProgress->hide();
 
-    //CONNECTS
-    QObject::connect(this, &MainWindow::sendStartDir, this->settingsWindow, &SettingsDialog::setStartDir);
-    QObject::connect(this, &MainWindow::sendActualChoosenFiles, this->settingsWindow, &SettingsDialog::setActualChoosenFiles);
-    QObject::connect(this->settingsWindow, &SettingsDialog::sendChoosenFiles, this, &MainWindow::setChoosenFiles);
-
     setWindowTitle("ClusterProg");
     ui->statusbar->showMessage("TreePlusOne, 2020");
 }
@@ -28,25 +24,16 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete settingsWindow;
+    delete settingsPresenter;
     delete ui;
-}
-
-void MainWindow::setChoosenFiles(const QStringList &files)
-{
-    settings.choosenFiles = files;
-    qDebug() << settings.choosenFiles;
 }
 
 void MainWindow::on_chooseDirButton_clicked()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                    settings.startDir,
-                                                    QFileDialog::ShowDirsOnly
-                                                    | QFileDialog::DontResolveSymlinks);
-    if (!dir.isEmpty()) {
-        ui->chooseDirLabel->setText(dir);
-        settings.startDir = dir;
-    }
+    settings = settingsPresenter->setStartDirFromFileDialog();
+    if (settings.startDir == Settings::DEFAULT_DIR)
+        return;
+    ui->chooseDirLabel->setText(settings.startDir);
 }
 
 void MainWindow::on_InfoButton_clicked()
@@ -57,8 +44,6 @@ void MainWindow::on_InfoButton_clicked()
 
 void MainWindow::on_settingsButton_clicked()
 {
-    emit sendStartDir(settings.startDir);
-    emit sendActualChoosenFiles(settings.choosenFiles);
     settingsWindow->show();
 }
 

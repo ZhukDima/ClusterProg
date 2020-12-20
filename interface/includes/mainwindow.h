@@ -4,10 +4,9 @@
 #include <QMainWindow>
 #include <QProgressBar>
 
-#include <QDebug>
-
 #include "settingsdialog.h"
 #include "settings.h"
+#include "settingspresenter.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,8 +20,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void setChoosenFiles(const QStringList& files);
-
 private slots:
     void on_chooseDirButton_clicked();
 
@@ -32,16 +29,13 @@ private slots:
 
     void on_runButton_clicked();
 
-signals:
-    void sendStartDir(const QString& dir);
-    
-    void sendActualChoosenFiles(const QStringList& files);
-
 private:
     Ui::MainWindow *ui;
     SettingsDialog* settingsWindow;
     QProgressBar* processProgress;
+
     Settings settings;
+    SettingsPresenter *settingsPresenter;
 };
 
 #endif // MAINWINDOW_H
