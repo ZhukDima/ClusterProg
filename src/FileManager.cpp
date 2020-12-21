@@ -1,13 +1,13 @@
 #include <string>
 #include <filesystem>
 #include <iostream>
-#include "FileMover.h"
+#include "FileManager.h"
 
 namespace fs = std::filesystem;
 
 // PUBLIC
 
-void FileMover::moveFile(const std::string& pathToSource, std::string pathToDestination)
+void FileManager::moveFile(std::string_view pathToSource, std::string pathToDestination)
 {
     try
     {
@@ -20,7 +20,7 @@ void FileMover::moveFile(const std::string& pathToSource, std::string pathToDest
     }
 }
 
-void FileMover::createDir(const std::string& path)
+void FileManager::createDir(std::string_view path)
 {
     try
     {
@@ -34,9 +34,9 @@ void FileMover::createDir(const std::string& path)
 
 // PRIVATE
 
-const int FileMover::SAME_FILE_INDEX = 0;
+const int FileManager::SAME_FILE_INDEX = 0;
 
-std::string FileMover::getNewFilePathIfExists(std::string path, int idx)
+std::string FileManager::getNewFilePathIfExists(std::string_view path, const int idx)
 {
     std::string newPath = constructNewPath(path, idx);
     if (fs::exists(newPath))
@@ -46,9 +46,9 @@ std::string FileMover::getNewFilePathIfExists(std::string path, int idx)
     return newPath;
 }
 
-std::string FileMover::constructNewPath(std::string path, int idx)
+std::string FileManager::constructNewPath(std::string_view path, const int idx)
 {
     fs::path oldPath(path);
-    fs::path newPath = oldPath.parent_path() / ( fs::path( oldPath.stem().string() + (idx == FileMover::SAME_FILE_INDEX ? "" : "_" + std::to_string(idx)) + oldPath.extension().string() ) );
+    fs::path newPath = oldPath.parent_path() / ( fs::path( oldPath.stem().string() + (idx == FileManager::SAME_FILE_INDEX ? "" : "_" + std::to_string(idx)) + oldPath.extension().string() ) );
     return newPath.string();
 }
