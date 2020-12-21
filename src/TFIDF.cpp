@@ -20,6 +20,11 @@ TFIDF::TFIDF(const std::vector<FileInfo> &filesInfo)
     }
 }
 
+int TFIDF::countUnicWords() const
+{
+    return IDFMetrics.size();
+}
+
 double TFIDF::calculate(const std::string &word, const std::string &path) const
 {
     try

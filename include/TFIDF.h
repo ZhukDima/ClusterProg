@@ -11,6 +11,7 @@ public:
     TFIDF(const TFIDF &) = delete;
     TFIDF &operator=(const TFIDF &) = delete;
 
+    int countUnicWords() const;
     double calculate(const std::string &word, const std::string &path) const;
     FileInfo TFIDFForFile(const std::string &path) const;
 
