@@ -6,11 +6,6 @@
 
 class TFIDF
 {
-private:
-    std::map<std::string, int> pathToIndex;
-    std::vector<FileInfo> TFMetrics;
-    std::map<std::string, double> IDFMetrics;
-
 public:
     TFIDF(const std::vector<FileInfo> &filesInfo);
     TFIDF(const TFIDF &) = delete;
@@ -18,6 +13,11 @@ public:
 
     double calculate(const std::string &word, const std::string &path) const;
     FileInfo TFIDFForFile(const std::string &path) const;
+
+private:
+    std::map<std::string, int> pathToIndex;
+    std::vector<FileInfo> TFMetrics;
+    std::map<std::string, double> IDFMetrics;
 };
 
 #endif

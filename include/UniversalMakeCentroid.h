@@ -6,6 +6,8 @@
 struct UniversalMakeCentroid
 {
 public:
+    UniversalMakeCentroid() = delete;
+
     template <typename Data>
     static Data make(const Data &data);
 

@@ -11,11 +11,11 @@ public:
     KMeans(const KMeans &) = delete;
     KMeans &operator=(const KMeans &) = delete;
 
-    // CalcDelta:       
+    // CalcDelta:
     //                  static double   calc(const Data&, const Data&)
-    // CompEqual:       
+    // CompEqual:
     //                  static bool     comp(const Data&, const Data&)
-    // MakeCentroid:    
+    // MakeCentroid:
     //                  static Data     make(const std::stack<Data>&),
     //                  static Data     make(const Data&)
     template <class CalcDelta, class CompEqual, class MakeCentroid>
