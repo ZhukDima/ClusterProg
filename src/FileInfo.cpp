@@ -39,7 +39,7 @@ const std::map<std::string, double>& FileInfo::getAllMetric() const {
 void FileInfo::setMetric(std::string key, double value) {
     impl->setMetric(key, value);
 }
-// 
-// FileInfo::~FileInfo() {
-//     delete impl;
-// }
+
+ FileInfo::~FileInfo() {
+     delete impl;
+ }
