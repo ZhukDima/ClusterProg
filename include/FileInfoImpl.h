@@ -6,6 +6,7 @@ private:
     std::string pathToFile;
     std::map<std::string, double> metric;
     int amountOfWords = 0;
+    void swap(const FileInfoImpl& obj) noexcept;
 public:
     FileInfoImpl();
     FileInfoImpl(std::string _pathToFile);

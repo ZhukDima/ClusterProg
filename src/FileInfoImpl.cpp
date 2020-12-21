@@ -6,9 +6,7 @@
 FileInfoImpl::FileInfoImpl(): pathToFile(""), amountOfWords(0) {}
 
 FileInfoImpl::FileInfoImpl(std::string _pathToFile, const std::map<std::string, double>& _metric): pathToFile(_pathToFile) {
-    for (auto i : _metric) {
-        metric[i.first] = i.second;
-    }
+    metric = _metric;
     FileReader file(pathToFile);
     while (file.hasNextWord()) {
         std::string word = file.getNextWord();
@@ -19,22 +17,21 @@ FileInfoImpl::FileInfoImpl(std::string _pathToFile, const std::map<std::string, 
 }
 
 FileInfoImpl::FileInfoImpl(const FileInfoImpl& obj) {
-    amountOfWords = obj.getAmountOfWords();
+    swap(obj);
+}
+
+void FileInfoImpl::swap(const FileInfoImpl &obj) noexcept {
     pathToFile = obj.getPath();
-    for (auto i : obj.getAllMetric()) {
-        metric[i.first] = i.second;
-    }
+    amountOfWords = obj.getAmountOfWords();
+    metric = obj.getAllMetric();
 }
 
 FileInfoImpl& FileInfoImpl::operator=(const FileInfoImpl& obj) {
     if (this == &obj) {
         return *this;
     }
-    amountOfWords = obj.getAmountOfWords();
-    pathToFile = obj.getPath();
-    for (auto i : obj.getAllMetric()) {
-        metric[i.first] = i.second;
-    }
+    FileInfoImpl tmp(obj);
+    swap(tmp);
     return *this;
 }
 
