@@ -25,6 +25,16 @@ int TFIDF::countUnicWords() const
     return IDFMetrics.size();
 }
 
+std::set<std::string> TFIDF::setUnicWords() const
+{
+    std::set<std::string> ans;
+    for (auto &[word, count] : IDFMetrics)
+    {
+        ans.insert(word);
+    }
+    return ans;
+}
+
 double TFIDF::calculate(const std::string &word, const std::string &path) const
 {
     try

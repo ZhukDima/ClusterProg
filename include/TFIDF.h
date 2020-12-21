@@ -3,6 +3,7 @@
 
 #include "FileInfo.h"
 #include <vector>
+#include <set>
 
 class TFIDF
 {
@@ -12,6 +13,7 @@ public:
     TFIDF &operator=(const TFIDF &) = delete;
 
     int countUnicWords() const;
+    std::set<std::string> setUnicWords() const;
     double calculate(const std::string &word, const std::string &path) const;
     FileInfo TFIDFForFile(const std::string &path) const;
 
