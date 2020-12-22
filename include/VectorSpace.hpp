@@ -11,12 +11,12 @@ struct VectorSpace
 public:
     VectorSpace(size_t N);
     VectorSpace(const VectorSpace &) = default;
-    VectorSpace operator=(const VectorSpace &) = delete;
+    VectorSpace& operator=(const VectorSpace &) = default;
 
     T &operator[](int index);
     const T &operator[](int index) const;
     VectorSpace &operator+=(const VectorSpace &obj);
-    bool operator==(const VectorSpace &obj);
+    bool operator==(const VectorSpace &obj) const;
     VectorSpace &operator/=(T a);
     double operator-(const VectorSpace &obj) const;
 
@@ -52,7 +52,7 @@ VectorSpace<T> &VectorSpace<T>::operator+=(const VectorSpace<T> &obj)
 }
 
 template <class T>
-bool VectorSpace<T>::operator==(const VectorSpace<T> &obj)
+bool VectorSpace<T>::operator==(const VectorSpace<T> &obj) const
 {
     assert(vec.size() == obj.vec.size());
     size_t i = 0;

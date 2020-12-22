@@ -2,11 +2,11 @@
 #define CLUSTERPROG_ANALIZER_HPP
 
 #include "DirHandler.h"
-#include "KMeans.h"
+#include "KMeans.hpp"
 #include "FileManager.h"
 #include "Group.h"
 #include "TFIDF.h"
-#include "VectorSpace.h"
+#include "VectorSpace.hpp"
 
 #include <algorithm>
 #include <string>

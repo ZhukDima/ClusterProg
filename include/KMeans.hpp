@@ -95,10 +95,6 @@ std::vector<Cluster> KMeans<Data>::calculate(size_t k) const
 
     // 4 step
     return clustersNewCentroids;
-<<<<<<< HEAD:src/KMeans.cpp
-}
-=======
 }
 
 #endif
->>>>>>> 85a4219aea66811d2abf6a81c00a538637bef59f:include/KMeans.hpp
