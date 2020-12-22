@@ -1,5 +1,20 @@
-#include "UniversalMakeCentroid.h"
+#ifndef UNIVERSALMAKECENTROID_H
+#define UNIVERSALMAKECENTROID_H
+
+#include <vector>
 #include <assert.h>
+
+struct UniversalMakeCentroid
+{
+public:
+    UniversalMakeCentroid() = delete;
+
+    template <typename Data>
+    static Data make(const Data &data);
+
+    template <typename Data>
+    static Data make(const std::vector<Data> &vec);
+};
 
 template <typename Data>
 Data UniversalMakeCentroid::make(const Data &data)
@@ -18,3 +33,5 @@ Data UniversalMakeCentroid::make(const std::vector<Data> &vec)
     }
     return ans /= vec.size();
 }
+
+#endif

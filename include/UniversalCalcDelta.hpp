@@ -1,6 +1,8 @@
 #ifndef UNIVERSALCALCDELTA_H
 #define UNIVERSALCALCDELTA_H
 
+#include <cmath> // abs
+
 struct UniversalCalcDelta
 {
 public:
@@ -9,5 +11,11 @@ public:
     template <typename Data>
     static double calc(const Data &a, const Data &b);
 };
+
+template <typename Data>
+double UniversalCalcDelta::calc(const Data &a, const Data &b)
+{
+    return std::abs(a - b);
+}
 
 #endif
