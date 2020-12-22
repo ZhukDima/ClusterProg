@@ -2,7 +2,7 @@
 #include <assert.h>
 
 template <class T>
-VectorSpace<T>::VectorSpace(size_t N) : N(N), vec(N) {}
+VectorSpace<T>::VectorSpace(size_t N) : vec(N) {}
 
 template <class T>
 T &VectorSpace<T>::operator[](int index)
@@ -11,7 +11,7 @@ T &VectorSpace<T>::operator[](int index)
 }
 
 template <class T>
-T VectorSpace<T>::operator[](int index) const
+const T &VectorSpace<T>::operator[](int index) const
 {
     return vec[index];
 }
@@ -19,32 +19,34 @@ T VectorSpace<T>::operator[](int index) const
 template <class T>
 VectorSpace<T> &VectorSpace<T>::operator+=(const VectorSpace<T> &obj)
 {
-    assert(N == obj.N);
-    for (size_t i = 0; i < N; i++)
+    assert(vec.size() == obj.vec.size());
+    size_t i = 0;
+    for (T &elem : vec)
     {
-        arr[i] += obj.arr[i];
+        elem += obj.vec[i++];
     }
-    return this;
+    return *this;
 }
 
 template <class T>
 VectorSpace<T> &VectorSpace<T>::operator/=(T a)
 {
-    for (size_t i = 0; i < N; i++)
+    for (T &elem : vec)
     {
-        arr[i] /= a;
+        elem /= divider;
     }
-    return this;
+    return *this;
 }
 
 template <class T>
 double VectorSpace<T>::operator-(const VectorSpace<T> &obj) const
 {
-    assert(N == obj.N);
+    assert(vec.size() == obj.vec.size());
     double ans = 0;
-    for (size_t i = 0; i < N; i++)
+    size_t i = 0;
+    for (const T &elem : vec)
     {
-        ans += arr[i] - obj.arr[i];
+        ans += elem - obj.vec[i];
     }
     return ans;
 }

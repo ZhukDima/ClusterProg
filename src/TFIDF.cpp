@@ -22,17 +22,19 @@ TFIDF::TFIDF(const std::vector<FileInfo> &filesInfo)
 
 int TFIDF::countUnicWords() const
 {
-    return IDFMetrics.size();
+    return getSetUnicWords().size();
 }
 
-std::set<std::string> TFIDF::setUnicWords() const
+std::set<std::string> TFIDF::getSetUnicWords() const
 {
-    std::set<std::string> ans;
-    for (auto &[word, count] : IDFMetrics)
+    if (setUnicWords.empty())
     {
-        ans.insert(word);
+        for (auto &[word, count] : IDFMetrics)
+        {
+            setUnicWords.insert(word);
+        }
     }
-    return ans;
+    return setUnicWords;
 }
 
 double TFIDF::calculate(const std::string &word, const std::string &path) const

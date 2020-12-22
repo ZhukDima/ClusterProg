@@ -8,17 +8,16 @@ struct VectorSpace
 {
 public:
     VectorSpace(size_t N);
-    VectorSpace(const VectorSpace &) = delete;
+    VectorSpace(const VectorSpace &) = default;
     VectorSpace operator=(const VectorSpace &) = delete;
 
     T &operator[](int index);
-    T operator[](int index) const;
+    const T &operator[](int index) const;
     VectorSpace &operator+=(const VectorSpace &obj);
     VectorSpace &operator/=(T a);
     double operator-(const VectorSpace &obj) const;
 
 private:
-    size_t N;
     std::vector<T> vec;
 };
 

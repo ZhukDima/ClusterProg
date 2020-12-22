@@ -17,7 +17,7 @@ public:
     std::vector<size_t> getClusteringIndexes() const;
 
     template <typename Data>
-    std::stack<Data> getClusteringDataByData(const std::vector<Data> &data) const;
+    std::vector<Data> getClusteringDataByData(const std::vector<Data> &data) const;
 
 private:
     std::vector<size_t> indexes;

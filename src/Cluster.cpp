@@ -15,12 +15,12 @@ std::vector<size_t> Cluster::getClusteringIndexes() const
 }
 
 template <typename Data>
-std::stack<Data> Cluster::getClusteringDataByData(const std::vector<Data> &data) const
+std::vector<Data> Cluster::getClusteringDataByData(const std::vector<Data> &data) const
 {
-    std::stack<Data> ans;
+    std::vector<Data> ans;
     for (int index : indexes)
     {
-        ans.push(data[index]);
+        ans.push_back(data[index]);
     }
     return ans;
 }
