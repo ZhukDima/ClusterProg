@@ -18,22 +18,20 @@ TFIDF::TFIDF(const std::vector<FileInfo> &filesInfo)
     {
         count = std::log(filesInfo.size() / count);
     }
+
+    for (auto &[word, count] : IDFMetrics)
+    {
+        setUnicWords.insert(word);
+    }
 }
 
 int TFIDF::countUnicWords() const
 {
-    return getSetUnicWords().size();
+    return setUnicWords.size();
 }
 
 std::set<std::string> TFIDF::getSetUnicWords() const
 {
-    if (setUnicWords.empty())
-    {
-        for (auto &[word, count] : IDFMetrics)
-        {
-            setUnicWords.insert(word);
-        }
-    }
     return setUnicWords;
 }
 
