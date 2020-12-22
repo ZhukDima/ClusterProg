@@ -1,6 +1,14 @@
 import os
+import shutil
 
+if os.path.exists('test_files') == True:
+    shutil.rmtree('test_files')
 os.mkdir('test_files')
+
+if os.path.exists('output') == True:
+    shutil.rmtree('output')
+os.mkdir('output')
+
 lorem = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
 data = lorem.split(' ')
 for i in range(30, 70):
