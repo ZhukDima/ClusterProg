@@ -7,14 +7,20 @@
 class Cluster
 {
 public:
-    Cluster();
-    Cluster(const std::vector<size_t> &indexes);
+    Cluster() = default;
+    Cluster(const std::vector<size_t> &indexes) : indexes(indexes) {}
     Cluster(const Cluster &) = delete;
     Cluster operator=(const Cluster &) = delete;
 
-    void addIndexElem(size_t index);
+    void addIndexElem(size_t index)
+    {
+        indexes.push_back(index);
+    }
 
-    std::vector<size_t> getClusteringIndexes() const;
+    std::vector<size_t> getClusteringIndexes() const
+    {
+        return indexes;
+    }
 
     template <typename Data>
     std::vector<Data> getClusteringDataByData(const std::vector<Data> &data) const;
