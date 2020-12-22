@@ -28,8 +28,8 @@ add_subdirectory(test)
 ### End test definition ###
 ##
 
-include_directories(include)
-file(GLOB sources "${PROJECT_SOURCE_DIR}/src/*.cpp")
+include_directories(include src)
+file(GLOB sources "${PROJECT_SOURCE_DIR}/src/*.cpp" "${PROJECT_SOURCE_DIR}/include/*.hpp")
 add_executable(ClusterProg src/main.cpp)
 target_include_directories(ClusterProg PUBLIC include src)
 list(REMOVE_ITEM sources "${PROJECT_SOURCE_DIR}/src/main.cpp")

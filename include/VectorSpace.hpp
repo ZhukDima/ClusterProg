@@ -11,6 +11,7 @@ struct VectorSpace
 public:
     VectorSpace(size_t N);
     VectorSpace(const VectorSpace &) = default;
+
     VectorSpace& operator=(const VectorSpace &) = default;
 
     T &operator[](int index);
@@ -56,7 +57,7 @@ bool VectorSpace<T>::operator==(const VectorSpace<T> &obj) const
 {
     assert(vec.size() == obj.vec.size());
     size_t i = 0;
-    for (T &elem : vec)
+    for (const T &elem : vec)
     {
         if (elem != obj.vec[i++])
         {
