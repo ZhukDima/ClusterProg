@@ -3,7 +3,7 @@
 template <typename Data>
 Data UniversalMakeCentroid::make(const Data &data)
 {
-    return a;
+    return data;
 }
 
 template <typename Data>

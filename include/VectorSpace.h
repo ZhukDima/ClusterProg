@@ -1,13 +1,13 @@
 #ifndef VECTORSPACE_H
 #define VECTORSPACE_H
 
-#include <array>
+#include <vector>
 
-template <class T, size_t N>
+template <class T>
 struct VectorSpace
 {
 public:
-    VectorSpace();
+    VectorSpace(size_t N);
     VectorSpace(const VectorSpace &) = delete;
     VectorSpace operator=(const VectorSpace &) = delete;
 
@@ -18,7 +18,8 @@ public:
     double operator-(const VectorSpace &obj) const;
 
 private:
-    std::array<T, N> arr;
+    size_t N;
+    std::vector<T> vec;
 };
 
 #endif

@@ -50,7 +50,7 @@ std::vector<Cluster> KMeans<Data>::calculate(size_t k) const
         }
 
         std::vector<Data> newCentroids;
-        for (const auto &&clusterNewCentroid : clustersNewCentroids)
+        for (const auto &clusterNewCentroid : clustersNewCentroids)
         {
             newCentroids.push_back(MakeCentroid::make(clusterNewCentroid.getClusteringDataByData(data)));
         }

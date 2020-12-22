@@ -1,23 +1,25 @@
 #include "VectorSpace.h"
+#include <assert.h>
 
-template <class T, size_t N>
-VectorSpace<T, N>::VectorSpace() {}
+template <class T>
+VectorSpace<T>::VectorSpace(size_t N) : N(N), vec(N) {}
 
-template <class T, size_t N>
-T &VectorSpace<T, N>::operator[](int index)
+template <class T>
+T &VectorSpace<T>::operator[](int index)
 {
-    return arr[index];
+    return vec[index];
 }
 
-template <class T, size_t N>
-T VectorSpace<T, N>::operator[](int index) const
+template <class T>
+T VectorSpace<T>::operator[](int index) const
 {
-    return arr[index];
+    return vec[index];
 }
 
-template <class T, size_t N>
-VectorSpace<T, N> &VectorSpace<T, N>::operator+=(const VectorSpace<T, N> &obj)
+template <class T>
+VectorSpace<T> &VectorSpace<T>::operator+=(const VectorSpace<T> &obj)
 {
+    assert(N == obj.N);
     for (size_t i = 0; i < N; i++)
     {
         arr[i] += obj.arr[i];
@@ -25,8 +27,8 @@ VectorSpace<T, N> &VectorSpace<T, N>::operator+=(const VectorSpace<T, N> &obj)
     return this;
 }
 
-template <class T, size_t N>
-VectorSpace<T, N> &VectorSpace<T, N>::operator/=(T a)
+template <class T>
+VectorSpace<T> &VectorSpace<T>::operator/=(T a)
 {
     for (size_t i = 0; i < N; i++)
     {
@@ -35,9 +37,10 @@ VectorSpace<T, N> &VectorSpace<T, N>::operator/=(T a)
     return this;
 }
 
-template <class T, size_t N>
-double VectorSpace<T, N>::operator-(const VectorSpace<T, N> &obj) const
+template <class T>
+double VectorSpace<T>::operator-(const VectorSpace<T> &obj) const
 {
+    assert(N == obj.N);
     double ans = 0;
     for (size_t i = 0; i < N; i++)
     {
