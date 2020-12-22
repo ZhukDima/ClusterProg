@@ -1,4 +1,7 @@
 #include <AnalizerImpl.h>
+#include "UniversalCalcDelta.hpp"
+#include "UniversalCompEqual.hpp"
+#include "UniversalMakeCentroid.hpp"
 
 void AnalizerImpl::setCountDirectory(size_t inputCountDirectory) {
     countDirectory = inputCountDirectory;
@@ -28,7 +31,7 @@ std::vector<Group> AnalizerImpl::categorize() {
     DirHandler directory(pathToData);
     std::vector<FileInfo> filesInfo = directory.getFiles();
     TFIDF tfidf(filesInfo);
-    std::set<std::string> setUnicWords = tfidf.setUnicWords();
+    std::set<std::string> setUnicWords = tfidf.getSetUnicWords();
     std::vector<VectorSpace<double>> vectorsSpace;
     for (auto &fileInfo : filesInfo) {
         //vectorsSpace.push_back(VectorSpace<double>(setUnicWords.size()));
@@ -45,7 +48,7 @@ std::vector<Group> AnalizerImpl::categorize() {
     for (auto &fileInfo : filesInfo) {
         allPath.push_back(fileInfo.getPath());
     }
-    std::vector<std::stack<std::string>> clusteringData;
+    std::vector<std::vector<std::string>> clusteringData;
     for (auto &cluster : clusters) {
         clusteringData.push_back(cluster.getClusteringDataByData(allPath));
     }
@@ -57,14 +60,14 @@ std::vector<Group> AnalizerImpl::categorize() {
         }
         Group tempGroup;
 
-        //for (auto filename : group) {
-        //    tempGroup.addFile(filename);
-        //}
-
-        while(!group.empty()){
-            tempGroup.addFile(group.top());
-            group.pop();
+        for (auto filename : group) {
+            tempGroup.addFile(filename);
         }
+
+//        while(!group.empty()){
+//            tempGroup.addFile(group.top());
+//            group.pop();
+//        }
         result.push_back(tempGroup);
         result[count].setGroupName("group_" + std::to_string(count));
         ++count;
