@@ -16,7 +16,7 @@ public:
     T &operator[](int index);
     const T &operator[](int index) const;
     VectorSpace &operator+=(const VectorSpace &obj);
-    bool operator==(const VectorSpace &obj);
+    bool operator==(const VectorSpace &obj) const;
     VectorSpace &operator/=(T a);
     double operator-(const VectorSpace &obj) const;
 
@@ -52,11 +52,11 @@ VectorSpace<T> &VectorSpace<T>::operator+=(const VectorSpace<T> &obj)
 }
 
 template <class T>
-bool VectorSpace<T>::operator==(const VectorSpace<T> &obj)
+bool VectorSpace<T>::operator==(const VectorSpace<T> &obj) const
 {
     assert(vec.size() == obj.vec.size());
     size_t i = 0;
-    for (T &elem : vec)
+    for (const T &elem : vec)
     {
         if (elem != obj.vec[i++])
         {
