@@ -1,26 +1,28 @@
 #ifndef KMEANS_H
 #define KMEANS_H
 
-#include "TFIDF.h"
-#include <set>
+#include "Cluster.h"
 
+template <typename Data>
 class KMeans
 {
-private:
-    std::vector<FileInfo> vecFileInfo;
-    std::vector<std::map<std::string, double>> centroids;
-
-    double deltaBetweenTFIDF(const std::map<std::string, double> &m1, const std::map<std::string, double> &m2) const;
-    bool equalCentroid(const std::map<std::string, double> &l, const std::map<std::string, double> &r) const;
-    bool equalCentroidsWithBase(const std::vector<std::map<std::string, double>> &newCentroids) const;
-
 public:
-    KMeans() = delete;
-    KMeans(const KMeans &obj) = delete;
-    KMeans &operator=(const KMeans &obj) = delete;
+    KMeans(const std::vector<Data> &data);
+    KMeans(const KMeans &) = delete;
+    KMeans &operator=(const KMeans &) = delete;
 
-    KMeans(const std::vector<FileInfo> &_vecFileInfo);
-    std::vector<std::set<std::string>> calculate(size_t k);
+    // CalcDelta:
+    //                  static double   calc(const Data&, const Data&)
+    // CompEqual:
+    //                  static bool     comp(const Data&, const Data&)
+    // MakeCentroid:
+    //                  static Data     make(const std::stack<Data>&),
+    //                  static Data     make(const Data&)
+    template <class CalcDelta, class CompEqual, class MakeCentroid>
+    std::vector<Cluster> calculate(size_t k) const;
+
+private:
+    std::vector<Data> data;
 };
 
 #endif

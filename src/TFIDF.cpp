@@ -1,40 +1,60 @@
 #include "TFIDF.h"
 #include <math.h> // log
 
-TFIDF::TFIDF(const std::vector<FileInfo> &vecFileInfo)
+TFIDF::TFIDF(const std::vector<FileInfo> &filesInfo)
 {
-    for (auto fi = vecFileInfo.begin(); fi != vecFileInfo.end(); ++fi)
+    for (const auto &fileInfo : filesInfo)
     {
-        for (auto p = fi->getAllMetric().begin(); p != fi->getAllMetric().end(); ++p)
+        pathToIndex[fileInfo.getPath()] = TFMetrics.size();
+        TFMetrics.push_back(FileInfo(fileInfo.getPath()));
+        for (const auto &[word, count] : fileInfo.getAllMetric())
         {
-            metricTF[fi->getPath()][p->first] = (double)p->second / fi->getAmountOfWords();
-            metricIDF[p->first] += 1;
+            TFMetrics.back().setMetric(word, count / fileInfo.getAmountOfWords());
+            IDFMetrics[word] += 1;
         }
     }
-    for (auto m = metricIDF.begin(); m != metricIDF.end(); ++m)
+
+    for (auto &[word, count] : IDFMetrics)
     {
-        m->second = std::log(vecFileInfo.size() / m->second);
+        count = std::log(filesInfo.size() / count);
     }
+}
+
+int TFIDF::countUnicWords() const
+{
+    return getSetUnicWords().size();
+}
+
+std::set<std::string> TFIDF::getSetUnicWords() const
+{
+    if (setUnicWords.empty())
+    {
+        for (auto &[word, count] : IDFMetrics)
+        {
+            setUnicWords.insert(word);
+        }
+    }
+    return setUnicWords;
 }
 
 double TFIDF::calculate(const std::string &word, const std::string &path) const
 {
     try
     {
-        return metricTF.at(path).at(word) * metricIDF.at(word);
+        return TFMetrics.at(pathToIndex.at(path)).getAllMetric().at(word) * IDFMetrics.at(word);
     }
-    catch(const std::out_of_range& e)
+    catch (const std::out_of_range &e)
     {
         return 0;
     }
 }
 
-std::map<std::string, double> TFIDF::mapTFIDFforFile(const std::string &path) const
+FileInfo TFIDF::TFIDFForFile(const std::string &path) const
 {
-    std::map<std::string, double> resualt;
-    for (auto p = metricTF.at(path).begin(); p != metricTF.at(path).end(); ++p)
+    FileInfo fileInfo(path);
+    for (auto &[word, count] : TFMetrics.at(pathToIndex.at(path)).getAllMetric())
     {
-        resualt[p->first] = calculate(p->first, path);
+        fileInfo.setMetric(word, count);
     }
-    return resualt;
+    return fileInfo;
 }

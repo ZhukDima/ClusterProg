@@ -3,21 +3,26 @@
 
 #include "FileInfo.h"
 #include <vector>
+#include <set>
+#include <map>
 
 class TFIDF
 {
-private:
-    std::map<std::string, std::map<std::string, double>> metricTF; // map<path, map<word, metric>>
-    std::map<std::string, double> metricIDF;                       // map<word, metric>
-
 public:
-    TFIDF() = delete;
-    TFIDF(const TFIDF &obj) = delete;
-    TFIDF &operator=(const TFIDF &obj) = delete;
+    TFIDF(const std::vector<FileInfo> &filesInfo);
+    TFIDF(const TFIDF &) = delete;
+    TFIDF &operator=(const TFIDF &) = delete;
 
-    TFIDF(const std::vector<FileInfo> &vecFileInfo);
+    int countUnicWords() const;
+    std::set<std::string> getSetUnicWords() const;
     double calculate(const std::string &word, const std::string &path) const;
-    std::map<std::string, double> mapTFIDFforFile(const std::string &path) const;
+    FileInfo TFIDFForFile(const std::string &path) const;
+
+private:
+    std::set<std::string> setUnicWords;
+    std::map<std::string, int> pathToIndex;
+    std::vector<FileInfo> TFMetrics;
+    std::map<std::string, double> IDFMetrics;
 };
 
 #endif
