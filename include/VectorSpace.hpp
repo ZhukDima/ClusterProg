@@ -1,6 +1,28 @@
-#include "VectorSpace.h"
-#include <assert.h>
+#ifndef VECTORSPACE_H
+#define VECTORSPACE_H
+
+#include <vector>
 #include <cmath> // abs
+#include <assert.h>
+
+template <class T>
+struct VectorSpace
+{
+public:
+    VectorSpace(size_t N);
+    VectorSpace(const VectorSpace &) = default;
+    VectorSpace operator=(const VectorSpace &) = delete;
+
+    T &operator[](int index);
+    const T &operator[](int index) const;
+    VectorSpace &operator+=(const VectorSpace &obj);
+    bool operator==(const VectorSpace &obj);
+    VectorSpace &operator/=(T a);
+    double operator-(const VectorSpace &obj) const;
+
+private:
+    std::vector<T> vec;
+};
 
 template <class T>
 VectorSpace<T>::VectorSpace(size_t N) : vec(N) {}
@@ -30,6 +52,21 @@ VectorSpace<T> &VectorSpace<T>::operator+=(const VectorSpace<T> &obj)
 }
 
 template <class T>
+bool VectorSpace<T>::operator==(const VectorSpace<T> &obj)
+{
+    assert(vec.size() == obj.vec.size());
+    size_t i = 0;
+    for (T &elem : vec)
+    {
+        if (elem != obj.vec[i++])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+template <class T>
 VectorSpace<T> &VectorSpace<T>::operator/=(T divider)
 {
     for (T &elem : vec)
@@ -51,3 +88,5 @@ double VectorSpace<T>::operator-(const VectorSpace<T> &obj) const
     }
     return ans;
 }
+
+#endif

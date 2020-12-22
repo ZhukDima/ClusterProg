@@ -1,6 +1,31 @@
-#include "KMeans.h"
+#ifndef KMEANS_H
+#define KMEANS_H
+
+#include "Cluster.hpp"
 #include <set>
-#include <stack>
+#include <vector>
+
+template <typename Data>
+class KMeans
+{
+public:
+    KMeans(const std::vector<Data> &data);
+    KMeans(const KMeans &) = delete;
+    KMeans &operator=(const KMeans &) = delete;
+
+    // CalcDelta:
+    //                  static double   calc(const Data&, const Data&)
+    // CompEqual:
+    //                  static bool     comp(const Data&, const Data&)
+    // MakeCentroid:
+    //                  static Data     make(const std::stack<Data>&),
+    //                  static Data     make(const Data&)
+    template <class CalcDelta, class CompEqual, class MakeCentroid>
+    std::vector<Cluster> calculate(size_t k) const;
+
+private:
+    std::vector<Data> data;
+};
 
 template <typename Data>
 KMeans<Data>::KMeans(const std::vector<Data> &data) : data(data) {}
@@ -70,4 +95,10 @@ std::vector<Cluster> KMeans<Data>::calculate(size_t k) const
 
     // 4 step
     return clustersNewCentroids;
+<<<<<<< HEAD:src/KMeans.cpp
 }
+=======
+}
+
+#endif
+>>>>>>> 85a4219aea66811d2abf6a81c00a538637bef59f:include/KMeans.hpp
