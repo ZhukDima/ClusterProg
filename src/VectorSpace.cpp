@@ -30,7 +30,7 @@ VectorSpace<T> &VectorSpace<T>::operator+=(const VectorSpace<T> &obj)
 }
 
 template <class T>
-VectorSpace<T> &VectorSpace<T>::operator/=(T a)
+VectorSpace<T> &VectorSpace<T>::operator/=(T divider)
 {
     for (T &elem : vec)
     {
