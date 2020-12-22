@@ -84,9 +84,9 @@ double VectorSpace<T>::operator-(const VectorSpace<T> &obj) const
     size_t i = 0;
     for (const T &elem : vec)
     {
-        ans += std::abs(elem - obj.vec[i++]);
+        ans += std::pow(elem - obj.vec[i++], 2);
     }
-    return ans;
+    return std::sqrt(ans);
 }
 
 #endif
