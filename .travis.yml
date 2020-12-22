@@ -23,7 +23,6 @@ matrix:
       script:
         - mkdir build
         - python3 tests_file.py
-        - mkdir output
         - cd build/
         - cmake ..
         - make
