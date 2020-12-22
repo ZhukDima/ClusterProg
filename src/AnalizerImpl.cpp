@@ -48,7 +48,7 @@ std::vector<Group> AnalizerImpl::categorize() {
 }
 
 void AnalizerImpl::move() {
-    FileMover mover;
+    FileManager mover;
     std::vector<Group> groups = categorize();
     for (const auto &group : groups) {
         mover.createDir(pathToResult + "/" + group.getGroupName());

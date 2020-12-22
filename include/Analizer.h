@@ -3,7 +3,7 @@
 
 #include "DirHandler.h"
 #include "KMeans.h"
-#include "FileMover.h"
+#include "FileManager.h"
 #include "Group.h"
 
 #include <string>
