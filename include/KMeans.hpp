@@ -2,6 +2,9 @@
 #define KMEANS_H
 
 #include "Cluster.hpp"
+#include "UniversalCompEqual.hpp"
+#include "UniversalCalcDelta.hpp"
+#include "UniversalMakeCentroid.hpp"
 #include <set>
 #include <vector>
 
@@ -20,7 +23,7 @@ public:
     // MakeCentroid:
     //                  static Data     make(const std::stack<Data>&),
     //                  static Data     make(const Data&)
-    template <class CalcDelta, class CompEqual, class MakeCentroid>
+    template <class CalcDelta = UniversalCalcDelta, class CompEqual = UniversalCompEqual, class MakeCentroid = UniversalMakeCentroid>
     std::vector<Cluster> calculate(size_t k) const;
 
 private:
@@ -35,7 +38,7 @@ template <class CalcDelta, class CompEqual, class MakeCentroid>
 std::vector<Cluster> KMeans<Data>::calculate(size_t k) const
 {
     // 1 step
-    std::vector<Data> centroids(k);
+    std::vector<Data> centroids;
 
     {
         std::set<size_t> s;
@@ -43,10 +46,9 @@ std::vector<Cluster> KMeans<Data>::calculate(size_t k) const
         {
             s.insert(std::rand() % data.size());
         }
-        size_t i = 0;
         for (size_t j : s)
         {
-            centroids[i++] = MakeCentroid::make(data[j]);
+            centroids.push_back(MakeCentroid::make(data[j]));
         }
     }
 
@@ -56,7 +58,7 @@ std::vector<Cluster> KMeans<Data>::calculate(size_t k) const
     {
         clustersNewCentroids = std::vector<Cluster>(k);
 
-        for (size_t vi = 0; vi < k; vi++)
+        for (size_t vi = 0; vi < data.size(); vi++)
         {
             Data v = data[vi];
             size_t indexBestCentroid = 0;
