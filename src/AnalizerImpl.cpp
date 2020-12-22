@@ -1,5 +1,4 @@
 #include <AnalizerImpl.h>
-#include <algorithm>
 
 void AnalizerImpl::setCountDirectory(size_t inputCountDirectory) {
     countDirectory = inputCountDirectory;
@@ -26,16 +25,45 @@ std::string cutName(std::string path) {
 }
 
 std::vector<Group> AnalizerImpl::categorize() {
-    // путь к директории и информация о файлах в директории
     DirHandler directory(pathToData);
-    KMeans kmeans(directory.getFiles());
-    std::vector<std::set<std::string>> groups = kmeans.calculate(countDirectory);
+    std::vector<FileInfo> filesInfo = directory.getFiles();
+    TFIDF tfidf(filesInfo);
+    std::set<std::string> setUnicWords = tfidf.setUnicWords();
+    std::vector<VectorSpace<double>> vectorsSpace;
+    for (auto &fileInfo : filesInfo) {
+        //vectorsSpace.push_back(VectorSpace<double>(setUnicWords.size()));
+        vectorsSpace.emplace_back(setUnicWords.size());
+        size_t i = 0;
+        for (auto &word : setUnicWords) {
+            vectorsSpace.back()[i++] = tfidf.calculate(word, fileInfo.getPath());
+        }
+    }
+    KMeans<VectorSpace<double>> kMeans(vectorsSpace);
+    std::vector<Cluster> clusters = kMeans.calculate<UniversalCalcDelta, UniversalCompEqual, UniversalMakeCentroid>(countDirectory);
+
+    std::vector<std::string> allPath;
+    for (auto &fileInfo : filesInfo) {
+        allPath.push_back(fileInfo.getPath());
+    }
+    std::vector<std::stack<std::string>> clusteringData;
+    for (auto &cluster : clusters) {
+        clusteringData.push_back(cluster.getClusteringDataByData(allPath));
+    }
     std::vector<Group> result;
     size_t count = 0;
-    for (auto group : groups) {
+    for (auto group : clusteringData) {
+        if (group.empty()) {
+            continue;
+        }
         Group tempGroup;
-        for (auto filename : group) {
-            tempGroup.addFile(cutName(filename));
+
+        //for (auto filename : group) {
+        //    tempGroup.addFile(filename);
+        //}
+
+        while(!group.empty()){
+            tempGroup.addFile(group.top());
+            group.pop();
         }
         result.push_back(tempGroup);
         result[count].setGroupName("group_" + std::to_string(count));
@@ -44,13 +72,14 @@ std::vector<Group> AnalizerImpl::categorize() {
     return result;
 }
 
+
 void AnalizerImpl::move() {
     FileMover mover;
     std::vector<Group> groups = categorize();
     for (const auto &group : groups) {
         mover.createDir(pathToResult + "/" + group.getGroupName());
         for (auto filename : group.getFiles()) {
-            mover.moveFile(filename, pathToResult + "/" + group.getGroupName() + "/" + filename);
+            mover.moveFile(filename, pathToResult + "/" + group.getGroupName() + "/" + cutName(filename));
         }
     }
 }

@@ -5,7 +5,10 @@
 #include "KMeans.h"
 #include "FileMover.h"
 #include "Group.h"
+#include "TFIDF.h"
+#include "VectorSpace.h"
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
