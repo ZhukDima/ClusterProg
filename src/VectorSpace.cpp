@@ -1,5 +1,6 @@
 #include "VectorSpace.h"
 #include <assert.h>
+#include <cmath> // abs
 
 template <class T>
 VectorSpace<T>::VectorSpace(size_t N) : vec(N) {}
@@ -46,7 +47,7 @@ double VectorSpace<T>::operator-(const VectorSpace<T> &obj) const
     size_t i = 0;
     for (const T &elem : vec)
     {
-        ans += elem - obj.vec[i];
+        ans += std::abs(elem - obj.vec[i]);
     }
     return ans;
 }
