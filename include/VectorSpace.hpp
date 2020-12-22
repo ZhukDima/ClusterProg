@@ -11,7 +11,7 @@ struct VectorSpace
 public:
     VectorSpace(size_t N);
     VectorSpace(const VectorSpace &) = default;
-    VectorSpace operator=(const VectorSpace &) = default;
+    VectorSpace& operator=(const VectorSpace &) = default;
 
     T &operator[](int index);
     const T &operator[](int index) const;
