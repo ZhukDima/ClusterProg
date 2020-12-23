@@ -1,3 +1,4 @@
+
 #ifndef FILEINFOIMPL_H
 #define FILEINFOIMPL_H
 
@@ -9,7 +10,7 @@ private:
     void swap(const FileInfoImpl& obj) noexcept;
 public:
     FileInfoImpl();
-    FileInfoImpl(std::string _pathToFile);
+    explicit FileInfoImpl(std::string _pathToFile);
     FileInfoImpl(std::string _pathToFile, const std::map<std::string, double>& _metric);
     FileInfoImpl(const FileInfoImpl& obj);
     FileInfoImpl& operator=(const FileInfoImpl& obj);

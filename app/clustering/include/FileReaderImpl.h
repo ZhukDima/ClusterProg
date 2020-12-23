@@ -1,3 +1,4 @@
+
 #ifndef FILEREADERIMPL_H
 #define FILEREADERIMPL_H
 
@@ -9,7 +10,7 @@ class FileReaderImpl {
 public:
     std::string pathToFile;
     std::fstream in;
-    FileReaderImpl(std::string _pathToFile);
+    explicit FileReaderImpl(std::string _pathToFile);
     ~FileReaderImpl();
     bool hasNextWord();
     std::string readAccepted(std::function<bool(char)> accept);
