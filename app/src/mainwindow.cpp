@@ -3,8 +3,8 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    settingsPresenter(new SettingsPresenter(settings))
+      ui(new Ui::MainWindow),
+      settingsPresenter(new SettingsPresenter(settings))
 {
     ui->setupUi(this);
     settingsWindow = new SettingsDialog(this, settingsPresenter);
@@ -38,7 +38,12 @@ void MainWindow::on_chooseDirButton_clicked()
 
 void MainWindow::on_InfoButton_clicked()
 {
-    QString msg = "<ol><li>Choose directory</li><li>Choose settings if you need to</li><li>Push the Start button</li></ol>";
+    QString msg = "<ol><li>Choose directory</li>"
+    "<li>Choose settings if you need to</li>"
+    "<li>Push the Start button</li>"
+    "<li>Set Cluster count</li>"
+    "<li>Check the result!</li>"
+    "</ol>";
     QMessageBox::information(this, "Info Message", msg);
 }
 
@@ -49,6 +54,15 @@ void MainWindow::on_settingsButton_clicked()
 
 void MainWindow::on_runButton_clicked()
 {
+    bool ok;
+    int clusterCount = settingsPresenter->getClusterCountFromDialog(this, ok);
+    if (!ok)
+        return;
+
+    settings = settingsPresenter->setClusterCount(clusterCount);
+
+    qDebug() << settingsPresenter->getClusterCountToOperate();
+
     qDebug() << "START";
     processProgress->show();
     processProgress->setMaximum(999999999);

@@ -6,8 +6,9 @@
 #include "settings.h"
 #include "settingspresenter.h"
 
-namespace Ui {
-class SettingsDialog;
+namespace Ui
+{
+    class SettingsDialog;
 }
 
 class SettingsDialog : public QDialog
