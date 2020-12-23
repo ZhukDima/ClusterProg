@@ -37,6 +37,10 @@ template <typename Data>
 template <class CalcDelta, class CompEqual, class MakeCentroid>
 std::vector<Cluster> KMeans<Data>::calculate(size_t k, const std::vector<Data> &startCentroids) const
 {
+    if (k > data.size())
+    {
+        k = data.size();
+    }
     assert(startCentroids.size() <= k);
 
     // 1 step
