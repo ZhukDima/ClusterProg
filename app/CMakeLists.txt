@@ -34,11 +34,6 @@ add_library(
     ${UI_FILES}
 )
 
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
-find_package(Qt5Widgets CONFIG
-    PATHS /home/vadim/Applications/5.14.2/gcc_64/lib/cmake/Qt5Widgets
-    NO_DEFAULT_PATH)
-
-target_link_libraries(InterfaceLib PUBLIC Qt5::Widgets)
-
-target_include_directories(InterfaceLib PUBLIC "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/includes")
+target_link_libraries(InterfaceLib Qt5::Widgets)
