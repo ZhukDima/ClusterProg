@@ -6,8 +6,8 @@
 class GroupImpl {
 public:
     GroupImpl() = default;
-    GroupImpl(const GroupImpl& obj);
-    GroupImpl& operator=(const GroupImpl& obj);
+    GroupImpl(const GroupImpl& obj) = default;
+    GroupImpl& operator=(const GroupImpl& obj) = default;
     ~GroupImpl() = default;
 
     void setGroupName(const std::string &inputGroupName);
