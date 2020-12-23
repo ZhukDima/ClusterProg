@@ -41,13 +41,13 @@ std::vector<Cluster> KMeans<Data>::calculate(size_t k, const std::vector<Data> &
     {
         k = data.size();
     }
-    if (startCentroids.size() > k)
-    {
-        startCentroids.resize(k);
-    }
 
     // 1 step
     std::vector<Data> centroids(startCentroids);
+    if (centroids.size() > k)
+    {
+        centroids.resize(k);
+    }
 
     {
         std::set<size_t> s;
