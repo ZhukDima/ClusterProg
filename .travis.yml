@@ -9,7 +9,7 @@ compiler:
 before_script:
     - sudo apt-get update
     - sudo apt-get install -y cmake
-    - sudo apt install qt5-default
+    - sudo apt install -y qt5-default
 
 
 env:
