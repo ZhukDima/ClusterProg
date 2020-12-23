@@ -37,4 +37,4 @@ add_subdirectory(app)
 
 include_directories(app/includes)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC InterfaceLib)
+target_link_libraries(${PROJECT_NAME} PRIVATE InterfaceLib)

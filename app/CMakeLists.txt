@@ -34,15 +34,13 @@ add_library(
     ${UI_FILES}
 )
 
-find_package(Qt5Widgets CONFIG
-    PATHS /home/vadim/Applications/5.14.2/gcc_64/lib/cmake/Qt5Widgets
-    NO_DEFAULT_PATH
-)
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
-target_link_libraries(InterfaceLib PUBLIC Qt5::Widgets)
+target_link_libraries(InterfaceLib Qt5::Widgets)
 
+# CLUSTERING
 add_subdirectory(clustering)
 
-target_link_libraries(InterfaceLib PUBLIC cluster_prog_lib)
+target_link_libraries(InterfaceLib cluster_prog_lib)
 
 target_include_directories(InterfaceLib PUBLIC "${CMAKE_SOURCE_DIR}/includes")
