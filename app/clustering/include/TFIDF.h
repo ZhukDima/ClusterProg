@@ -15,12 +15,15 @@ public:
 
     int countUnicWords() const;
     std::set<std::string> getSetUnicWords() const;
-    double calculate(const std::string &word, const std::string &path) const;
+    double calculateTFIDFMetric(const std::string &word, const std::string &path) const;
+    size_t getNumberFilesWithWord(const std::string &word) const;
     FileInfo TFIDFForFile(const std::string &path) const;
 
 private:
+    std::vector<FileInfo> countWordInFiles;
+    std::map<std::string, size_t> countFilesWithWord;
     std::set<std::string> setUnicWords;
-    std::map<std::string, int> pathToIndex;
+    std::map<std::string, size_t> pathToIndex;
     std::vector<FileInfo> TFMetrics;
     std::map<std::string, double> IDFMetrics;
 };
