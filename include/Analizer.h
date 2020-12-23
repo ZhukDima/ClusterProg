@@ -2,15 +2,16 @@
 #define CLUSTERPROG_ANALIZER_HPP
 
 #include "DirHandler.h"
-#include "KMeans.h"
-#include "FileMover.h"
+#include "KMeans.hpp"
+#include "FileManager.h"
 #include "Group.h"
 #include "TFIDF.h"
-#include "VectorSpace.h"
+#include "VectorSpace.hpp"
 
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <set>
 
 class AnalizerImpl;
 
@@ -18,7 +19,7 @@ class Analizer {
 public:
     Analizer();
 
-    ~Analizer();
+    ~Analizer() = default;
 
     void setCountDirectory(size_t inputCountDirectory);
 
@@ -26,13 +27,14 @@ public:
 
     void setPathToData(const std::string &inputPathToData);
 
+    void setPathsToCentroids(const std::vector<std::string> &inputPathsToCentroids);
+
     // распределение файлов по группам
     std::vector<Group> categorize();
 
     // создание папок и запись файлов
     void move();
 
-    // вызов всех методов
     void analize();
 
 private:
