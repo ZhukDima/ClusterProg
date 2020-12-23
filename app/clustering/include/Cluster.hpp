@@ -17,7 +17,7 @@ public:
         indexes.push_back(index);
     }
 
-    std::vector<size_t> getClusteringIndexes() const
+    const std::vector<size_t> &getClusteringIndexes() const
     {
         return indexes;
     }
