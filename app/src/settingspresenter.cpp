@@ -37,3 +37,8 @@ Settings SettingsPresenter::clearChoosenFiles()
     settings.choosenFiles.clear();
     return settings;
 }
+
+std::string SettingsPresenter::getChoosenDirToOperate()
+{
+    return this->settings.startDir.toStdString();
+}

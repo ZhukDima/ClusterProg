@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+#include "Analizer.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -58,4 +60,10 @@ void MainWindow::on_runButton_clicked()
             processProgress->setValue(i);
     }
     processProgress->hide();
+
+    Analizer analizer;
+    analizer.setPathToData(settingsPresenter->getChoosenDirToOperate());
+    analizer.setCountDirectory(2);
+    analizer.setPathToResult(settingsPresenter->getChoosenDirToOperate());
+    analizer.analize();
 }
