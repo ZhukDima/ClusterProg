@@ -12,6 +12,7 @@ private:
 public:
     DirHandler() = delete;
     DirHandler(std::string _pathToDir);
+    DirHandler(const std::vector<std::string>& pathsToFiles);
     DirHandler(const DirHandler& obj) = delete;
     DirHandler& operator=(const DirHandler& obj) = delete;
     ~DirHandler();

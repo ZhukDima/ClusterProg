@@ -1,12 +1,14 @@
 #include <string>
 #include <vector>
-#include <dirent.h>
+#include <filesystem>
 #include "FileInfo.h"
 #include "DirHandler.h"
 
+namespace fs = std::filesystem;
+
 class DirHandlerImpl {
 private:
-    std::string pathToDir;
+    fs::path pathToDir;
     std::vector <FileInfo> files;
 public:
     DirHandlerImpl() = delete;
@@ -14,36 +16,35 @@ public:
     DirHandlerImpl& operator=(const DirHandlerImpl& obj) = delete;
     ~DirHandlerImpl() = default;
     DirHandlerImpl(std::string _pathToDir): pathToDir(_pathToDir) {
-        DIR *dir = opendir(pathToDir.c_str());
-        if (dir == NULL) {
-            throw "Unable to open directory";
+        if (!fs::exists(pathToDir)) {
+            throw "Directory does not exist";
         }
-        struct dirent *el;
-        while ((el = readdir(dir)) != NULL) {
-            if (el->d_type == 4) {
-                continue;
+        for (auto &p : fs::directory_iterator(pathToDir)) {
+            if (!p.is_directory()) {
+                std::string path = p.path().string();
+                FileInfo file;
+                try {
+                    file = FileInfo(path);
+                } catch(const char* err) {
+                    continue;
+                }
+                files.push_back(file);
             }
-            std::string pathToFile = pathToDir;
-            if (pathToFile[pathToFile.size() - 1] == '/') {
-                pathToFile += el->d_name;
-            } else {
-                pathToFile += "/";
-                pathToFile += el->d_name;
-            }
-            FileInfo file;
+        }
+    }
+    DirHandlerImpl(const std::vector<std::string>& pathsToFiles) {
+        for (auto &file : pathsToFiles) {
+            FileInfo fileInfo;
             try {
-                file = FileInfo(pathToFile);
+                fileInfo = FileInfo(file);
             } catch(const char* err) {
                 continue;
             }
-            files.push_back(file);
-        }
-        if (closedir(dir) == -1) {
-            throw "Unable to close directory";
+            files.push_back(fileInfo);
         }
     }
     std::string getPath() const {
-        return pathToDir;
+        return pathToDir.string();
     }
     std::vector<FileInfo>& getFiles() {
         return files;
@@ -51,6 +52,8 @@ public:
 };
 
 DirHandler::DirHandler(std::string _pathToDir): impl(new DirHandlerImpl(_pathToDir)) {}
+
+DirHandler::DirHandler(const std::vector<std::string> &pathsToFiles): impl(new DirHandlerImpl(pathsToFiles)) {}
 
 std::string DirHandler::getPath() const {
     return impl->getPath();
