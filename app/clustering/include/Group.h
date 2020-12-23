@@ -21,7 +21,7 @@ public:
 
     void addFile(const std::string &fileName);
 
-    std::string getGroupName() const;
+    const std::string &getGroupName() const;
 
     const std::vector<std::string>& getFiles() const;
 

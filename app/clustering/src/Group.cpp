@@ -13,7 +13,7 @@ void Group::addFile(const std::string &fileName) {
     impl->addFile(fileName);
 }
 
-std::string Group::getGroupName() const {
+const std::string &Group::getGroupName() const {
     return impl->getGroupName();
 }
 
