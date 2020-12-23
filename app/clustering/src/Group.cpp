@@ -17,6 +17,20 @@ const std::string &Group::getGroupName() const {
     return impl->getGroupName();
 }
 
-const std::vector<std::string> &Group::getFiles() const {
+const std::vector<std::string>& Group::getFiles() const {
     return impl->getFiles();
+}
+
+GroupImpl Group::getImpl() const {
+    return *impl;
+}
+
+Group::Group(const Group& obj): impl(new GroupImpl(obj.getImpl())) {}
+
+Group& Group::operator=(const Group& obj) {
+    if (this == &obj) {
+        return *this;
+    }
+    *impl = obj.getImpl();
+    return *this;
 }
