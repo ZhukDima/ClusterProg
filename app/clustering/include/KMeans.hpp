@@ -46,7 +46,7 @@ std::vector<Cluster> KMeans<Data>::calculate(size_t k, const std::vector<Data> &
     std::vector<Data> centroids(startCentroids);
     if (centroids.size() > k)
     {
-        centroids.resize(k);
+        centroids.erase(centroids.begin() + k, centroids.end());
     }
 
     {
