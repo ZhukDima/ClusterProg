@@ -8,7 +8,7 @@ FileInfo::FileInfo(): impl(new FileInfoImpl()) {}
 FileInfo::FileInfo(std::string _pathToFile): impl(new FileInfoImpl(_pathToFile)) {}
 
 FileInfo::FileInfo(std::string _pathToFile, const std::map<std::string, double>& _metric):
-    impl(new FileInfoImpl(_pathToFile, _metric)) {}
+        impl(new FileInfoImpl(_pathToFile, _metric)) {}
 
 FileInfo::FileInfo(const FileInfo& obj): impl(new FileInfoImpl(obj.getImpl())) {}
 
@@ -40,6 +40,6 @@ void FileInfo::setMetric(std::string key, double value) {
     impl->setMetric(key, value);
 }
 
- FileInfo::~FileInfo() {
-     delete impl;
- }
+FileInfo::~FileInfo() {
+    delete impl;
+}

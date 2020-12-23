@@ -1,4 +1,3 @@
-
 #ifndef FILEINFOIMPL_H
 #define FILEINFOIMPL_H
 

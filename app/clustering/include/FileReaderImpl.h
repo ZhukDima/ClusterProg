@@ -1,4 +1,3 @@
-
 #ifndef FILEREADERIMPL_H
 #define FILEREADERIMPL_H
 
