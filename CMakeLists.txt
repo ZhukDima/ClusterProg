@@ -1,8 +1,11 @@
-cmake_minimum_required(VERSION 3.16)
-project(ClusterProg)
+cmake_minimum_required(VERSION 3.5)
+
+project(ClusterProg LANGUAGES CXX)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wpedantic -std=c++17")
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wpedantic -std=c++17")
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(ExternalProject)
 find_package(Git REQUIRED)
@@ -22,16 +25,16 @@ add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
         ${CMAKE_BINARY_DIR}/googletest-build)
 
 enable_testing()
-add_subdirectory(test)
+add_subdirectory(app/clustering/test)
 
 ##
 ### End test definition ###
 ##
 
-include_directories(include src)
-file(GLOB sources "${PROJECT_SOURCE_DIR}/src/*.cpp" "${PROJECT_SOURCE_DIR}/include/*.hpp")
-add_executable(ClusterProg src/main.cpp)
-target_include_directories(ClusterProg PUBLIC include src)
-list(REMOVE_ITEM sources "${PROJECT_SOURCE_DIR}/src/main.cpp")
-add_library(cluster_prog_lib STATIC ${sources})
-target_link_libraries(ClusterProg PRIVATE cluster_prog_lib)
+add_executable(${PROJECT_NAME} main.cpp)
+
+add_subdirectory(app)
+
+include_directories(app/includes)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC InterfaceLib)
