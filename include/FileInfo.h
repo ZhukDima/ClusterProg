@@ -10,7 +10,7 @@ private:
 public:
     FileInfo();
     FileInfo(std::string _pathToFile, const std::map<std::string, double>& _metric);
-    FileInfo(std::string _pathToFile);
+    explicit FileInfo(std::string _pathToFile);
     FileInfo(const FileInfo& obj);
     FileInfo& operator=(const FileInfo& obj);
     ~FileInfo();

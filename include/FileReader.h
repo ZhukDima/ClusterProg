@@ -5,7 +5,7 @@ class FileReaderImpl;
 
 class FileReader {
 public:
-    FileReader(std::string _pathToFile);
+    explicit FileReader(std::string _pathToFile);
     FileReader(const FileReader &obj) = delete;
     FileReader& operator=(const FileReader &obj) = delete;
     bool hasNextWord();
