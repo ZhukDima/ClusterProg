@@ -5,9 +5,10 @@
 
 class AnalizerImpl {
 private:
-    size_t countDirectory;
+    size_t countDirectory{};
     std::string pathToResult;
     std::string pathToData;
+    std::set<std::string> pathsToCentroids;
 public:
     AnalizerImpl() = default;
 
@@ -19,13 +20,14 @@ public:
 
     void setPathToData(const std::string &inputPathToData);
 
+    void setPathsToCentroids(const std::vector<std::string> &inputPathsToCentroids);
+
     // распределение файлов по группам
     std::vector<Group> categorize();
 
     // создание папок и запись файлов
     void move();
 
-    // вызов всех методов
     void analize();
 };
 

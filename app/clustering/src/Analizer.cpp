@@ -3,8 +3,6 @@
 
 Analizer::Analizer() : impl(new AnalizerImpl) {}
 
-// Analizer::~Analizer() { delete impl; }
-
 void Analizer::setCountDirectory(size_t inputCountDirectory) {
     impl->setCountDirectory(inputCountDirectory);
 }
@@ -27,4 +25,8 @@ void Analizer::move() {
 
 void Analizer::analize() {
     impl->analize();
+}
+
+void Analizer::setPathsToCentroids(const std::vector<std::string> &inputPathsToCentroids) {
+    impl->setPathsToCentroids(inputPathsToCentroids);
 }

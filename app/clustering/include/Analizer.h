@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <set>
 
 class AnalizerImpl;
 
@@ -26,13 +27,14 @@ public:
 
     void setPathToData(const std::string &inputPathToData);
 
+    void setPathsToCentroids(const std::vector<std::string> &inputPathsToCentroids);
+
     // распределение файлов по группам
     std::vector<Group> categorize();
 
     // создание папок и запись файлов
     void move();
 
-    // вызов всех методов
     void analize();
 
 private:

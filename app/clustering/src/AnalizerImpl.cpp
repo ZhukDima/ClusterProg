@@ -1,7 +1,4 @@
 #include <AnalizerImpl.h>
-#include "UniversalCalcDelta.hpp"
-#include "UniversalCompEqual.hpp"
-#include "UniversalMakeCentroid.hpp"
 
 void AnalizerImpl::setCountDirectory(size_t inputCountDirectory) {
     countDirectory = inputCountDirectory;
@@ -16,7 +13,7 @@ void AnalizerImpl::setPathToData(const std::string &inputPathToData) {
 }
 
 std::string cutName(std::string path) {
-    std::string answ = "";
+    std::string answ;
     for (int i = path.size() - 1; i >= 0; --i) {
         if (path[i] == '/') {
             break;
@@ -33,16 +30,19 @@ std::vector<Group> AnalizerImpl::categorize() {
     TFIDF tfidf(filesInfo);
     std::set<std::string> setUnicWords = tfidf.getSetUnicWords();
     std::vector<VectorSpace<double>> vectorsSpace;
+    std::vector<VectorSpace<double>> vectorsCentroids;
     for (auto &fileInfo : filesInfo) {
-        //vectorsSpace.push_back(VectorSpace<double>(setUnicWords.size()));
         vectorsSpace.emplace_back(setUnicWords.size());
         size_t i = 0;
         for (auto &word : setUnicWords) {
             vectorsSpace.back()[i++] = tfidf.calculate(word, fileInfo.getPath());
         }
+        if(pathsToCentroids.find(fileInfo.getPath()) != pathsToCentroids.end()){
+            vectorsCentroids.push_back(vectorsSpace.back());
+        }
     }
     KMeans<VectorSpace<double>> kMeans(vectorsSpace);
-    std::vector<Cluster> clusters = kMeans.calculate<UniversalCalcDelta, UniversalCompEqual, UniversalMakeCentroid>(countDirectory);
+    std::vector<Cluster> clusters = kMeans.calculate(countDirectory, vectorsCentroids);
 
     std::vector<std::string> allPath;
     for (auto &fileInfo : filesInfo) {
@@ -54,20 +54,14 @@ std::vector<Group> AnalizerImpl::categorize() {
     }
     std::vector<Group> result;
     size_t count = 0;
-    for (auto group : clusteringData) {
+    for (const auto& group : clusteringData) {
         if (group.empty()) {
             continue;
         }
         Group tempGroup;
-
-        for (auto filename : group) {
+        for (const auto& filename : group) {
             tempGroup.addFile(filename);
         }
-
-//        while(!group.empty()){
-//            tempGroup.addFile(group.top());
-//            group.pop();
-//        }
         result.push_back(tempGroup);
         result[count].setGroupName("group_" + std::to_string(count));
         ++count;
@@ -87,7 +81,13 @@ void AnalizerImpl::move() {
     }
 }
 
-// основная логика по распределению тем(точка входа)
 void AnalizerImpl::analize() {
     move();
+}
+
+void AnalizerImpl::setPathsToCentroids(const std::vector<std::string> &inputPathsToCentroids) {
+    pathsToCentroids.clear();
+    for(const auto& pathToCentroid : inputPathsToCentroids){
+        pathsToCentroids.insert(pathToCentroid);
+    }
 }
