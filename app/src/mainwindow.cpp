@@ -32,6 +32,7 @@ void MainWindow::on_chooseDirButton_clicked()
     if (settings.startDir == Settings::DEFAULT_DIR)
         return;
     ui->chooseDirLabel->setText(settings.startDir);
+    ui->chooseDirLabel->setAlignment(Qt::AlignHCenter);
 }
 
 void MainWindow::on_InfoButton_clicked()
@@ -76,6 +77,7 @@ void MainWindow::on_runButton_clicked()
 void MainWindow::setActualStartDirText(const QString &dir)
 {
     ui->chooseDirLabel->setText(dir);
+    ui->chooseDirLabel->setAlignment(Qt::AlignHCenter);
 }
 
 void MainWindow::showNoSettingsWarningMsg()
