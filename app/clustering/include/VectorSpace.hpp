@@ -96,7 +96,9 @@ double VectorSpace<T>::operator-(const VectorSpace<T> &obj) const
     {
         ans += std::pow(elem - obj.vec[i++], 2);
     }
-    return std::sqrt(ans); assert(Size() == obj.Size());
+    return std::sqrt(ans); 
+    
+    //assert(Size() == obj.Size());
 
     // std::priority_queue<double> priorQue;
     // size_t i = 0;

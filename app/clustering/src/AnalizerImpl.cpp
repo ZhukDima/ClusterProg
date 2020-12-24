@@ -37,35 +37,35 @@ std::vector<Group> AnalizerImpl::categorize()
     DirHandler directory(pathToData);
     std::vector<FileInfo> filesInfo = directory.getFiles();
 
-    std::cout << std::endl;
-    for (auto &fileInfo : filesInfo)
-    {
-        std::cout << fileInfo.getPath() << ":";
-        for (const auto &[word, count] : fileInfo.getAllMetric())
-        {
-            std::cout << " [" << word << "," << count << "]";
-        }
-        std::cout << ";" << std::endl << std::endl;
-    }
-    std::cout << std::endl;
+    // std::cout << std::endl;
+    // for (auto &fileInfo : filesInfo)
+    // {
+    //     std::cout << fileInfo.getPath() << ":";
+    //     for (const auto &[word, count] : fileInfo.getAllMetric())
+    //     {
+    //         std::cout << " [" << word << "," << count << "]";
+    //     }
+    //     std::cout << ";" << std::endl << std::endl;
+    // }
+    // std::cout << std::endl;
 
     TFIDFPP tfidf(filesInfo);
     std::set<std::string> setUnicWords = tfidf.getSetUsefulUnicWords();
-    std::cout << " > " << setUnicWords.size() << std::endl;
+    //std::cout << " > " << setUnicWords.size() << std::endl;
 
-    std::cout << std::endl;
-    for (auto &elem : setUnicWords)
-    {
-        std::cout << elem << " ";
-    }
-    std::cout << std::endl;
+    // std::cout << std::endl;
+    // for (auto &elem : setUnicWords)
+    // {
+    //     std::cout << elem << " ";
+    // }
+    // std::cout << std::endl;
 
-    std::cout << std::endl;
-    for (auto &elem : tfidf.getSetUnicWords())
-    {
-        std::cout << elem << " ";
-    }
-    std::cout << std::endl;
+    // std::cout << std::endl;
+    // for (auto &elem : tfidf.getSetUnicWords())
+    // {
+    //     std::cout << elem << " ";
+    // }
+    // std::cout << std::endl;
 
     std::vector<VectorSpace<double>> vectorsSpace;
     std::vector<VectorSpace<double>> vectorsCentroids;
