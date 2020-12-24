@@ -4,10 +4,7 @@
 using namespace std;
 
 int main() {
-    Analizer analizer;
-    analizer.setPathToDirectory("../test_files");
-    analizer.setCountDirectory(2);
-    analizer.setPathToResult("../output");
-    analizer.analize();
+    Analizer analizer("../test_files", {}, "../output", 2);
+    analizer.filesMoving();
     return 0;
 }

@@ -4,31 +4,25 @@
 #include "Analizer.h"
 
 class AnalizerImpl {
-private:
-    size_t countDirectory{};
-    std::string pathToResult;
-    std::string pathToDirectory;
-    std::vector<std::string> pathsToFiles;
 public:
-    AnalizerImpl() = default;
+    AnalizerImpl() = delete;
+
+    AnalizerImpl(std::string inputPathToDirectory, std::vector<std::string> inputPathsToFiles,
+                 std::string inputPathToResult, size_t inputCountDirectory);
 
     ~AnalizerImpl() = default;
 
-    void setCountDirectory(size_t inputCountDirectory);
+    // распределение файлов по группам
+    std::vector<SimilarFilesGroup> categorize();
 
-    void setPathToResult(const std::string &inputPathToResult);
+    // создание папок перемещение файлов по папкам согласно их группам
+    void filesMoving();
 
-    void setPathToDirectory(const std::string &inputPathToDirectory);
-
-    void setPathsToFiles(const std::vector<std::string> &inputPathsToFiles);
-
-// распределение файлов по группам
-    std::vector<Group> categorize();
-
-// создание папок и запись файлов
-    void move();
-
-    void analize();
+private:
+    std::string pathToDirectory;
+    std::vector<std::string> pathsToFiles;
+    std::string pathToResult;
+    size_t countDirectory{};
 };
 
 #endif //CLUSTERPROG_ANALIZERIMPL_HPP

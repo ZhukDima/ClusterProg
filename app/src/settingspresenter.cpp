@@ -106,11 +106,8 @@ bool SettingsPresenter::isValidSettings()
 
 int SettingsPresenter::useAnalizer()
 {
-    Analizer analizer;
-    analizer.setPathToDirectory(getStartDirToOperate());
-    analizer.setPathsToFiles(getChoosenFilesToOperate());
-    analizer.setCountDirectory(getClusterCountToOperate());
-    analizer.setPathToResult(getStartDirToOperate());
-    analizer.analize();
+    Analizer analizer(getStartDirToOperate(), getChoosenFilesToOperate(),
+                      getStartDirToOperate(), getClusterCountToOperate());
+    analizer.filesMoving();
     return 0;
 }
