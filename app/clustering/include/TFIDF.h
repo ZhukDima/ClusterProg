@@ -19,7 +19,7 @@ public:
     size_t getNumberFilesWithWord(const std::string &word) const;
     FileInfo TFIDFForFile(const std::string &path) const;
 
-private:
+protected:
     std::vector<FileInfo> countWordInFiles;
     std::map<std::string, size_t> countFilesWithWord;
     std::set<std::string> setUnicWords;
