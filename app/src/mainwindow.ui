@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>390</width>
+    <height>531</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: #f0f8ff;
+font: 11pt &quot;FreeSans&quot;;</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">QPushButton
+{
+	padding: 15px;
+	margin: 0 10px 0 10px;
+}
+QPushButton#runButton
+{
+	color: #fff;
+	border: 2px solid #136b01;
+	border-radius: 3px;
+	background-color: #3DA028;
+}
+QPushButton#runButton:hover
+{
+	background-color: #fff;
+	color: #136b01;
+}
+
+QPushButton#InfoButton
+{
+	color: #fff;
+	border: 2px solid #015666;
+	border-radius: 3px;
+	background-color: #37B6CE;
+}
+QPushButton#InfoButton:hover
+{
+	background-color: #fff;
+	color: #015666;
+}
+
+QPushButton#settingsButton
+{
+	color: #fff;
+	border: 2px solid #A65100;
+	border-radius: 3px;
+	background-color: #FF9D40;
+}
+QPushButton#settingsButton:hover
+{
+	background-color: #fff;
+	color: #A65100;
+}
+
+QPushButton#chooseDirButton
+{
+	color: #fff;
+	border: 2px solid #081073;
+	border-radius: 3px;
+	background-color: #4C57D8;
+}
+QPushButton#chooseDirButton:hover
+{
+	background-color: #fff;
+	color: #081073;
+}</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QPushButton" name="chooseDirButton">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Choose Directory</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="chooseDirLabel">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>FreeSans</family>
+        <pointsize>-1</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">padding: 5px;
+font-size: 18px;
+margin: 0 auto 0 auto;</string>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Choosen directory . . .&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="settingsButton">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Settings</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="InfoButton">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Info</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="runButton">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>RUN</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="hiddenInfoTextLabel">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>&lt;ol&gt;
+	&lt;li&gt;Choose directory&lt;/li&gt;
+	&lt;li&gt;Choose settings if you need to&lt;/li&gt;
+	&lt;li&gt;Push the Run button&lt;/li&gt;
+	&lt;li&gt;Set Cluster count&lt;/li&gt;
+	&lt;li&gt;Check the result!&lt;/li&gt;
+&lt;/ol&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="hiddenSuccessTextLabel">
+      <property name="text">
+       <string>Your files were clustered
+in their parent directory
+Check the result!</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="hiddenNoSettingsTextLabel">
+      <property name="text">
+       <string>Can't clustering home directory.
+Choose specific files or another directory.
+Maybe you just forgot to save the settings</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>390</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="font">
+    <font>
+     <family>FreeSans</family>
+     <pointsize>11</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: #585353;
+padding: 5px 20px;</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
