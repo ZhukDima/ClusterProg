@@ -1,0 +1,232 @@
+Федеральное государственное бюджетное образовательное учреждение
+высшего профессионального образования
+«Московский государственный технический университет имени    Н. Э. Баумана»
+(МГТУ им. Н. Э. Баумана)
+
+
+
+Факультет: Информатика и системы управления
+
+Кафедра: Теоретическая информатика и компьютерные технологии
+
+
+
+
+
+
+
+Лабораторная работа №7
+«Разработка клиент-серверного приложения на основе сокетов»
+по курсу: «КОМПЬЮТЕРНЫЕ СЕТИ»
+
+
+
+
+
+
+Выполнил:
+Студент группы ИУ9-32Б
+Жук Д. О.
+
+Проверил: 
+Посевин Д. П.
+
+
+ 
+1.	Цель.
+Целью данной лабораторной работы является разработка клиент-серверного приложения на основе сокетов в языке GO, используя пакет net (server/server.go, client/client.go).
+2.	Условия задачи.
+Реализовать клиент-серверное приложение на основе сокетов в языке GO и запустить его на сервере.
+Описание протокола:
+Запрос клиента	Описание запроса
++ x y	Добавляет точку с координатой (x, y). 
+? a b	Узнать длину ломанной между точками с индексами a и b.
+!	Получить список точек.
+
+Ответ сервера	Описание запроса
+not float: "s"	Строка s не приводима к типу вещественных чисел.
+not int: "s"	Строка s не приводима к типу целых чисел.
+point added successfully	Сообщение возникает после успешной операции добавления точки.
+invalid indexes: a b	Индексы не входят в интервал, удовлетворяющий введенному массиву точек (либо a < 0, либо b > индекса последнего элемента).
+length: q	Сообщение возникает после успешной операции вычисления длины ломанной, где q – искомая длина.
+undefined command: comm	Введенная команда не была распознана. Не соответствует возможным запросам клиента
+Number of points: n
+0: x0 y0
+…
+n-1: xn-1 yn-1	Сообщение возникает после успешной операции получения списка точек: n – их кол-во. Со второй по n-ую строчку написаны: индекс, первая координата, вторая координата соответственно. 
+
+server/server.go
+package main
+
+import (
+   "fmt"
+   "log"
+   "math"
+   "net"
+   "strconv"
+   "strings"
+)
+
+const bufferSize = 32
+const startMassage = `Работа с ломанной. Команды имеют вид:
+   + x y - добавление точки с коорбинатой (x, y);
+   ? a b - возвращает расстояние между точками под номером a и b;
+   ! - возврщает список всех точек.
+`
+
+func main() {
+   listener, err := net.Listen("tcp", "localhost:3012")
+   if err != nil {
+      log.Println("listen error:", err)
+   }
+   for {
+      conn, err := listener.Accept()
+      if err != nil {
+         log.Println("listener-accept error:", err)
+         continue
+      }
+      go handleClient(conn)
+   }
+}
+
+type point struct {
+   x float64
+   y float64
+}
+
+func (p1 *point) delta(p2 *point) float64 {
+   return math.Sqrt((p1.x-p2.x)*(p1.x-p2.x) + (p1.y-p2.y)*(p1.y-p2.y))
+}
+
+func handleClient(conn net.Conn) {
+   defer conn.Close()
+
+   conn.Write([]byte(startMassage))
+   arrPoint := make([]point, 0)
+
+   log.Println("start connect:", conn.RemoteAddr())
+   _buf := make([]byte, bufferSize)
+   for {
+      readLen, err := conn.Read(_buf)
+      buf := _buf[:readLen]
+      if err != nil {
+         log.Println("close connect:", conn.RemoteAddr(), "error:", err)
+         break
+      }
+
+      switch command := strings.Fields(string(buf)); len(command) {
+      case 1:
+         switch command[0] {
+         case "!":
+            conn.Write(messageArrPoint(&arrPoint))
+         default:
+            conn.Write(messageUndefinedCommand(command))
+         }
+      case 3:
+         switch command[0] {
+         case "+":
+            message, _ := addPointToArr(&arrPoint, command)
+            conn.Write(message)
+         case "?":
+            message, _ := lengthWayFromTo(&arrPoint, command)
+            conn.Write(message)
+         default:
+            conn.Write(messageUndefinedCommand(command))
+         }
+      default:
+         conn.Write(messageUndefinedCommand(command))
+      }
+
+   }
+}
+
+func messageUndefinedCommand(command []string) []byte {
+   return []byte("undefined command: " + fmt.Sprintf("%q\n", command))
+}
+
+func messageArrPoint(arrPoint *[]point) []byte {
+   var ans []byte
+   ans = append(ans, []byte(fmt.Sprintf("Number of points: %d\n", len(*arrPoint)))...)
+   for i, point := range *arrPoint {
+      ans = append(ans, []byte(fmt.Sprintf("%d: %+g %+g\n", i, point.x, point.y))...)
+   }
+   return ans
+}
+
+func addPointToArr(arrPoint *[]point, command []string) ([]byte, bool) {
+   var p = point{}
+   var err error
+
+   if p.x, err = strconv.ParseFloat(command[1], 64); err != nil {
+      return []byte("not float: \"" + command[1] + "\"\n"), false
+   }
+   if p.y, err = strconv.ParseFloat(command[2], 64); err != nil {
+      return []byte("not float: \"" + command[2] + "\"\n"), false
+   }
+   *arrPoint = append(*arrPoint, p)
+
+   return []byte("point added successfully\n"), true
+}
+
+func lengthWayFromTo(arrPoint *[]point, command []string) ([]byte, bool) {
+   var a, b int
+   var err error
+
+   if a, err = strconv.Atoi(command[1]); err != nil {
+      return []byte("not int: \"" + command[1] + "\"\n"), false
+   }
+   if b, err = strconv.Atoi(command[2]); err != nil {
+      return []byte("not int: \"" + command[2] + "\"\n"), false
+   }
+
+   if a > b {
+      a, b = b, a
+   }
+
+   if !(0 <= a && b < len(*arrPoint)) {
+      return []byte(fmt.Sprintf("invalid indexes: %d %d\n", a, b)), false
+   }
+
+   var ans float64 = 0
+   for i := a; i < b; i++ {
+      ans += (*arrPoint)[i].delta(&(*arrPoint)[i+1])
+   }
+   return []byte(fmt.Sprintf("length: %g\n", ans)), true
+}
+
+client/client.go
+package main
+
+import (
+   "io"
+   "log"
+   "net"
+   "os"
+)
+
+func main() {
+   if len(os.Args) != 2 {
+      log.Fatalln("args error:", os.Args)
+   }
+   serv := os.Args[1]
+   conn, err := net.Dial("tcp", serv)
+   if err != nil {
+      log.Println("connect error:", err)
+   }
+   go copyTo(os.Stdout, conn)
+   copyTo(conn, os.Stdin)
+}
+
+func copyTo(dst io.Writer, src io.Reader) {
+   if _, err := io.Copy(dst, src); err != nil {
+      log.Fatal(err)
+   }
+}
+
+ 
+3.	Результаты выполнения
+  
+4.	Сервер
+Путь к файлам с лабораторной работой на сервере lab2.posevin.com:
+			/home/zhuk/semestr3/lab7
+

@@ -1,0 +1,98 @@
+Федеральное государственное бюджетное образовательное учреждение
+высшего профессионального образования
+«Московский государственный технический университет имени    Н. Э. Баумана»
+(МГТУ им. Н. Э. Баумана)
+
+
+
+Факультет: Информатика и системы управления
+
+Кафедра: Теоретическая информатика и компьютерные технологии
+
+
+
+
+
+
+
+Лабораторная работа №6.1
+«Разработка http-прокси»
+по курсу: «КОМПЬЮТЕРНЫЕ СЕТИ»
+
+
+
+
+
+
+Выполнил:
+Студент группы ИУ9-32Б
+Жук Д. О.
+
+Проверил: 
+Посевин Д. П.
+
+
+ 
+1.	Цель.
+Целью данной лабораторной работы является разработка http-прокси на языке GO на основе пакета net/html (main.go).
+2.	Условия задачи.
+Реализовать http-прокси на GO и запустить его на сервере.
+main.go
+package main
+
+import (
+   "flag"
+   "io"
+   "log"
+   "net/http"
+)
+
+func copyHeader(dst, src http.Header) {
+   for k, vv := range src {
+      for _, v := range vv {
+         dst.Add(k, v)
+      }
+   }
+}
+
+type proxy struct {
+}
+
+func (p *proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
+   if req.URL.Scheme != "http" && req.URL.Scheme != "https" {
+      msg := "unsupported protocal scheme " + req.URL.Scheme
+      http.Error(wr, msg, http.StatusBadRequest) 
+      return
+   }
+
+   client := &http.Client{}
+
+   req.RequestURI = ""
+
+   resp, err := client.Do(req)
+   if err != nil {
+      http.Error(wr, "Server Error", http.StatusInternalServerError)
+      log.Fatal("ServeHTTP:", err)
+   }
+   defer resp.Body.Close()
+
+   log.Println(resp.Status, req.URL)
+
+   copyHeader(wr.Header(), resp.Header)
+   wr.WriteHeader(resp.StatusCode)
+   io.Copy(wr, resp.Body)
+}
+
+func main() {
+   var addr = flag.String("addr", "127.0.0.1:80", "")
+   flag.Parse()
+
+   handler := &proxy{}
+
+   log.Println("Starting proxy server on", *addr)
+   if err := http.ListenAndServe(*addr, handler); err != nil {
+      log.Fatal("ListenAndServe:", err)
+   }
+}
+3.	Результаты выполнения
+  

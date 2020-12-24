@@ -1,0 +1,204 @@
+Федеральное государственное бюджетное образовательное учреждение
+высшего профессионального образования
+«Московский государственный технический университет имени    Н. Э. Баумана»
+(МГТУ им. Н. Э. Баумана)
+
+
+
+Факультет: Информатика и системы управления
+
+Кафедра: Теоретическая информатика и компьютерные технологии
+
+
+
+
+
+
+
+Лабораторная работа №3.1
+«Разработка smtp клиента»
+по курсу: «КОМПЬЮТЕРНЫЕ СЕТИ»
+
+
+
+
+
+
+Выполнил:
+Студент группы ИУ9-32Б
+Жук Д. О.
+
+Проверил: 
+Посевин Д. П.
+
+
+ 
+1.	Цель.
+Целью данной лабораторной работы является: разработка smtp-клиента на языке GO на основе пакетов net/smtp, crypto/tls (main1.go).
+2.	Условия задачи.
+Реализовать smtp-клиент на GO и запустить его. Для данного приложения необходимо создать тестовую учетную запись на почтовом сервере, например на yandex.ru или gmail.com, после чего используя параметры SMTP соединения с сервером соответствующего почтового сервиса выполнить отправку тестового сообщения.
+Реализовать следующие функции:
+- ввод значения поля To из командной строки;
+- ввод значения поля Subject из командной строки;
+- ввод сообщения в поле Message body из командной строки.
+Дополнительные требования: параметры соединения должны храниться во внешнем файле.
+main1.go
+package main
+
+import (
+   "encoding/json"
+   "fmt"
+   "io/ioutil"
+   "log"
+   "net/smtp"
+)
+
+// AllData ...
+type AllData struct {
+   Host    string   `json:"host"`
+   Port    string   `json:"port"`
+   From    string   `json:"from"`
+   To      []string `json:"to"`
+   Subject string   `json:"subject"`
+   Message string   `json:"message"`
+}
+
+// ChangeToMessage ...
+func (data *AllData) ChangeToMessage() {
+   var num int
+   fmt.Print("Number Email To:")
+   fmt.Scanf("%d", &num)
+   newTo := make([]string, num)
+   for i := 0; i < num; i++ {
+      fmt.Printf("Print Email #%d:\t", i+1)
+      fmt.Scanf("%s", &newTo[i])
+   }
+   data.To = newTo
+}
+
+// ChangeSubjectMessage ...
+func (data *AllData) ChangeSubjectMessage() {
+   var newSubject string
+   fmt.Print("Print Subject:")
+   fmt.Scanf("%s", &newSubject)
+   data.Subject = newSubject
+}
+
+// ChangeBodyMessage ...
+func (data *AllData) ChangeBodyMessage() {
+   var newMessage string
+   fmt.Println("Print Message:")
+   fmt.Scanf("%s", &newMessage)
+   data.Message = newMessage
+}
+
+// SendMessage ...
+func (data *AllData) SendMessage() {
+   var pass string
+   fmt.Print("Print pass:\t")
+   fmt.Scanf("%s", &pass)
+   auth := smtp.PlainAuth("", data.From, pass, data.Host)
+
+   allMessage := fmt.Sprintf("From: <%s>\n", data.From)
+   allMessage += "To: "
+   for i, s := range data.To {
+      if i != 0 {
+         allMessage += ", "
+      }
+      allMessage += fmt.Sprintf("<%s>", s)
+   }
+   allMessage += "\nSubject: " + data.Subject + "\n"
+   allMessage += data.Message
+
+   log.Println("Start Sending Email")
+
+   if err := smtp.SendMail(data.Host+":"+data.Port, auth, data.From,
+      data.To, []byte(allMessage)); err != nil {
+      log.Fatal("Error SendMail: ", err)
+   }
+   log.Println("Email Sent!")
+}
+
+var nameSaveFile = "info.json"
+
+// SaveChanges ...
+func (data *AllData) SaveChanges() {
+   strJSON, err := json.Marshal(data)
+   if err != nil {
+      log.Fatal("Error marshal JSON: ", err)
+   }
+   if err := ioutil.WriteFile(nameSaveFile, []byte(strJSON), 0644); err != nil {
+      log.Fatal("Error save JSON: ", err)
+   }
+}
+
+// Print ...
+func (data *AllData) Print() {
+   fmt.Println("From:\t", data.From)
+   fmt.Println("To:\t", data.To)
+   fmt.Println("Subject:", data.Subject)
+   fmt.Printf("Message:\n%s\n", data.Message)
+}
+
+func main() {
+   b, err := ioutil.ReadFile(nameSaveFile)
+   if err != nil {
+      log.Fatal("Error read JSON: ", err)
+   }
+
+   var data AllData
+   if err := json.Unmarshal([]byte(b), &data); err != nil {
+      log.Fatal("Error unmarshal JSON: ", err)
+   }
+
+   fmt.Println("Type command:")
+   fmt.Println("\t0 - Change To Sending Message")
+   fmt.Println("\t1 - Change Subject Sending Message")
+   fmt.Println("\t2 - Change Body Sending Message")
+   fmt.Println("\t3 - Send Message")
+   fmt.Println("\t4 - Save Changes Message In File")
+
+   for {
+      fmt.Println()
+      data.Print()
+      fmt.Println()
+      var command string
+      fmt.Print("Print command:\t")
+      fmt.Scanf("%s", &command)
+      switch command {
+      case "0":
+         data.ChangeToMessage()
+      case "1":
+         data.ChangeSubjectMessage()
+      case "2":
+         data.ChangeBodyMessage()
+      case "3":
+         data.SendMessage()
+      case "4":
+         data.SaveChanges()
+      default:
+         fmt.Println("Error command!")
+      }
+   }
+}
+
+info.json
+
+{
+  "host": "smtp.gmail.com",
+  "port": "587",
+  "from": "zhukdo@gmail.com",
+  "to": [
+    "zhukdo@yandex.ru",
+    "danila@posevin.com"
+  ],
+  "subject": "lab3-zhuk",
+  "message": "Жук ИУ9-32Б"
+}
+
+
+ 
+
+
+3.	Результаты выполнения
+   

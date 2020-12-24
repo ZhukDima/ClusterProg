@@ -1,0 +1,254 @@
+Федеральное государственное бюджетное образовательное учреждение
+высшего профессионального образования
+«Московский государственный технический университет имени Н. Э. Баумана»
+(МГТУ им. Н. Э. Баумана)
+
+
+
+Факультет: Информатика и системы управления
+
+Кафедра: Теоретическая информатика и компьютерные технологии
+
+
+
+
+
+
+
+Лабораторная работа №8
+«Разработка шаблона класса»
+по курсу: «ЯЗЫКИ И МЕТОДЫ ПРОГРАММИРОВАНИЯ»
+
+
+
+
+
+
+
+Выполнил:
+Студент группы ИУ9-22Б
+Жук Д. О.
+
+Проверил: 
+Посевин Д. П.
+
+
+ 
+1.	Цель.
+Целью данной работы является изучение возможностей языка C++, обеспечивающих применение знаков операций к объектам пользовательских типов.
+2.	Условия задачи.
+Реализовать на языке С++ шаблон класса (MergingMap<K,V>), представляющий из себя  ассоциативный массив, отображающий ключи типа K в значения типа V.
+Требование к классу V:
+1.	наличие конструктора, принимающего в качестве параметра целое число и в случае, если это число равно 0, порождающего некоторое значение, играющее для типа V роль «нуля»;
+2.	наличие бинарной операции «+», позволяющей каким-то образом получать «сумму» двух значений (подразумевается, что эта операция является ассоциативной, и вышеупомянутый «ноль» является относительно неё нейтральным элементом).
+Отметим, что примитивные числовые типы языка C++ удовлетворяют требованиям к классу V и могут быть использованы для проверки работоспособности класса MergingMap<K,V>. Операции, которые должны быть перегружены для MergingMap<K,V>:
+1.	«[ ]» – возвращает ссылку на значение, связанное с указанным ключом (в случае отсутствия в ассоциативном массиве словарной пары с указанным ключом такая пара автоматически добавляется в массив, причём её значением становится «ноль»);
+2.	«+» – объединение двух ассоциативных массивов A и B, результатом которого является ассоциативный массив, содержащий такие словарные пары hk, vi, что k является ключом хотя бы в одном из объединяемых массивов, а v = A [k] + B [k].
+3.	«==», «!=».
+Конструктор класса MergingMap<K,V> должен принимать в качестве параметра целое число и создать пустой ассоциативный массив. Параметр конструктора может либо игнорироваться, либо восприниматься как прогнозируемый размер ассоциативного массива для более эффективного выделения памяти.
+Работоспособность шаблона MergingMap следует проверить для случаев MergingMap<string, int> и MergingMap<string, MergingMap<string, int>>. 
+ 
+4.	Решение.
+MergingMap.h
+#pragma once
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+#define vec vector
+
+template <class K, class V>
+class MergingMap {
+	vec<K> keys;
+	vec<V> vals;
+
+public:
+	MergingMap(int max_size);
+	MergingMap();
+
+	int size() const;
+	K getKey(int i) const;
+	V getVal(int i) const;
+
+	int findIndex(K key) const;
+
+	V& operator[](K key);
+
+	MergingMap<K, V>& operator+=(const MergingMap<K, V>& other);
+
+	bool operator==(const MergingMap<K, V>& other) const;
+
+	bool operator!=(const MergingMap<K, V>& other) const;
+
+	operator string();
+};
+
+template <class K, class V>
+MergingMap<K, V> operator+(MergingMap<K, V> left, const MergingMap<K, V>& right);
+
+template <class K, class V>
+ostream& operator<<(ostream& out, const MergingMap<K, V>& map);
+
+MergingMap.cpp
+
+#include "MergingMap.h"
+
+template <class K, class V>
+MergingMap<K, V>::MergingMap(int max_size) {
+	keys.reserve(max_size);
+	vals.reserve(max_size);
+}
+
+template <class K, class V>
+MergingMap<K, V>::MergingMap() : MergingMap(10) {}
+
+template <class K, class V>
+int MergingMap<K, V>::size() const { return keys.size(); }
+
+template <class K, class V>
+K MergingMap<K, V>::getKey(int i) const { return keys[i]; }
+
+template <class K, class V>
+V MergingMap<K, V>::getVal(int i) const { return vals[i]; }
+
+template <class K, class V>
+int MergingMap<K, V>::findIndex(K key) const {
+	int l = -1, r = size();
+	while (r - l > 1) {
+		int m = (l + r) / 2;
+		if (keys[m] == key) return m;
+		if (keys[m] < key) l = m;
+		else r = m;
+	}
+	return l;
+}
+
+template <class K, class V>
+V& MergingMap<K, V>::operator[](K key) {
+	int ind = findIndex(key);
+	if (ind >= 0 && keys[ind] == key) return vals[ind];
+	keys.push_back(key);
+	vals.push_back(V(0));
+	for (int i = ind + 1; i < size() - 1; i++) {
+		swap(keys[i], keys[size() - 1]);
+		swap(vals[i], vals[size() - 1]);
+	}
+	return vals[ind + 1];
+}
+
+template <class K, class V>
+MergingMap<K, V>& MergingMap<K, V>::operator+=(const MergingMap<K, V>& other) {
+	for (int i = 0; i < other.size(); i++)
+		this->operator[](other.getKey(i)) += other.getVal(i);
+	return *this;
+}
+
+template <class K, class V>
+bool MergingMap<K, V>::operator==(const MergingMap<K, V>& other) const {
+	int i = 0, j = 0;
+	while (true) {
+		while (i < size() && vals[i] == V()) i++;
+		while (j < other.size() && other.vals[j] == V()) j++;
+		if (i == size() && j == other.size()) return true;
+		if (i == size() || j == other.size()) return false;
+		if (keys[i] != other.keys[j]
+			|| vals[i++] != other.vals[j++]) return false;
+	}
+}
+
+template <class K, class V>
+bool MergingMap<K, V>::operator!=(const MergingMap<K, V>& other) const {
+	return !(*this == other);
+}
+
+template <class K, class V>
+MergingMap<K, V>::operator string() {
+	string retVal = "";
+	for (int i = 0; i < size(); i++)
+	{
+		retVal += (string)keys[i];
+		retVal += (string)vals[i];
+	}
+
+	return retVal;
+}
+
+template <class K, class V>
+MergingMap<K, V> operator+(MergingMap<K, V> left, const MergingMap<K, V>& right) {
+	left += right;
+	return left;
+}
+
+template <class K, class V>
+ostream& operator<<(ostream& out, const MergingMap<K, V>& map)
+{
+	out << '{';
+	bool ch = false;
+	for (int i = 0; i < map.size(); i++) {
+		if (map.getVal(i) == V()) continue;
+		if (ch) out << ", ";
+		out << '[' << map.getKey(i) << "->" << map.getVal(i) << ']';
+		ch = true;
+	}
+	return out << '}';
+}
+
+main.cpp
+
+#include "MergingMap.cpp"
+
+#define str string
+
+template <class C>
+void CheckAns(C val, C trueVal) {
+	cout << (val == trueVal ? "true" : "FALSE") << endl;
+}
+
+int main()
+{
+	MergingMap<str, int> map1, map2;
+
+	map1["12"] = 12;
+	map1["45"] = 45;
+	map1["45"] *= -1;
+
+	cout << "1)" << endl;
+
+	CheckAns(map1["45"], -45);
+	CheckAns(map1["12"], 12);
+	CheckAns(map1["MGTU - top!"], 0);
+
+	cout << "2)" << endl;
+
+	map2["45"] = -45;
+	map2["12"] = -12;
+	cout << "map1 = " << map1 << endl;
+	cout << "map2 = " << map2 << endl;
+	CheckAns(map2 == map1, false);
+
+	map2["12"] *= -1;
+	cout << "map1 = " << map1 << endl;
+	cout << "map2 = " << map2 << endl;
+	CheckAns(map2 == map1, true);
+
+	cout << "3)" << endl;
+
+	MergingMap<str, MergingMap<str, int>> bigmap;
+
+	bigmap["map1"] = map1;
+	bigmap["map1"]["inf"] = 1000;
+	bigmap["map2"] = map2;
+	bigmap["map2"]["abc"] = 123;
+	bigmap["sum(map1,map2)"] = bigmap["map1"] + bigmap["map2"];
+	cout << bigmap << endl;
+}
+ 
+5.	Результаты выполнения
+
+  
+
+6.	Сервер
+Путь к исполняемому файлу программы на сервере lab2.posevin.com:
+			/home/zhuk/lab9/prog.exe

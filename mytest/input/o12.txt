@@ -1,0 +1,273 @@
+Федеральное государственное бюджетное образовательное учреждение
+высшего профессионального образования
+«Московский государственный технический университет имени    Н. Э. Баумана»
+(МГТУ им. Н. Э. Баумана)
+
+
+
+Факультет: Информатика и системы управления
+
+Кафедра: Теоретическая информатика и компьютерные технологии
+
+
+
+
+
+
+
+Лабораторная работа №6.2
+«Разработка web-прокси»
+по курсу: «КОМПЬЮТЕРНЫЕ СЕТИ»
+
+
+
+
+
+
+Выполнил:
+Студент группы ИУ9-32Б
+Жук Д. О.
+
+Проверил: 
+Посевин Д. П.
+
+
+ 
+1.	Цель.
+Целью данной лабораторной работы является разработка web-прокси на языке GO на основе пакетов net/html и golang.org/x/net/html (main.go).
+2.	Условия задачи.
+Реализовать web-прокси на GO и запустить его на сервере.
+main.go
+package main
+
+import (
+   "bytes"
+   "fmt"
+   "io"
+   "log"
+   "net/http"
+   "net/url"
+   "strings"
+   "text/template"
+   "unicode"
+
+   "golang.org/x/net/html"
+)
+
+const site = "http://localhost" // на сервере " http://lab2.posevin.com"
+const port = ":3012"
+const feed = "/article/"
+const debagMode = false
+
+type protocol struct {
+   Protocol string
+}
+
+var allProtocols = []protocol{protocoal{"http://"}, protocol{"https://"}}
+
+func wayToMirror() string {
+   return site + port + feed
+}
+
+func debagPrintLn(v ...interface{}) {
+   if debagMode {
+      log.Println(v...)
+   }
+}
+
+func getAttrValue(node *html.Node, attrName string) string {
+   for _, attr := range node.Attr {
+      if attr.Key == attrName {
+         return attr.Val
+      }
+   }
+   return ""
+}
+
+func changeURL(node *html.Node, domen string, ind int) {
+   // if node.Data == "head" {
+   //     base := &html.Node{Data: "base", Type: html.ElementNode}
+   //     base.Attr = append(base.Attr, html.Attribute{Key: "href", Val: "//" + domen})
+   //     node.InsertBefore(base, node.FirstChild)
+   // }
+
+   for i, attr := range node.Attr {
+      if attr.Key == "href" || attr.Key == "src" {
+         attr.Val = strings.TrimSpace(attr.Val)
+         u, err := url.Parse(attr.Val)
+         typeChange := 0
+         if err == nil {
+            debagPrintLn("parseURL:", u.IsAbs(), node.Attr[i].Val)
+
+            if u.IsAbs() {
+               attr.Val = wayToMirror() + attr.Val[strings.Index(attr.Val, "://")+3:]
+               typeChange = 1
+            } else if len(attr.Val) > 2 && strings.HasPrefix(attr.Val, "//") {
+               attr.Val = wayToMirror() + attr.Val[2:]
+               typeChange = 2
+            } else if len(attr.Val) > 1 && attr.Val[0] == '/' {
+               attr.Val = wayToMirror() + domen + attr.Val
+               typeChange = 3
+            } else if len(attr.Val) > 1 && unicode.IsLetter(rune(attr.Val[0])) {
+               attr.Val = wayToMirror() + domen + "/" + attr.Val
+               typeChange = 4
+            } else {
+               typeChange = 5
+            }
+         }
+         debagPrintLn("changeURL:", "typeChange:", typeChange,
+            "was:", node.Attr[i].Val, "became:", attr.Val)
+         node.Attr[i].Val = attr.Val
+      }
+   }
+
+   for child := node.FirstChild; child != nil; child = child.NextSibling {
+      changeURL(child, domen, ind+1)
+   }
+}
+
+func getNSplit(s string, n int, space string) string {
+   return strings.Split(s, space)[n]
+}
+
+func copyHeader(dst, src http.Header) {
+   for key, values := range src {
+      if key != "Content-Security-Policy" {
+         for _, val := range values {
+            dst.Add(key, val)
+         }
+      }
+   }
+}
+
+func makeMirror(url string, originalResp http.ResponseWriter) bool {
+   resp, err := http.Get(url)
+   if err != nil {
+      message := "Cannot get html: " + err.Error()
+      debagPrintLn(message)
+      return false
+   }
+
+   contentType := resp.Header.Get("Content-type")
+   debagPrintLn("Content-type:", contentType)
+
+   copyHeader(originalResp.Header(), resp.Header)
+   originalResp.WriteHeader(resp.StatusCode)
+
+   if strings.Contains(contentType, "text/html") {
+      node, err := html.Parse(resp.Body)
+
+      if err != nil {
+         message := "Cannot parse html: " + err.Error()
+         log.Println(message)
+         return false
+      }
+
+      domen := getNSplit(url, 2, "/")
+      debagPrintLn("domen:", domen)
+      changeURL(node, domen, 0)
+
+      var buffer bytes.Buffer
+      html.Render(&buffer, node)
+      ans := buffer.String()
+
+      fmt.Fprint(originalResp, ans)
+   } else {
+      io.Copy(originalResp, resp.Body)
+   }
+
+   return true
+}
+
+func main() {
+   tmpl, err := template.ParseFiles("index.html")
+   if err != nil {
+      log.Fatal("Unable to open html: ", err.Error())
+   }
+   log.Println(site + port + "/")
+   http.HandleFunc("/", func(resp http.ResponseWriter, req *http.Request) {
+      if len(req.URL.String()) > 1 {
+         log.Println("bad connect to:", req.URL.String())
+         return
+      }
+      if err := tmpl.Execute(resp, map[string]interface{}{
+         "allProtocols": allProtocols,
+         "wayToMirror":  wayToMirror(),
+      }); err != nil {
+         log.Fatal("Unable to execute: ", err.Error())
+      }
+   })
+   http.HandleFunc(feed, func(resp http.ResponseWriter, req *http.Request) {
+      originSite := req.URL.String()[len(feed):]
+      for i, protocol := range allProtocols {
+         article2 := protocol.Protocol + originSite
+         log.Println("connect to:", i, article2)
+         if makeMirror(article2, resp) {
+            return
+         }
+      }
+      log.Println("connect fail to:", originSite)
+   })
+   http.ListenAndServe(port, nil)
+}
+
+
+index.html
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Web-proxy | Жук Дмитрий</title>
+    <script>
+        function defineURL(site) {
+            var allProtocols = [{{ range .allProtocols }}"{{ .Protocol }}", {{ end }}""]
+            var wayToMirror = "{{ .wayToMirror }}"
+
+            allProtocols.forEach(protocol => {
+                if (site.startsWith(protocol)) {
+                    site = site.slice(protocol.length)
+                    return wayToMirror + site
+                }
+            });
+
+            return wayToMirror + site
+        }
+    </script>
+</head>
+
+<body>
+<p><b>Примеры ссылок:</b><br></p>
+<p>http://rsr-olymp.ru/</p>
+<p>http://pascalabc.net/</p>
+<p>http://mathprofi.ru/</p>
+<p>https://lenta.ru/</p>
+<p>https://www.tutorialspoint.com/</p>
+<p>https://ru.wikipedia.org/wiki/Служебная:Случайная_страница</p>
+<p>https://yandex.ru/</p>
+<p><b>Сайт:</b><br><input id="site" type="text" size="40"></p>
+<p><input id="goto" type="button" value="Отправить" onclick="window.location.href=defineURL(document.getElementById('site').value)">
+</p>
+<p>Сделал Жук Дмитрий, МГТУ, ИУ9-32Б, 2020</p>
+<script>
+    var input = document.getElementById("site");
+    input.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("goto").click();
+        }
+    });
+</script>
+</body>
+
+</html>
+
+ 
+3.	Результаты выполнения
+  
+4.	Сервер
+Путь к файлам с лабораторной работой на сервере lab2.posevin.com:
+			/home/zhuk/semestr3/lab6.2
+После запуска main.go сайт будет находится по адресу:
+			http://lab2.posevin.com:3012/
+

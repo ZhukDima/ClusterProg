@@ -1,0 +1,216 @@
+Федеральное государственное бюджетное образовательное учреждение
+высшего профессионального образования
+«Московский государственный технический университет имени Н. Э. Баумана»
+(МГТУ им. Н. Э. Баумана)
+
+
+
+Факультет: Информатика и системы управления
+
+Кафедра: Теоретическая информатика и компьютерные технологии
+
+
+
+
+
+
+
+Лабораторная работа №8
+«Разработка шаблона класса»
+по курсу: «ЯЗЫКИ И МЕТОДЫ ПРОГРАММИРОВАНИЯ»
+
+
+
+
+
+
+
+Выполнил:
+Студент группы ИУ9-22Б
+Жук Д. О.
+
+Проверил: 
+Посевин Д. П.
+
+
+ 
+1.	Цель.
+Целью данной работы является изучение шаблонов классов языка C++.
+2.	Условия задачи.
+Реализовать на языке С++ шаблон класса, представляющий из себя  «неизменяемая» очередь с элементами типа T и максимальным размером N, имеющая обычные для очереди операции.
+«Неизменяемость» очереди заключается в том, что операции Enqueue и Dequeue вместо изменения очереди, для которой они вызваны, создают и возвращают новую очередь, отличающуюся от исходной на один элемент. При этом исходная очередь полностью сохраняет своё состояние и работоспособность. Операции Enqueue и Dequeue нужно реализовать так, чтобы они работали за амортизированное константное время. Для этого нужно использовать два стека размера N. Операция Enqueue записывает новый элемент в первый стек, а операция Dequeue забирает элемент из второго стека. Фокус заключается в том, что стеки выделяются в динамической памяти и являются общими для очереди, на которой сработала операция, и для очереди, которая была создана в результате работы операции. Отметим, что новая пара стеков создаётся в момент создания новой пустой очереди, а также тогда, когда операция Dequeue обнаруживает, что второй стек пуст и нужно копировать содержимое первого стека во второй.
+Для освобождения памяти, занимаемой парой стеков, которая потенциально может разделяться сразу несколькими очередями, требуется воспользоваться подсчётом ссылок на эту пару стеков (можно воспользоваться шаблоном shared_ptr).
+Важное замечание: если в шаблоне некоторого класса задаётся количество каких-либо элементов, то в качестве хранилища этих элементов следует использовать обычный массив фиксированного на этапе компиляции размера. В остальных случаях предпочтительно использовать шаблоны контейнерных классов из стандартной библиотеки языка C++ (из-за этого условия понадобилось реализовать свой стек).
+ 
+3.	Решение.
+MyStack.h
+#pragma once
+
+using namespace std;
+
+template <typename T, int N>
+class MyStack {
+	T* arr = new T[N];
+	int size = 0;
+
+public:
+	MyStack();
+	~MyStack();
+
+	void push(T val);
+	T pop();
+
+	// Копирует элементы из стека from в данный в обратном порядке
+	void copyFromWithFlip(const MyStack& from);
+	bool empty();
+};
+
+MyStack.cpp
+
+#include "MyStack.h"
+
+template <typename T, int N>
+MyStack<T, N>::MyStack() {}
+
+template <typename T, int N>
+MyStack<T, N>::~MyStack() { delete[] arr; }
+
+template <typename T, int N>
+void MyStack<T, N>::push(T val) {
+	if (size >= N) throw '1';
+	arr[size++] = val;
+}
+
+template <typename T, int N>
+T MyStack<T, N>::pop() {
+	if (size <= 0) throw '1';
+	return arr[--size];
+}
+
+template <typename T, int N>
+void MyStack<T, N>::copyFromWithFlip(const MyStack& from) {
+	size = from.size;
+	for (int i = 0; i < size; i++)
+		arr[i] = from.arr[size - i - 1];
+}
+
+template <typename T, int N>
+bool MyStack<T, N>::empty() { return size == 0; }
+
+ 
+Queue.h
+#pragma once
+#include <memory>
+#include "MyStack.h"
+
+template <typename T, int N>
+class Queue {
+	shared_ptr<MyStack<T, N>> first, second;
+
+public:
+	Queue();
+	Queue(const Queue<T, N>& father);
+
+	Queue<T, N>& operator=(const Queue<T, N>& father);
+
+	//Добавляет элемент val в начало очередь
+	Queue<T, N> Enqueue(T val);
+
+	//Забирает элемент из конца очереди и записывает его в retVal
+	Queue<T, N> Dequeue(T& retVal);
+};
+
+Queue.cpp
+#include "Queue.h"
+
+template <typename T, int N>
+Queue<T, N>::Queue() {
+	first = make_shared<MyStack<T, N>>();
+	second = make_shared<MyStack<T, N>>();
+}
+
+template <typename T, int N>
+Queue<T, N>::Queue(const Queue<T, N>& father) {
+	first = father.first;
+	second = father.second;
+}
+
+template <typename T, int N>
+Queue<T, N>& Queue<T, N>::operator=(const Queue<T, N>& father) {
+	first = father.first;
+	second = father.second;
+	return *this;
+}
+
+template <typename T, int N>
+Queue<T, N> Queue<T, N>::Enqueue(T val) {
+	Queue<T, N> ans(*this);
+	ans.first->push(val);
+	return ans;
+}
+
+template <typename T, int N>
+Queue<T, N> Queue<T, N>::Dequeue(T& retVal) {
+	if (second->empty()) {
+		Queue<T, N> ans;
+		ans.second->copyFromWithFlip(*first);
+		retVal = ans.second->pop();
+		return ans;
+	}
+	else {
+		Queue<T, N> ans(*this);
+		retVal = ans.second->pop();
+		return ans;
+	}
+}
+main.cpp
+
+#include <iostream>
+#include "Queue.h"
+#include "Queue.cpp"
+#include "MyStack.cpp"
+
+void CheckValue(int value, int trueValue) {
+	cout << "value = " << value 
+		<< (value == trueValue ? " true" : " FALSE") 
+		<< endl;
+}
+
+int main()
+{
+	int value = -1;
+	Queue<int, 10> a, a1, b, b1, c;
+
+	a1 = a.Enqueue(1); // a is empty, b = 1
+	a1 = a1.Enqueue(2).Enqueue(3);
+	
+	a1.Dequeue(value); // value = 1
+	CheckValue(value, 1);
+	a1.Dequeue(value).Dequeue(value); // value = 2
+	CheckValue(value, 2);
+	a1.Dequeue(value).Dequeue(value).Dequeue(value); // value = 3
+	CheckValue(value, 3);
+
+	a1.Dequeue(value); // value = 1
+	CheckValue(value, 1);
+
+	b1 = b.Enqueue(2);
+
+	b1.Dequeue(value); // value = 2
+	CheckValue(value, 2);
+	b1.Dequeue(value); // value = 2
+	CheckValue(value, 2);
+
+	int val1, val2, val3;
+
+	c.Enqueue(1).Enqueue(2).Dequeue(val1).Enqueue(3).Dequeue(val2).Dequeue(val3);
+	CheckValue(val1, 1);
+	CheckValue(val2, 2);
+	CheckValue(val3, 3);
+}
+ 
+4.	Результаты выполнения
+  
+5.	Сервер
+Путь к исполняемому файлу программы на сервере lab2.posevin.com:
+			/home/zhuk/lab8/prog.exe
