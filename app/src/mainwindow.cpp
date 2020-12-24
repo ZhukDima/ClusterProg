@@ -75,6 +75,14 @@ void MainWindow::on_runButton_clicked()
 
     settings = settingsPresenter->setClusterCount(clusterCount);
 
+    int res = settingsPresenter->useAnalizer();
+    if (res < 0)
+    {
+        QMessageBox::warning(this, "Problems",
+                             "Something goes wrong");
+        return;
+    }
+
     processProgress->show();
     processProgress->setMaximum(999999999);
     for (unsigned int i = 1; i < 999999999; ++i)
@@ -83,12 +91,6 @@ void MainWindow::on_runButton_clicked()
             processProgress->setValue(i);
     }
     processProgress->hide();
-
-    Analizer analizer;
-    analizer.setPathToData(settingsPresenter->getStartDirToOperate());
-    analizer.setCountDirectory(settingsPresenter->getClusterCountToOperate());
-    analizer.setPathToResult(settingsPresenter->getStartDirToOperate());
-    analizer.analize();
 }
 
 void MainWindow::setActualStartDirText(const QString &dir)

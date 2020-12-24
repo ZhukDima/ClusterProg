@@ -5,7 +5,7 @@
 #include "KMeans.hpp"
 #include "FileManager.h"
 #include "Group.h"
-#include "TFIDF.h"
+#include "TFIDFPP.h"
 #include "VectorSpace.hpp"
 
 #include <algorithm>
@@ -25,9 +25,9 @@ public:
 
     void setPathToResult(const std::string &inputPathToResult);
 
-    void setPathToData(const std::string &inputPathToData);
+    void setPathToDirectory(const std::string &inputPathToDirectory);
 
-    void setPathsToCentroids(const std::vector<std::string> &inputPathsToCentroids);
+    void setPathsToFiles(const std::vector<std::string> &inputPathsToFiles);
 
     // распределение файлов по группам
     std::vector<Group> categorize();

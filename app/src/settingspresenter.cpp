@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include "Analizer.h"
 
 namespace fs = std::filesystem;
 
@@ -101,4 +102,15 @@ Settings SettingsPresenter::updateStartDirIfChoosenFilesFromAnother()
 bool SettingsPresenter::isValidSettings()
 {
     return (!settings.choosenFiles.empty() || settings.startDir != Settings::DEFAULT_DIR);
+}
+
+int SettingsPresenter::useAnalizer()
+{
+    Analizer analizer;
+    analizer.setPathToDirectory(getStartDirToOperate());
+    analizer.setPathsToFiles(getChoosenFilesToOperate());
+    analizer.setCountDirectory(getClusterCountToOperate());
+    analizer.setPathToResult(getStartDirToOperate());
+    analizer.analize();
+    return 0;
 }

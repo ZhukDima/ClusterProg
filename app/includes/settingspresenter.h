@@ -30,6 +30,8 @@ public:
 
     bool isValidSettings();
 
+    int useAnalizer();
+
 private:
     Settings settings;
 };
