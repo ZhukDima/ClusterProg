@@ -86,7 +86,7 @@ void MainWindow::on_runButton_clicked()
 
     Analizer analizer;
     analizer.setPathToData(settingsPresenter->getStartDirToOperate());
-    analizer.setCountDirectory(2);
+    analizer.setCountDirectory(settingsPresenter->getClusterCountToOperate());
     analizer.setPathToResult(settingsPresenter->getStartDirToOperate());
     analizer.analize();
 }
