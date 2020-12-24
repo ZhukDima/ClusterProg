@@ -5,7 +5,7 @@
 #include "KMeans.hpp"
 #include "FileManager.h"
 #include "Group.h"
-#include "TFIDF.h"
+#include "TFIDFPP.h"
 #include "VectorSpace.hpp"
 
 #include <algorithm>

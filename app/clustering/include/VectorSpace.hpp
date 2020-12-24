@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath> // abs
 #include <assert.h>
+#include <queue>
 
 template <class T>
 struct VectorSpace
@@ -83,6 +84,8 @@ VectorSpace<T> &VectorSpace<T>::operator/=(T divider)
     return *this;
 }
 
+#include <iostream>
+
 template <class T>
 double VectorSpace<T>::operator-(const VectorSpace<T> &obj) const
 {
@@ -93,7 +96,29 @@ double VectorSpace<T>::operator-(const VectorSpace<T> &obj) const
     {
         ans += std::pow(elem - obj.vec[i++], 2);
     }
-    return std::sqrt(ans);
+    return std::sqrt(ans); assert(Size() == obj.Size());
+
+    // std::priority_queue<double> priorQue;
+    // size_t i = 0;
+    // for (const T &elem : vec)
+    // {
+    //     if (elem == 0 && obj.vec[i++] == 0) {
+    //         continue;
+    //     }
+    //     priorQue.push(std::pow(elem - obj.vec[i], 2));
+    //     while (priorQue.size() > obj.Size() * 10 / 100)
+    //     {
+    //         priorQue.pop();
+    //     }
+    // }
+
+    // double ans = 0;
+    // for (; !priorQue.empty(); priorQue.pop())
+    // {
+    //     ans += priorQue.top();
+    // }
+
+    // return ans;
 }
 
 #endif
