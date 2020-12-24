@@ -4,7 +4,7 @@
 #include "DirHandler.h"
 #include "KMeans.hpp"
 #include "FileManager.h"
-#include "Group.h"
+#include "SimilarFilesGroup.h"
 #include "TFIDFPP.h"
 #include "VectorSpace.hpp"
 
@@ -12,30 +12,24 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <filesystem>
 
 class AnalizerImpl;
 
 class Analizer {
 public:
-    Analizer();
+    Analizer() = delete;
+
+    Analizer(std::string inputPathToDirectory, std::vector<std::string> inputPathsToFiles,
+             std::string inputPathToResult, size_t inputCountDirectory);
 
     ~Analizer() = default;
 
-    void setCountDirectory(size_t inputCountDirectory);
-
-    void setPathToResult(const std::string &inputPathToResult);
-
-    void setPathToDirectory(const std::string &inputPathToDirectory);
-
-    void setPathsToFiles(const std::vector<std::string> &inputPathsToFiles);
-
     // распределение файлов по группам
-    std::vector<Group> categorize();
+    std::vector<SimilarFilesGroup> categorize();
 
-    // создание папок и запись файлов
-    void move();
-
-    void analize();
+    // создание папок перемещение файлов по папкам согласно их группам
+    void filesMoving();
 
 private:
     AnalizerImpl *impl = nullptr;
