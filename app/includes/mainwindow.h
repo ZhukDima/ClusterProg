@@ -37,10 +37,15 @@ private slots:
 private:
     Ui::MainWindow *ui;
     SettingsDialog *settingsWindow;
-    QProgressBar *processProgress;
 
     Settings settings;
     SettingsPresenter *settingsPresenter;
+
+    void showNoSettingsWarningMsg();
+    void showAboutProgramInfoMsg();
+    void showClusteringErrorCriticalMsg();
+    void showSuccessInfoMsg();
+    void hideMsgTextLabels();
 };
 
 #endif // MAINWINDOW_H

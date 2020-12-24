@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>390</width>
-    <height>449</height>
+    <height>521</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,6 +101,40 @@ margin: 0 auto 0 auto;</string>
       </property>
       <property name="text">
        <string>RUN</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="hiddenInfoTextLabel">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>&lt;ol&gt;
+	&lt;li&gt;Choose directory&lt;/li&gt;
+	&lt;li&gt;Choose settings if you need to&lt;/li&gt;
+	&lt;li&gt;Push the Run button&lt;/li&gt;
+	&lt;li&gt;Set Cluster count&lt;/li&gt;
+	&lt;li&gt;Check the result!&lt;/li&gt;
+&lt;/ol&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="hiddenSuccessTextLabel">
+      <property name="text">
+       <string>Your files were clustered
+in their parent directory
+Check the result!</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="hiddenNoSettingsTextLabel">
+      <property name="text">
+       <string>Can't clustering home directory.
+Choose specific files or another directory.
+Maybe you just forgot to save the settings</string>
       </property>
      </widget>
     </item>
