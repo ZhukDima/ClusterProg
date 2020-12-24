@@ -40,12 +40,12 @@ std::vector<Group> AnalizerImpl::categorize()
     std::cout << std::endl;
     for (auto &fileInfo : filesInfo)
     {
-        std::cout << fileInfo.getPath() << ": ";
+        std::cout << fileInfo.getPath() << ":";
         for (const auto &[word, count] : fileInfo.getAllMetric())
         {
-            std::cout << "[" << word << "," << count << "] ";
+            std::cout << " [" << word << "," << count << "]";
         }
-        std::cout << ";" << std::endl;
+        std::cout << ";" << std::endl << std::endl;
     }
     std::cout << std::endl;
 
