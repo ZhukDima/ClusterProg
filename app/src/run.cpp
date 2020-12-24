@@ -4,7 +4,7 @@
 int Run::run(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setWindowIcon(QIcon("../icon.svg"));
+    a.setWindowIcon(QIcon("/home/vadim/coding/ClusterProg/icon.svg"));
     MainWindow w;
     w.show();
     return a.exec();
