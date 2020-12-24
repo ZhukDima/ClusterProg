@@ -47,7 +47,7 @@ double TFIDF::calculateTFIDFMetric(const std::string &word, const std::string &p
     }
 }
 
-size_t getNumberFilesWithWord(const std::string &word) const
+size_t TFIDF::getNumberFilesWithWord(const std::string &word) const
 {
     try
     {

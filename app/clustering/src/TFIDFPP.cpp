@@ -10,7 +10,7 @@ std::set<std::string> TFIDFPP::getSetUsefulUnicWords() const
     {
         if (getNumberFilesWithWord(*it) == 1)
         {
-            it = setUsefulUnicWords.erase(*it);
+            it = setUsefulUnicWords.erase(it);
         }
         else
         {
