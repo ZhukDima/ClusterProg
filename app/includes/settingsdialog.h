@@ -6,8 +6,9 @@
 #include "settings.h"
 #include "settingspresenter.h"
 
-namespace Ui {
-class SettingsDialog;
+namespace Ui
+{
+    class SettingsDialog;
 }
 
 class SettingsDialog : public QDialog
@@ -24,6 +25,9 @@ private slots:
     void on_saveSettingsButton_clicked();
 
     void on_clearChoosenFiles_clicked();
+
+signals:
+    void sendActualStartDirText(const QString &dir);
 
 private:
     Ui::SettingsDialog *ui;

@@ -9,7 +9,10 @@
 #include "settingspresenter.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui
+{
+    class MainWindow;
+}
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -19,6 +22,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    void setActualStartDirText(const QString &dir);
 
 private slots:
     void on_chooseDirButton_clicked();
@@ -31,8 +36,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    SettingsDialog* settingsWindow;
-    QProgressBar* processProgress;
+    SettingsDialog *settingsWindow;
+    QProgressBar *processProgress;
 
     Settings settings;
     SettingsPresenter *settingsPresenter;

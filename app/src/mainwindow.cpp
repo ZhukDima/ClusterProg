@@ -5,8 +5,8 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    settingsPresenter(new SettingsPresenter(settings))
+      ui(new Ui::MainWindow),
+      settingsPresenter(new SettingsPresenter(settings))
 {
     ui->setupUi(this);
     settingsWindow = new SettingsDialog(this, settingsPresenter);
@@ -21,6 +21,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     setWindowTitle("ClusterProg");
     ui->statusbar->showMessage("TreePlusOne, 2020");
+
+    //CONNECTS
+    QObject::connect(this->settingsWindow, &SettingsDialog::sendActualStartDirText, this, &MainWindow::setActualStartDirText);
 }
 
 MainWindow::~MainWindow()
@@ -40,7 +43,12 @@ void MainWindow::on_chooseDirButton_clicked()
 
 void MainWindow::on_InfoButton_clicked()
 {
-    QString msg = "<ol><li>Choose directory</li><li>Choose settings if you need to</li><li>Push the Start button</li></ol>";
+    QString msg = "<ol><li>Choose directory</li>"
+                  "<li>Choose settings if you need to</li>"
+                  "<li>Push the Start button</li>"
+                  "<li>Set Cluster count</li>"
+                  "<li>Check the result!</li>"
+                  "</ol>";
     QMessageBox::information(this, "Info Message", msg);
 }
 
@@ -51,7 +59,22 @@ void MainWindow::on_settingsButton_clicked()
 
 void MainWindow::on_runButton_clicked()
 {
-    qDebug() << "START";
+    if (!settingsPresenter->isValidSettings())
+    {
+        QMessageBox::warning(this, "Set settings",
+                             "Can't clustering home directory."
+                             "\nChoose specific files or another directory."
+                             "\nMaybe you just forgot to save the settings");
+        return;
+    }
+
+    bool ok;
+    int clusterCount = settingsPresenter->getClusterCountFromDialog(this, ok);
+    if (!ok)
+        return;
+
+    settings = settingsPresenter->setClusterCount(clusterCount);
+
     processProgress->show();
     processProgress->setMaximum(999999999);
     for (unsigned int i = 1; i < 999999999; ++i)
@@ -62,8 +85,13 @@ void MainWindow::on_runButton_clicked()
     processProgress->hide();
 
     Analizer analizer;
-    analizer.setPathToData(settingsPresenter->getChoosenDirToOperate());
+    analizer.setPathToData(settingsPresenter->getStartDirToOperate());
     analizer.setCountDirectory(2);
-    analizer.setPathToResult(settingsPresenter->getChoosenDirToOperate());
+    analizer.setPathToResult(settingsPresenter->getStartDirToOperate());
     analizer.analize();
+}
+
+void MainWindow::setActualStartDirText(const QString &dir)
+{
+    ui->chooseDirLabel->setText(dir);
 }

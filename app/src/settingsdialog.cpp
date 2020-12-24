@@ -1,12 +1,9 @@
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
 
-#include "settings.h"
-
-SettingsDialog::SettingsDialog(QWidget *parent, SettingsPresenter *_settingsPresenter) :
-    QDialog(parent),
-    ui(new Ui::SettingsDialog),
-    settingsPresenter(_settingsPresenter)
+SettingsDialog::SettingsDialog(QWidget *parent, SettingsPresenter *_settingsPresenter) : QDialog(parent),
+                                                                                         ui(new Ui::SettingsDialog),
+                                                                                         settingsPresenter(_settingsPresenter)
 {
     ui->setupUi(this);
     setWindowTitle("Settings");
@@ -34,6 +31,10 @@ void SettingsDialog::on_saveSettingsButton_clicked()
 {
     settingsPresenter->setChoosenFiles(settings.choosenFiles);
 
+    settings = settingsPresenter->updateStartDirIfChoosenFilesFromAnother();
+
+    emit sendActualStartDirText(settings.startDir);
+
     QMessageBox::information(this, "Saved", "Changes are saved");
     ui->choosenFiles->setStyleSheet("background: rgba(189, 245, 208, 0.562);"
                                     "border: 1px solid green;");
@@ -49,7 +50,8 @@ void SettingsDialog::on_clearChoosenFiles_clicked()
 
     int ans = msgBox.exec();
 
-    if (ans == QMessageBox::Yes) {
+    if (ans == QMessageBox::Yes)
+    {
         settings = settingsPresenter->clearChoosenFiles();
         ui->choosenFiles->clear();
         ui->choosenFiles->setStyleSheet("background: #fff;");
