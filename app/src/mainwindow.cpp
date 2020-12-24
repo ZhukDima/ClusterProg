@@ -11,16 +11,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     settingsWindow = new SettingsDialog(this, settingsPresenter);
     settingsWindow->setModal(true);
-    processProgress = new QProgressBar;
-    statusBar()->addPermanentWidget(processProgress);
-    processProgress->setAlignment(Qt::AlignCenter);
-    processProgress->setStyleSheet("color: #178317;"
-                                   "background-color: #fff;"
-                                   "selection-background-color: #94E494;");
-    processProgress->hide();
 
     setWindowTitle("ClusterProg");
     ui->statusbar->showMessage("TreePlusOne, 2020");
+
+    hideMsgTextLabels();
 
     //CONNECTS
     QObject::connect(this->settingsWindow, &SettingsDialog::sendActualStartDirText, this, &MainWindow::setActualStartDirText);
@@ -43,13 +38,7 @@ void MainWindow::on_chooseDirButton_clicked()
 
 void MainWindow::on_InfoButton_clicked()
 {
-    QString msg = "<ol><li>Choose directory</li>"
-                  "<li>Choose settings if you need to</li>"
-                  "<li>Push the Start button</li>"
-                  "<li>Set Cluster count</li>"
-                  "<li>Check the result!</li>"
-                  "</ol>";
-    QMessageBox::information(this, "Info Message", msg);
+    showAboutProgramInfoMsg();
 }
 
 void MainWindow::on_settingsButton_clicked()
@@ -61,10 +50,7 @@ void MainWindow::on_runButton_clicked()
 {
     if (!settingsPresenter->isValidSettings())
     {
-        QMessageBox::warning(this, "Set settings",
-                             "Can't clustering home directory."
-                             "\nChoose specific files or another directory."
-                             "\nMaybe you just forgot to save the settings");
+        showNoSettingsWarningMsg();
         return;
     }
 
@@ -75,25 +61,52 @@ void MainWindow::on_runButton_clicked()
 
     settings = settingsPresenter->setClusterCount(clusterCount);
 
+    ui->statusbar->showMessage("Processing");
+
     int res = settingsPresenter->useAnalizer();
     if (res < 0)
     {
-        QMessageBox::warning(this, "Problems",
-                             "Something goes wrong");
+        ui->statusbar->showMessage("ERROR");
+        showClusteringErrorCriticalMsg();
+        ui->statusbar->showMessage("TreePlusOne, 2020");
         return;
     }
-
-    processProgress->show();
-    processProgress->setMaximum(999999999);
-    for (unsigned int i = 1; i < 999999999; ++i)
-    {
-        if (i % 1000 == 0)
-            processProgress->setValue(i);
-    }
-    processProgress->hide();
+    ui->statusbar->showMessage("TreePlusOne, 2020");
+    showSuccessInfoMsg();
 }
 
 void MainWindow::setActualStartDirText(const QString &dir)
 {
     ui->chooseDirLabel->setText(dir);
+}
+
+void MainWindow::showNoSettingsWarningMsg()
+{
+    QString msg = ui->hiddenNoSettingsTextLabel->text();
+    QMessageBox::warning(this, "Set settings", msg);
+}
+
+void MainWindow::showAboutProgramInfoMsg()
+{
+    QString msg = ui->hiddenInfoTextLabel->text();
+    QMessageBox::information(this, "Info Message", msg);
+}
+
+void MainWindow::showClusteringErrorCriticalMsg()
+{
+    QMessageBox::critical(this, "Problems",
+                          "Something goes wrong");
+}
+
+void MainWindow::showSuccessInfoMsg()
+{
+    QString msg = ui->hiddenSuccessTextLabel->text();
+    QMessageBox::information(this, "Done", msg);
+}
+
+void MainWindow::hideMsgTextLabels()
+{
+    ui->hiddenInfoTextLabel->hide();
+    ui->hiddenSuccessTextLabel->hide();
+    ui->hiddenNoSettingsTextLabel->hide();
 }
