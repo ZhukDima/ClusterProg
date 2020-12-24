@@ -11,8 +11,8 @@ void Analizer::setPathToResult(const std::string &inputPathToResult) {
     impl->setPathToResult(inputPathToResult);
 }
 
-void Analizer::setPathToData(const std::string &inputPathToData) {
-    impl->setPathToData(inputPathToData);
+void Analizer::setPathToDirectory(const std::string &inputPathToDirectory) {
+    impl->setPathToDirectory(inputPathToDirectory);
 }
 
 std::vector<Group> Analizer::categorize() {
@@ -27,6 +27,6 @@ void Analizer::analize() {
     impl->analize();
 }
 
-void Analizer::setPathsToCentroids(const std::vector<std::string> &inputPathsToCentroids) {
-    impl->setPathsToCentroids(inputPathsToCentroids);
+void Analizer::setPathsToFiles(const std::vector<std::string> &inputPathsToFiles) {
+    impl->setPathsToFiles(inputPathsToFiles);
 }

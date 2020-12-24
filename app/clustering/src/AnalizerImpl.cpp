@@ -8,8 +8,8 @@ void AnalizerImpl::setPathToResult(const std::string &inputPathToResult) {
     pathToResult = inputPathToResult;
 }
 
-void AnalizerImpl::setPathToData(const std::string &inputPathToData) {
-    pathToData = inputPathToData;
+void AnalizerImpl::setPathToDirectory(const std::string &inputPathToDirectory) {
+    pathToDirectory = inputPathToDirectory;
 }
 
 std::string cutName(std::string path) {
@@ -25,23 +25,38 @@ std::string cutName(std::string path) {
 }
 
 std::vector<Group> AnalizerImpl::categorize() {
-    DirHandler directory(pathToData);
-    std::vector<FileInfo> filesInfo = directory.getFiles();
-    TFIDF tfidf(filesInfo);
-    std::set<std::string> setUnicWords = tfidf.getSetUnicWords();
+    DirHandler *directory = nullptr;
+    if (pathsToFiles.empty()) {
+        directory = new DirHandler(pathToDirectory);
+    } else {
+        directory = new DirHandler(pathsToFiles);
+    }
+    std::vector<FileInfo> filesInfo = directory->getFiles();
+    TFIDFPP tfidf(filesInfo);
+    std::set<std::string> setUnicWords = tfidf.getSetUsefulUnicWords();
     std::vector<VectorSpace<double>> vectorsSpace;
-    std::vector<VectorSpace<double>> vectorsCentroids;
     for (auto &fileInfo : filesInfo) {
         vectorsSpace.emplace_back(setUnicWords.size());
         size_t i = 0;
         for (auto &word : setUnicWords) {
-            vectorsSpace.back()[i++] = tfidf.calculate(word, fileInfo.getPath());
-        }
-        if(pathsToCentroids.find(fileInfo.getPath()) != pathsToCentroids.end()){
-            vectorsCentroids.push_back(vectorsSpace.back());
+            vectorsSpace.back()[i++] = tfidf.calculateTFIDFMetric(word, fileInfo.getPath());
         }
     }
     KMeans<VectorSpace<double>> kMeans(vectorsSpace);
+
+    std::vector<VectorSpace<double>> vectorsCentroids;
+/*    for (const auto &pathToFile : pathsToFiles) {
+        for (const auto &fileInfo : filesInfo) {
+            if (pathToFile == fileInfo.getPath()) {
+                vectorsCentroids.emplace_back(setUnicWords.size());
+                size_t i = 0;
+                for (auto &word : setUnicWords) {
+                    vectorsCentroids.back()[i++] = tfidf.calculate(word, fileInfo.getPath());
+                }
+                break;
+            }
+        }
+    }*/
     std::vector<Cluster> clusters = kMeans.calculate(countDirectory, vectorsCentroids);
 
     std::vector<std::string> allPath;
@@ -54,21 +69,21 @@ std::vector<Group> AnalizerImpl::categorize() {
     }
     std::vector<Group> result;
     size_t count = 0;
-    for (const auto& group : clusteringData) {
+    for (const auto &group : clusteringData) {
         if (group.empty()) {
             continue;
         }
         Group tempGroup;
-        for (const auto& filename : group) {
+        for (const auto &filename : group) {
             tempGroup.addFile(filename);
         }
         result.push_back(tempGroup);
         result[count].setGroupName("group_" + std::to_string(count));
         ++count;
     }
+    delete directory;
     return result;
 }
-
 
 void AnalizerImpl::move() {
     FileManager mover;
@@ -85,9 +100,6 @@ void AnalizerImpl::analize() {
     move();
 }
 
-void AnalizerImpl::setPathsToCentroids(const std::vector<std::string> &inputPathsToCentroids) {
-    pathsToCentroids.clear();
-    for(const auto& pathToCentroid : inputPathsToCentroids){
-        pathsToCentroids.insert(pathToCentroid);
-    }
+void AnalizerImpl::setPathsToFiles(const std::vector<std::string> &inputPathsToFiles) {
+    pathsToFiles = inputPathsToFiles;
 }
