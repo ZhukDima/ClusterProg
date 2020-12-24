@@ -3,7 +3,6 @@
 
 #include <QString>
 #include <QStringList>
-#include <QDebug>
 #include <QDir>
 
 class Settings

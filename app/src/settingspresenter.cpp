@@ -4,13 +4,16 @@
 #include <QInputDialog>
 #include <string>
 #include <vector>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 SettingsPresenter::SettingsPresenter(const Settings &settings)
 {
     this->settings = settings;
 }
 
-QStringList SettingsPresenter::getChoosenFilesFromFileDialog()
+QStringList SettingsPresenter::getChoosenFilesFromFileDialog() const
 {
     QStringList files = QFileDialog::getOpenFileNames(nullptr,
                                                       "Choose files",
@@ -43,7 +46,7 @@ Settings SettingsPresenter::clearChoosenFiles()
     return settings;
 }
 
-std::string SettingsPresenter::getChoosenDirToOperate() const
+std::string SettingsPresenter::getStartDirToOperate() const
 {
     return settings.startDir.toStdString();
 }
@@ -56,7 +59,7 @@ std::vector<std::string> SettingsPresenter::getChoosenFilesToOperate() const
     return preparedToOperateChoosenFiles;
 }
 
-const int SettingsPresenter::getClusterCountFromDialog(QWidget* dialogParent, bool &ok)
+const int SettingsPresenter::getClusterCountFromDialog(QWidget *dialogParent, bool &ok) const
 {
     int clusterCount = QInputDialog::getInt(dialogParent,
                                             "Cluster count",
@@ -78,4 +81,24 @@ Settings SettingsPresenter::setClusterCount(const int &clusterCount)
 {
     settings.clusterCount = clusterCount;
     return settings;
+}
+
+Settings SettingsPresenter::updateStartDirIfChoosenFilesFromAnother()
+{
+    if (settings.choosenFiles.empty())
+        return settings;
+
+    fs::path filePath = settings.choosenFiles.first().toStdString();
+
+    if (filePath.parent_path().string() == settings.startDir.toStdString())
+        return settings;
+
+    settings.startDir = QString::fromStdString(filePath.parent_path().string());
+
+    return settings;
+}
+
+bool SettingsPresenter::isValidSettings()
+{
+    return (!settings.choosenFiles.empty() || settings.startDir != Settings::DEFAULT_DIR);
 }

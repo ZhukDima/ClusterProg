@@ -31,6 +31,10 @@ void SettingsDialog::on_saveSettingsButton_clicked()
 {
     settingsPresenter->setChoosenFiles(settings.choosenFiles);
 
+    settings = settingsPresenter->updateStartDirIfChoosenFilesFromAnother();
+
+    emit sendActualStartDirText(settings.startDir);
+
     QMessageBox::information(this, "Saved", "Changes are saved");
     ui->choosenFiles->setStyleSheet("background: rgba(189, 245, 208, 0.562);"
                                     "border: 1px solid green;");

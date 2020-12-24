@@ -23,6 +23,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void setActualStartDirText(const QString &dir);
+
 private slots:
     void on_chooseDirButton_clicked();
 

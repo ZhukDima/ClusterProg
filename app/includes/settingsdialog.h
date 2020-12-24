@@ -26,6 +26,9 @@ private slots:
 
     void on_clearChoosenFiles_clicked();
 
+signals:
+    void sendActualStartDirText(const QString &dir);
+
 private:
     Ui::SettingsDialog *ui;
 
