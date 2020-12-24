@@ -1,0 +1,270 @@
+Federal State Budgetary Educational Institution
+higher professional education
+"Moscow State Technical University named after N. E. Bauman"
+(MSTU. Bauman)
+
+
+
+Faculty: Computer Science and Control Systems
+
+Department: Theoretical Informatics and Computer Technologies
+
+
+
+
+
+
+
+Laboratory work No. 0
+"Development of a web-oriented client-server
+data acquisition and presentation applications
+from RSS feed "
+at the rate: "COMPUTER NETWORKS"
+
+
+
+
+
+
+Completed:
+Student of group IU9-32B
+Zhuk D.O.
+
+Checked: 
+Posevin D.P.
+
+
+ 
+1. Purpose.
+The purpose of this lab is: development of a web server in GO language based on the net / http package (main1.go), development of an application in GO language that implements parsing of an XML RSS file (main2.go) and integration of work results (main3.go ).
+2. Problem conditions.
+Implement a web server in GO that connects to remote (remote) RSS news servers and returns the results of data processing in a structured form (hypertext page) to a web client, in our case to a browser by options.
+3. Solution.
+main1.go
+package main
+
+import (
+ "log"
+ "net / http"
+)
+
+func HandlerMain (w http.ResponseWriter, r * http.Request) {
+ w.Write ([] byte (
+ `<html>
+ <head>
+<title> Laboratory №0.1 | Menu </title>
+ <meta charset = "utf-8">
+ </head>
+ <body>
+ <h2> Menu </h2>
+ <p> <a href="/lenta"> Lenta.ru </a> </p>
+ <p> <a href="/mail"> Mail.Ru News </a> </p>
+ <p> <a href="/vs"> VZGLYAD.RU </a> </p>
+ </body>
+ </html> `,
+ ))
+}
+
+func HandlerLenta (w http.ResponseWriter, r * http.Request) {
+ w.Write ([] byte (
+ `<html>
+ <head>
+<title> Laboratory №0.1 | Lenta.ru </title>
+ <meta charset = "utf-8">
+ </head>
+ <body>
+ <h2> Lenta.ru </h2>
+ <p> ... </p>
+ </body>
+ </html> `,
+ ))
+}
+
+func HandlerMail (w http.ResponseWriter, r * http.Request) {
+ w.Write ([] byte (
+ `<html>
+ <head>
+<title> Laboratory №0.1 | Mail.Ru news </title>
+ <meta charset = "utf-8">
+ </head>
+ <body>
+ <h2> Mail.Ru news </h2>
+ <p> ... </p>
+ </body>
+ </html> `,
+ ))
+}
+
+func HandlerVs (w http.ResponseWriter, r * http.Request) {
+ w.Write ([] byte (
+ `<html>
+ <head>
+  <title> Laboratory №0.1 | VZGLYAD.RU </title>
+ <meta charset = "utf-8">
+ </head>
+ <body>
+ <h2> VZGLYAD.RU </h2>
+ <p> ... </p>
+ </body>
+ </html> `,
+ ))
+}
+
+func main () {
+ http.HandleFunc ("/", HandlerMain)
+ http.HandleFunc ("/ lenta", HandlerLenta)
+ http.HandleFunc ("/ mail", HandlerMail)
+ http.HandleFunc ("/ vs", HandlerVs)
+ err: = http.ListenAndServe (": 3012", nil)
+ if err! = nil {
+ log.Fatal ("ListenAndServe:", err)
+ }
+}
+
+main2.go
+
+package main
+
+import (
+ "fmt"
+ "log"
+
+ "github.com/mmcdole/gofeed"
+)
+
+func main () {
+ urls: = [] string {
+ "https://lenta.ru/rss",
+ "https://news.mail.ru/rss/90/",
+ "https://vz.ru/rss.xml",
+ }
+ for _, url: = range urls {
+ parser: = gofeed.NewParser ()
+ f, err: = parser.ParseURL (url)
+ if err! = nil {
+ log.Fatalln ("Could not read feed")
+ }
+ for _, i: = range f.Items {
+ fmt.Println (i.Title)
+ fmt.Println (i.Description)
+ }
+ }
+}
+ 
+main3.go
+
+package main
+
+import (
+ "fmt"
+ "log"
+ "net / http"
+ "sort"
+
+ "github.com/mmcdole/gofeed"
+)
+
+type Website struct {
+ ShortName string
+ URL string
+}
+
+var allWebsites = [] Website {
+ {"/ lenta", "https://lenta.ru/rss"},
+ {"/ mail", "https://news.mail.ru/rss/90/"},
+ {"/ vs", "https://vz.ru/rss.xml"},
+}
+
+func HandlerMain (w http.ResponseWriter, r * http.Request) {
+ menu: = ""
+ var arr [] * gofeed.Item
+ for _, x: = range allWebsites {
+ parser: = gofeed.NewParser ()
+ f, err: = parser.ParseURL (x.URL)
+ if err == nil {
+ arr = append (arr, f.Items ...)
+ menu + = "<p> <a href=\" + x.ShortName + "\">" + f.Title + "</a> </p>"
+ }
+ }
+ sort.Slice (arr, func (i, j int) bool {
+ return arr [j] .PublishedParsed.Before (* arr [i] .PublishedParsed)
+ })
+ list: = ""
+ for _, x: = range arr {
+ list + = "\ n \ t \ t \ t \ t <h2>" + x.Title + "</h2> \ n"
+ list + = "\ t \ t \ t \ t <p> <a href=\"" + x.Link + "\">" + x.Published + "</a> </p>"
+ list + = "\ t \ t \ t \ t <p>" + x.Description + "</p> <hr> \ n"
+ }
+ w.Write ([] byte (fmt.Sprintf (`
+ <html>
+ <head>
+<title> Laboratory # 0 | Menu </title>
+ <meta charset = "utf-8">
+ </head>
+ <body>
+ <h1> Menu </h1>
+ % s% s
+ <p> Made by student IU9-32B Zhuk Dmitry </p>
+ </body>
+ </html> `, menu, list)))
+}
+
+func handleFeed (url string) func (http.ResponseWriter, * http.Request) {
+ return func (w http.ResponseWriter, r * http.Request) {
+ s, err: = fetchRss (url)
+ if err! = nil {
+ s = "Cannot fetch feed"
+ }
+ w.Write ([] byte (s))
+ }
+}
+
+func fetchRss (url string) (string, error) {
+ parser: = gofeed.NewParser ()
+ f, err: = parser.ParseURL (url)
+ if err! = nil {
+ return "", err
+ }
+ res: = "<h1>" + f.Title + "</h1>"
+ for _, x: = range f.Items {
+ res + = "\ n \ t \ t \ t \ t <h2>" + x.Title + "</h2> \ n"
+ res + = "\ t \ t \ t \ t <p>" + x.Description + "</p> <hr> \ n"
+ }
+ return fmt.Sprintf (`
+ <html>
+ <head>
+ <title>% s </title>
+ <meta charset = "utf-8">
+ <style>
+ h2 {
+ margin-bottom: 0em;
+ }
+ p {
+ margin-top: 0.5em;
+ margin-bottom: 0.5em;
+ }
+ </style>
+ </head>
+ <body>% s
+ <p> Made by student IU9-32B Zhuk Dmitry </p>
+ </body>
+ </html> `," Lab # 0 | "+ f.Title, res), nil
+}
+
+func main () {
+ http.HandleFunc ("/", HandlerMain)
+ for _, x: = range allWebsites {
+ http.HandleFunc (x.ShortName, handleFeed (x.URL))
+ }
+ err: = http.ListenAndServe (": 3012", nil)
+ if err! = nil {
+ log.Fatal ("ListenAndServe:", err)
+ }
+}
+The gofeed library was used for parsing RSS. The app has a master page that combines posts from multiple RSS feeds, sorted in descending order of publication date. At the top of the page there are links to channel pages, where you can view posts of a particular channel. 
+
+4. Results of execution
+ 
+5. Server
+Path to program files on lab2.posevin.com server:
+ / home / zhuk / semestr3 / lab0

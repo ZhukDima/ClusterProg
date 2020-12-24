@@ -1,0 +1,231 @@
+Federal State Budgetary Educational Institution
+higher professional education
+"Moscow State Technical University named after N. E. Bauman"
+(MSTU. Bauman)
+
+
+
+Faculty: Computer Science and Control Systems
+
+Department: Theoretical Informatics and Computer Technologies
+
+
+
+
+
+
+
+Laboratory work No. 1
+"Development of ftp client, ftp server and their joint work"
+at the rate: "COMPUTER NETWORKS"
+
+
+
+
+
+
+Completed:
+Student of group IU9-32B
+Zhuk D.O.
+
+Checked: 
+Posevin D.P.
+
+
+ 
+1. Purpose.
+The purpose of this lab is: development of a GO ftp client based on the github.com/jlaffaye/ftp (main1.go) package, development of a GO ftp server based on github.com/goftp/file-driver packages, github .com / goftp / server (main2.go) and integration of work results.
+2. Problem conditions.
+Implement in GO language and start ftp-server on one of the servers, then start go ftp-client either on another server, or on the same server, but accessing localhost. 
+Develop a client-server application for automating data transfer from one server to another using a GO ftp client and a GO ftp server. It is necessary to implement the following functions using an ftp client:
+- support client authorization on ftp-server;
+- send to the client a list of the contents of the specified directory of the ftp server upon request;
+- allow the client to download files from the specified directory of the ftp server upon request;
+- allow the client to upload files to the specified directory of the ftp server upon request;
+- allow the client to create directories on the ftp server upon request;	
+- allow the client to delete directories on the ftp server upon request. 
+main1.go
+package main
+
+import (
+ "bufio"
+ "bytes"
+ "fmt"
+ "io / ioutil"
+ "log"
+ "os"
+ "path"
+ "strings"
+
+ "github.com/jlaffaye/ftp"
+)
+
+type client struct {
+ server string
+ login string
+ password string
+ conn * ftp.ServerConn
+}
+
+func (obj * client) CreateConnection () {
+ conn, err: = ftp.Dial (obj.server)
+ obj.conn = conn
+ if err! = nil {
+ log.Fatal ("Connection:", err)
+ }
+ err = obj.conn.Login (obj.login, obj.password)
+ if err! = nil {
+ log.Fatal ("Login:", err)
+ }
+}
+
+func (obj * client) StoreFile (pathLocal, pathRemote string) {
+ dir: = path.Dir (pathRemote)
+ file: = path.Base (pathRemote)
+ fmt.Println (dir)
+ err: = obj.conn.ChangeDir (dir)
+ if err! = nil {
+ log.Fatal ("ChangeDir:", err)
+ }
+ content, err: = ioutil.ReadFile (pathLocal)
+ if err! = nil {
+ log.Fatal ("Read local file:", err)
+ }
+ data: = bytes.NewBuffer (content)
+ err = obj.conn.Stor (file, data)
+ if err! = nil {
+ log.Fatal ("Stor:", err)
+ }
+
+ err = obj.conn.ChangeDirToParent ()
+ if err! = nil {
+ log.Fatal ("ChangeDirToParent:", err)
+ }
+}
+
+func (obj * client) LoadFile (pathRemote string) {
+ _, file: = path.Split (pathRemote)
+ r, err: = obj.conn.Retr (pathRemote)
+ if err! = nil {
+ log.Fatal ("Retr:", err)
+ }
+ buf, err: = ioutil.ReadAll (r)
+ if err! = nil {
+ log.Fatal ("ReadAll:", err)
+ }
+ err = ioutil.WriteFile (file, buf, 0644)
+ if err! = nil {
+ log.Fatal ("WriteFile:", err)
+ }
+ fmt.Println (string (buf))
+ r.Close ()
+}
+
+func (obj * client) CreateDir (path string) {
+ err: = obj.conn.MakeDir (path)
+ if err! = nil {
+ log.Fatal ("MakeDir:", err)
+ }
+}
+
+func (obj * client) DeleteFile (pathRemote string) {
+ err: = obj.conn.Delete (pathRemote)
+ if err! = nil {
+ log.Fatal ("Delete:", err)
+ }
+}
+
+func (obj * client) ReadDir (dir string) {
+ entry, err: = obj.conn.List (dir)
+ if err! = nil {
+ log.Fatal ("List:", err)
+ }
+ for _, el: = range entry {
+ fmt.Println (el.Name)
+ }
+}
+
+func (obj * client) DeleteDir (pathRemote string) {
+ err: = obj.conn.RemoveDir (pathRemote)
+ if err! = nil {
+ log.Fatal ("RemoveDir:", err)
+ }
+}
+
+func main () {
+ var cl client
+ fmt.Print ("Enter server address: \ t")
+ fmt.Scanf ("% s", & cl.server)
+ fmt.Print ("Enter login: \ t \ t")
+ fmt.Scanf ("% s", & cl.login)
+ fmt.Print ("Enter password: \ t \ t")
+ fmt.Scanf ("% s", & cl.password)
+ // cl.server = "students.yss.su:21"
+ // cl.login = "ftpiu8"
+ // cl.password = "3Ru7yOTA"
+ cl.CreateConnection ()
+ defer cl.conn.Quit ()
+ in: = bufio.NewReader (os.Stdin)
+ for {
+ fmt.Print ("\ t \ t \ t>")
+ cmd, _: = in.ReadString ('\ n')
+ comm: = strings.Split (cmd, "")
+ comm [len (comm) -1] = strings.Trim (comm [len (comm) -1], "\ n")
+ if comm [0] == "touch" {
+ cl.StoreFile (string (comm [1]), string (comm [2]))
+ } else if comm [0] == "cat" {
+ cl.LoadFile (string (comm [1]))
+ } else if comm [0] == "mkdir" {
+ cl.CreateDir (string (comm [1]))
+ } else if comm [0] == "rm" {
+ cl.DeleteFile (string (comm [1]))
+ } else if comm [0] == "ls" {
+ cl.ReadDir (string (comm [1]))
+ } else if comm [0] == "rmdir" {
+ cl.DeleteDir (string (comm [1]))
+ } else if comm [0] == "exit" {
+ fmt.Printf ("Connection to% s closed \ n", cl.server)
+ break
+ } else {
+ fmt.Printf ("% s: command not found \ n", comm [0])
+ }
+ }
+}
+
+
+ 
+main2.go
+
+package main
+
+import (
+ "log"
+
+ "goftp.io/server/core"
+ "goftp.io/server/driver/file"
+)
+
+func main () {
+ factory: = & file.DriverFactory {
+ RootPath: "./server",
+ Perm: core.NewSimplePerm ("zhuk", "zhuk"),
+ }
+ auth: = & core.SimpleAuth {
+ Name: "zhuk",
+ Password: "zhuk",
+ }
+ opts: = & core.ServerOpts {
+ Auth: auth,
+ Factory: factory,
+ Port: 3012,
+ }
+ server: = core.NewServer (opts)
+ err: = server.ListenAndServe ()
+ if err! = nil {
+ log.Fatal ("Run server:", err)
+ }
+}
+ 
+
+3. Execution results
+ 

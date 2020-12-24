@@ -1,0 +1,260 @@
+Federal State Budgetary Educational Institution
+higher professional education
+"Moscow State Technical University named after N. E. Bauman"
+(MSTU. Bauman)
+
+
+
+Faculty: Computer Science and Control Systems
+
+Department: Theoretical Informatics and Computer Technologies
+
+
+
+
+
+
+
+Laboratory work No. 2
+"Development of ssh client, ssh server and their joint work"
+at the rate: "COMPUTER NETWORKS"
+
+
+
+
+
+
+Completed:
+Student of group IU9-32B
+Zhuk D.O.
+
+Checked: 
+Posevin D.P.
+
+
+ 
+1. Purpose.
+The goal of this lab is: development of a GO ssh client based on the golang.org/x/crypto/ssh package (main1.go), development of a GO ssh server based on the github.com/gliderlabs/ssh package (main2 .go) and integration of work results with the ability to connect one client to several servers (main3.go).
+2. Problem conditions.
+Implement in the GO language and start the ssh server on one of the servers, then start the GO ssh client either on another server, or on the same server, but accessing localhost. 
+Develop a client-server application to automate data transfer from one server to another using GO ssh client and GO ssh server. It is necessary to implement the following functions using an ftp client:
+- creating a directory on a remote go ssh server from a go ssh client;
+- deleting a directory on a remote go ssh server from a go ssh client;
+- execute remotely the application on the ssh server using the ssh client.
+main1.go
+package main
+
+import (
+ "bufio"
+ "fmt"
+ "log"
+ "os"
+ "strings"
+
+ "golang.org/x/crypto/ssh"
+)
+
+type client struct {
+ server string
+ login string
+ password string
+}
+
+func main () {
+ var cl client
+ fmt.Print ("Enter server address: \ t")
+ fmt.Scanf ("% s", & cl.server)
+ fmt.Print ("Enter login: \ t \ t")
+ fmt.Scanf ("% s", & cl.login)
+ fmt.Print ("Enter password: \ t \ t")
+ fmt.Scanf ("% s", & cl.password)
+
+ сonfig: = & ssh.ClientConfig {
+ User: cl.login,
+ Auth: [] ssh.AuthMethod {
+ ssh.Password (cl.password),
+ },
+ HostKeyCallback: ssh.InsecureIgnoreHostKey (),
+ }
+
+ connection, err: = ssh.Dial ("tcp", cl.server, сonfig)
+ if err! = nil {
+ panic (err)
+ }
+
+ session, err: = connection.NewSession ()
+ if err! = nil {
+ panic (err)
+ }
+ defer session.Close ()
+
+ stdin, err: = session.StdinPipe ()
+ if err! = nil {
+ log.Fatal (err)
+ }
+
+ session.Stdout = os.Stdout
+ session.Stderr = os.Stderr
+
+ err = session.Shell ()
+ if err! = nil {
+ log.Fatal (err)
+ }
+
+ fmt.Println (strings.Repeat ("=", 50))
+ fmt.Println ("Start new session in", cl.server)
+ in: = bufio.NewReader (os.Stdin)
+ for {
+ fmt.Println (strings.Repeat ("=", 50))
+ inp, _, _: = in.ReadLine ()
+ cmd: = string (inp)
+ if cmd == "exit" {
+ break
+ }
+ stdin.Write ([] byte (cmd + "\ n"))
+ }
+ fmt.Println (strings.Repeat ("=", 50))
+ fmt.Println ("Cloze session in", cl.server)
+}
+
+main2.go
+
+package main
+
+import (
+ "bufio"
+ "fmt"
+ "io"
+ "log"
+ "os / exec"
+ "strings"
+
+ "github.com/gliderlabs/ssh"
+)
+
+var allUsers = map [string] string {
+ "zhuk": "zhuk",
+ "root": "pass123",
+}
+
+func main () {
+ log.Fatal (ssh.ListenAndServe (": 3012",
+ func (s ssh.Session) {
+ log.Println ("Terminal:")
+ for {
+ line, err: = bufio.NewReader (s) .ReadString ('\ n')
+ if err! = nil {
+ break
+ }
+ in: = strings.Split (line [: len (line) -1], "")
+ if in [0] == "" {
+ continue
+ }
+ if in [0] == "exit" {
+ break
+ }
+ exe: = exec.Command (in [0], in [1:] ...)
+ out, err: = exe.Output ()
+ if err! = nil {
+ log.Println (err)
+ }
+ io.WriteString (s, fmt.Sprintf ("% s \ n", out))
+ }
+ log.Println ("session closed")
+ },
+ ssh.PasswordAuth (func (context ssh.Context, password string) bool {
+ truePassword, found: = allUsers [context.User ()]
+ return found && password == truePassword
+ }),
+ ))
+}
+
+main3.go
+
+package main
+
+import (
+ "bufio"
+ "fmt"
+ "io"
+ "log"
+ "os"
+ "strings"
+
+ "golang.org/x/crypto/ssh"
+)
+
+type client struct {
+ server string
+ login string
+ password string
+}
+
+var allServer = [2] client {
+ {"lab2.posevin.com:22", "zhuk", "89637373707"},
+ {"localhost: 3012", "zhuk", "zhuk"},
+}
+
+func connect (cl client) (ans io.WriteCloser) {
+ сonfig: = & ssh.ClientConfig {
+ User: cl.login,
+ Auth: [] ssh.AuthMethod {
+ ssh.Password (cl.password),
+ },
+ HostKeyCallback: ssh.InsecureIgnoreHostKey (),
+ }
+
+ connection, err: = ssh.Dial ("tcp", cl.server, сonfig)
+ if err! = nil {
+ panic (err)
+ }
+
+ session, err: = connection.NewSession ()
+ if err! = nil {
+ panic (err)
+ }
+ // defer session.Close ()
+
+ stdin, err: = session.StdinPipe ()
+ if err! = nil {
+ log.Fatal (err)
+ }
+
+ session.Stdout = os.Stdout
+ session.Stderr = os.Stderr
+
+ err = session.Shell ()
+ if err! = nil {
+ log.Fatal (err)
+ }
+
+ fmt.Println (strings.Repeat ("=", 50))
+ fmt.Println ("Start new session in", cl.server)
+
+ return stdin
+}
+
+func main () {
+ var allStdin [] io.WriteCloser
+ for _, cl: = range allServer {
+ allStdin = append (allStdin, connect (cl))
+ }
+ in: = bufio.NewReader (os.Stdin)
+ for {
+ inp, _, _: = in.ReadLine ()
+ cmd: = string (inp)
+ if cmd == "exit" {
+ break
+ }
+ for _, stdin: = range allStdin {
+ fmt.Println (strings.Repeat ("=", 50))
+ go stdin.Write ([] byte (cmd + "\ n"))
+ }
+ }
+}
+
+ 
+
+
+3. Execution results
+ 

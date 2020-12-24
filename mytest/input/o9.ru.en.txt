@@ -1,0 +1,114 @@
+Federal State Budgetary Educational Institution
+higher professional education
+"Moscow State Technical University named after N. E. Bauman"
+(MSTU. Bauman)
+
+
+
+Faculty: Computer Science and Control Systems
+
+Department: Theoretical Informatics and Computer Technologies
+
+
+
+
+
+
+
+Laboratory work No. 4
+"Development of a web-oriented client-server
+applications. Parsing
+HTML pages "
+at the rate: "COMPUTER NETWORKS"
+
+
+
+
+
+
+Completed:
+Student of group IU9-32B
+Zhuk D.O.
+
+Checked: 
+Posevin D.P.
+
+
+ 
+1. Purpose.
+The goal of this lab is to develop a web-based client-server application using HTML parsing in GO language based on the golang.org/x/net/html (main.go) package).
+2. Problem conditions.
+Implement a web-based client-server application for parsing hypertext infoblocks of news snippets on GO and run it on the server.
+main.go
+package main
+
+import (
+ "log"
+ "os"
+
+ "github.com/go-ping/ping"
+)
+
+func main () {
+ host: = os.Args [1]
+ pinger, err: = ping.NewPinger (host)
+ if err! = nil {
+ log.Fatal (err)
+ }
+
+ pinger.OnRecv = func (pkt * ping.Packet) {
+ log.Printf ("% d bytes from% s: icmp_seq =% d time =% v \ n",
+ pkt.Nbytes, pkt.IPAddr, pkt.Seq, pkt.Rtt)
+ }
+ pinger.OnFinish = func (stats * ping.Statistics) {
+ log.Printf ("---% s ping statistics --- \ n", stats.Addr)
+ log.Printf ("% d packets transmitted,% d packets received,% v %% packet loss \ n",
+ stats.PacketsSent, stats.PacketsRecv, stats.PacketLoss)
+ log.Printf ("round-trip min / avg / max / stddev =% v /% v /% v /% v \ n",
+ stats.MinRtt, stats.AvgRtt, stats.MaxRtt, stats.StdDevRtt)
+ }
+
+ log.Printf ("PING% s (% s): \ n", pinger.Addr (), pinger.IPAddr ())
+ pinger.Count = 5
+if err: = pinger.Run (); err! = nil {
+ log.Fatal (err)
+ }
+}
+ 
+index.html
+<! DOCTYPE html>
+<html>
+<head>
+ <meta charset = "utf-8">
+ <style>
+ .my_img {
+ height: 10em;
+ width: auto;
+ }
+ </style>
+ <title> News Kod.ru </title>
+</head>
+<body>
+<h1> News Kod.ru </h1>
+<hr>
+{{range .items}}
+ <div>
+ <a href=""" {.Href} }"> <h2> {{.Text}} </h2> </a>
+ <img class = "my_img" src = "{{.ImgSrc}}" />
+ <hr>
+ </div>
+{{end}}
+</body>
+</html>
+
+
+ 
+
+
+3. Execution results
+ 
+4. Server
+Path to files with lab work on lab2.posevin.com server:
+ / home / zhuk / semestr3 / lab4
+After starting main.go, the site will be located at:
+ http://lab2.posevin.com:3012/

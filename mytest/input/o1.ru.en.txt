@@ -1,0 +1,329 @@
+Federal State Budgetary Educational Institution
+higher professional education
+"Moscow State Technical University named after N. E. Bauman"
+(MSTU. Bauman)
+
+
+
+Faculty: Computer Science and Control Systems
+
+Department: Theoretical Informatics and Computer Technologies
+
+
+
+
+
+
+
+Laboratory work No. 7
+"Development of the simplest class in C ++"
+on the course: "LANGUAGES AND PROGRAMMING METHODS"
+
+
+
+
+
+
+
+Completed:
+Student of group IU9-12
+Zhuk D.O.
+
+Checked: 
+Posevin D.P.
+
+
+ 
+1. Purpose.
+The aim of this work is to study the basic object-oriented features of the C ++ language.
+2. Problem conditions.
+Implement in C ++ a class that is a polynomial of degree n with rational coefficients and operations:
+1.calculation of the value for a given x;
+2. getting the degree of the polynomial;
+3. getting a link to the specified coefficient of the polynomial;
+4. division by a polynomial (to store the result, a new polynomial is formed, the remainder of the division is discarded).
+Additionally, it is required to implement a class of fractions with operations of addition and multiplication.
+3. Solution.
+Fraction.h
+#pragma once
+#include <iostream>
+using namespace std;
+
+class Fraction
+{
+ static int gcd (int a, int b);
+ int n, d;
+ Fraction & reBuild (int new_n, int new_d);
+
+public:
+ Fraction (int n = 0, int d = 1);
+int num () const; // returns the numerator
+int den () const; // returns the denominator
+ Fraction & operator / = (const Fraction & rhs);
+ Fraction & operator * = (const Fraction & rhs);
+ Fraction & operator - = (const Fraction & rhs);
+ Fraction & operator + = (const Fraction & rhs);
+};
+
+ostream & operator << (ostream & out, const Fraction & f);
+bool operator == (const Fraction & l, const Fraction & r);
+bool operator! = (const Fraction & l, const Fraction & r);
+Fraction operator * (Fraction lhs, const Fraction & rhs);
+Fraction operator / (Fraction lhs, const Fraction & rhs);
+Fraction operator + (Fraction lhs, const Fraction & rhs);
+Fraction operator- (Fraction lhs, const Fraction & rhs);
+
+ 
+Fraction.cpp
+#include "Fraction.h"
+
+int Fraction :: gcd (int a, int b) {return a? gcd (b% a, a): b; }
+
+Fraction & Fraction :: reBuild (int new_n, int new_d) {
+ int g = gcd (n = new_n, d = new_d);
+ n / = g, d / = g;
+ return * this;
+}
+Fraction :: Fraction (int n, int d) {
+ reBuild (n, d);
+ if (this-> d == 0) throw 0;
+}
+int Fraction :: num () const {return d <0? -n: n; }
+int Fraction :: den () const {return d <0? -d: d; }
+Fraction & Fraction :: operator / = (const Fraction & rhs) {
+ return reBuild (n * rhs.d, d * rhs.n);
+}
+Fraction & Fraction :: operator * = (const Fraction & rhs) {
+ return reBuild (n * rhs.n, d * rhs.d);
+}
+Fraction & Fraction :: operator - = (const Fraction & rhs)
+{
+ return reBuild (n * rhs.d - rhs.n * d, d * rhs.d);
+}
+Fraction & Fraction :: operator + = (const Fraction & rhs)
+{
+ return * this - = Fraction (0) - = rhs;
+}
+
+ostream & operator << (ostream & out, const Fraction & f)
+{
+ out << f.num ();
+ if (f.den ()! = 1)
+ out << "/" << f.den ();
+ return out;
+}
+bool operator == (const Fraction & l, const Fraction & r)
+{
+ return l.num () * r.den () == l.den () * r.num ();
+}
+bool operator! = (const Fraction & l, const Fraction & r) {return! (l == r); }
+Fraction operator * (Fraction lhs, const Fraction & rhs) {return lhs * = rhs; }
+Fraction operator / (Fraction lhs, const Fraction & rhs) {return lhs / = rhs; }
+Fraction operator + (Fraction lhs, const Fraction & rhs) {return lhs + = rhs; }
+Fraction operator- (Fraction lhs, const Fraction & rhs) {return lhs - = rhs; }
+
+ 
+Polinom.h
+#pragma once
+#include "Fraction.h"
+
+class Polinom {
+ int n;
+ Fraction * arr;
+
+public:
+ Polinom (int n = 1);
+ Polinom (const Polinom & p);
+ Polinom (const Fraction & f);
+ ~ Polinom ();
+Fraction calc (Fraction x) const; // calculate the value for the given x
+ int size () const;
+ int degree () const;
+ static void swapPolinom (Polinom & first, Polinom & second);
+
+ Fraction & operator [] (int ind);
+ Fraction get (int ind) const;
+
+ Polinom & operator / = (const Fraction & f);
+ Polinom & operator * = (const Fraction & f);
+Polinom & operator << = (int x); // shift the polynomial by x digits
+ Polinom & operator - = (const Polinom & rhs);
+ Polinom & operator% = (const Polinom & rhs);
+ Polinom & operator / = (const Polinom & rhs);
+};
+
+ostream & operator << (ostream & out, const Polinom & p);
+Polinom operator * (Polinom p, const Fraction & f);
+Polinom operator * (const Fraction & f, Polinom p);
+Polinom operator% (Polinom lhs, const Polinom & rhs);
+Polinom operator << (Polinom lhs, int x); // shift the polynomial by x digits
+Polinom operator- (Polinom lhs, const Polinom & rhs);
+Polinom operator / (Polinom lhs, const Polinom & rhs);
+
+ 
+Polinom.cpp
+#include "Polinom.h"
+
+Polinom :: Polinom (int n): n (n) {
+ if (n <= 0) throw 0;
+ arr = new Fraction [n];
+}
+Polinom :: Polinom (const Polinom & p): Polinom (p.size ()) {
+ for (int i = 0; i <n; i ++) arr [i] = p.get (i);
+}
+Polinom :: Polinom (const Fraction & f): Polinom () {arr [0] = f; }
+Polinom :: ~ Polinom () {delete [] arr; }
+Fraction Polinom :: calc (Fraction x) const {
+ Fraction ans;
+ for (int i = n; i> 0; i--) ans = ans * x + arr [i - 1];
+ return ans;
+}
+int Polinom :: size () const {
+ for (int i = n; i> 1; i--) if (arr [i - 1]! = 0) return i;
+ return 1;
+}
+int Polinom :: degree () const {return size () - 1; }
+void Polinom :: swapPolinom (Polinom & first, Polinom & second) {
+ swap (first.arr, second.arr);
+ swap (first.n, second.n);
+}
+
+Fraction & Polinom :: operator [] (int ind) {return arr [ind]; }
+Fraction Polinom :: get (int ind) const {return arr [ind]; }
+
+Polinom & Polinom :: operator / = (const Fraction & f) {
+ if (f! = 1)
+ for (int i = n = size (); i> 0; i--) arr [i - 1] / = f;
+ return * this;
+}
+Polinom & Polinom :: operator * = (const Fraction & f) {return * this / = 1 / f; }
+Polinom & Polinom :: operator << = (int x) {
+ if (x == 0) return * this;
+
+ n = size ();
+ Polinom buf (x + n);
+ for (int i = 0; i <n; i ++) buf [i + x] = get (i);
+ swapPolinom (* this, buf);
+ return * this;
+}
+Polinom & Polinom :: operator - = (const Polinom & rhs) {
+ int l = this-> size (), r = rhs.size ();
+ if (l <r)
+ swapPolinom (* this, (Polinom (rhs) - = * this) * = -1);
+ else for (int i = 0; i <r; i ++) (* this) [i] - = rhs.get (i);
+ return * this;
+}
+// Division of a polynomial by a polynomial "in a column" - the remainder is taken
+Polinom & Polinom :: operator% = (const Polinom & rhs) {
+ int l = this-> size (), r = rhs.size ();
+ for (int i = l - r; i> = 0; i--) {
+ Polinom buf (rhs);
+ buf * = get (i + r - 1) / rhs.get (r - 1);
+ buf << = i;
+ * this - = buf;
+ i ++;
+ i--;
+ }
+ return * this;
+}
+// Division of a polynomial by a polynomial "in a column" - the whole part is taken
+Polinom & Polinom :: operator / = (const Polinom & rhs) {
+ int l = this-> size (), r = rhs.size ();
+ if (l <r) {
+ arr [0] * = 0;
+ n = 1;
+ return * this;
+ }
+ Polinom new_this (l - r + 1);
+ for (int i = l - r; i> = 0; i--) {
+ Polinom buf (rhs);
+ buf * = new_this [i] = get (i + r - 1) / rhs.get (r - 1);
+ * this - = buf << = i;
+ }
+ swapPolinom (* this, new_this);
+ return * this;
+}
+
+ostream & operator << (ostream & out, const Polinom & p)
+{
+ out << '{' << p.get (0);
+ for (int i = 1; i <p.size (); i ++)
+ out << "," << p.get (i);
+
+ return out << '}';
+}
+Polinom operator * (Polinom p, const Fraction & f) {return p * = f; }
+Polinom operator * (const Fraction & f, Polinom p) {return p * = f; }
+Polinom operator% (Polinom lhs, const Polinom & rhs) {return lhs% = rhs; }
+Polinom operator << (Polinom lhs, int x) {return lhs << = x; }
+Polinom operator- (Polinom lhs, const Polinom & rhs) {return lhs - = rhs; }
+Polinom operator / (Polinom lhs, const Polinom & rhs) {return lhs / = rhs; }
+
+ 
+main.cpp
+#include "Polinom.h"
+
+int main ()
+{
+ Polinom p5 (3), p6 (2);
+p5 [2] = 1; p5 [1] = 5; p5 [0] = 6; // x ^ 2 + 5x + 1
+p6 [1] = 1; p6 [0] = 2; // x + 2
+
+ Polinom p1 (3), p2 (2);
+p1 [2] = 1; p1 [1] = 4; p1 [0] = -1; // x ^ 2 + 4x - 1
+p2 [1] = 7; p2 [0] = 1; // 7x + 1
+
+ Polinom p3 (5), p4 (3);
+p3 [4] = 5; p3 [3] = 2; p3 [2] = 6; p3 [1] = 0; p3 [0] = 9; // 5x ^ 4 + 2x ^ 3 + 6x ^ 2 + 9
+p4 [2] = 2; p4 [1] = 1; p4 [0] = 2; // 2x ^ 2 + x + 2
+
+ // Demonstration of calculating values ​​for given x
+ cout << "1)" << endl;
+ cout << p1.calc (2) << endl // 2 ^ 2 + 4 * 2 - 1 = 11
+ << p1.calc (0) << endl // 0 ^ 2 + 4 * 0 - 1 = -1
+ << p1.calc (Fraction (1, 4)) << endl // (1/4) ^ 2 + 4 * 1/4 - 1 = 1/16
+ << endl;
+
+ // Demonstration of obtaining the degree of a polynomial
+ cout << "2)" << endl;
+ cout << p1.degree () << endl // x ^ 2 + 5x + 1 => 2
+ << p2.degree () << endl // 7x + 1 => 1
+ << p3.degree () << endl // 5x ^ 4 + 2x ^ 3 + 6x ^ 2 + 9 => 4
+ << endl;
+
+ // Demonstration of getting a link to the specified polynomial coefficient
+ cout << "3)" << endl;
+ Fraction m = p1 [1];
+ cout << p1 << endl;
+ cout << (p1 [1] = Fraction (-123, 44)) << endl;
+ cout << p1 << endl;
+ cout << (p1 [1] = m) << endl;
+ cout << p1 << endl;
+ cout << endl;
+
+ // Demonstration of dividing polynes
+ cout << "4)" << endl;
+ cout << p5 << endl // x ^ 2 + 5x + 1
+ << p6 << endl // x + 2
+ << p5 / p6 << endl // x + 3
+ << p5% p6 << endl // 0
+ << endl;
+
+ cout << p1 << endl // x ^ 2 + 4x - 1
+ << p2 << endl // 7x + 1
+ << p1 / p2 << endl // 1/7 x + 27/49
+ << p1% p2 << endl // -76/49
+ << endl;
+
+ cout << p3 << endl // 5x ^ 4 + 2x ^ 3 + 6x ^ 2 + 9
+ << p4 << endl // 2x ^ 2 + x + 2
+ << p3 / p4 << endl // 5/2 x ^ 2 - 1/4 x + 5/8
+ << p3% p4 << endl // -1/8 x + 31/4
+ << endl;
+}
+
+4. Results of execution
+ 
+5. Server
+Path to the program executable file on the lab2.posevin.com server:
+ /home/zhuk/lab7/prog.exe
