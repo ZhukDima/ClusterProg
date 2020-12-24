@@ -1,0 +1,204 @@
+Federal state budgetary educational institution
+higher professional education
+"Moscow State Technical University named after N. E. Bauman"
+(MSTU. Bauman)
+
+
+
+Faculty: Computer Science and Control Systems
+
+Department: Theoretical Informatics and Computer Technologies
+
+
+
+
+
+
+
+Laboratory work No. 3.1
+"Development of an smtp client"
+at the rate: "COMPUTER NETWORKS"
+
+
+
+
+
+
+Completed:
+Student of group IU9-32B
+Zhuk D.O.
+
+Checked: 
+Posevin D.P.
+
+
+ 
+1. Purpose.
+The purpose of this lab is: development of an smtp client in GO language based on the net / smtp, crypto / tls (main1.go) packages.
+2. Problem conditions.
+Implement an smtp client on GO and run it. For this application, you need to create a test account on a mail server, for example, at yandex.ru or gmail.com, and then use the parameters of the SMTP connection with the server of the corresponding mail service to send a test message.
+Implement the following functions:
+- entering the value of the To field from the command line;
+- entering the value of the Subject field from the command line;
+- entering a message into the Message body field from the command line.
+Additional requirements: connection parameters must be stored in an external file.
+main1.go
+package main
+
+import (
+ "encoding / json"
+ "fmt"
+ "io / ioutil"
+ "log"
+ "net / smtp"
+)
+
+// AllData ...
+type AllData struct {
+ Host string `json:" host "`
+ Port string `json:" port "`
+ From string `json:" from "`
+ To [] string `json:" to "`
+ Subject string `json:" subject "`
+ Message string `json:" message "`
+}
+
+// ChangeToMessage ...
+func (data * AllData) ChangeToMessage () {
+ var num int
+ fmt.Print ("Number Email To:")
+ fmt.Scanf ("% d", & num)
+ newTo: = make ([] string, num)
+for i: = 0; i <num; i ++ {
+ fmt.Printf ("Print Email #% d: \ t", i + 1)
+ fmt.Scanf ("% s", & newTo [i])
+ }
+ data.To = newTo
+}
+
+// ChangeSubjectMessage ...
+func (data * AllData) ChangeSubjectMessage () {
+ var newSubject string
+ fmt.Print ("Print Subject:")
+ fmt.Scanf ("% s", & newSubject)
+ data.Subject = newSubject
+}
+
+// ChangeBodyMessage ...
+func (data * AllData) ChangeBodyMessage () {
+ var newMessage string
+ fmt.Println ("Print Message:")
+ fmt.Scanf ("% s", & newMessage)
+ data.Message = newMessage
+}
+
+// SendMessage ...
+func (data * AllData) SendMessage () {
+ var pass string
+ fmt.Print ("Print pass: \ t")
+ fmt.Scanf ("% s", & pass)
+ auth: = smtp.PlainAuth ("", data.From, pass, data.Host)
+
+ allMessage: = fmt.Sprintf ("From: <% s> \ n", data.From)
+ allMessage + = "To:"
+ for i, s: = range data.To {
+ if i! = 0 {
+ allMessage + = ","
+ }
+ allMessage + = fmt.Sprintf ("<% s>", s)
+ }
+ allMessage + = "\ nSubject:" + data.Subject + "\ n"
+ allMessage + = data.Message
+
+ log.Println ("Start Sending Email")
+
+ if err: = smtp.SendMail (data.Host + ":" + data.Port, auth, data.From,
+data.To, [] byte (allMessage)); err! = nil {
+ log.Fatal ("Error SendMail:", err)
+ }
+ log.Println ("Email Sent!")
+}
+
+var nameSaveFile = "info.json"
+
+// SaveChanges ...
+func (data * AllData) SaveChanges () {
+ strJSON, err: = json.Marshal (data)
+ if err! = nil {
+ log.Fatal ("Error marshal JSON:", err)
+ }
+if err: = ioutil.WriteFile (nameSaveFile, [] byte (strJSON), 0644); err! = nil {
+ log.Fatal ("Error save JSON:", err)
+ }
+}
+
+// Print ...
+func (data * AllData) Print () {
+ fmt.Println ("From: \ t", data.From)
+ fmt.Println ("To: \ t", data.To)
+ fmt.Println ("Subject:", data.Subject)
+ fmt.Printf ("Message: \ n% s \ n", data.Message)
+}
+
+func main () {
+ b, err: = ioutil.ReadFile (nameSaveFile)
+ if err! = nil {
+ log.Fatal ("Error read JSON:", err)
+ }
+
+ var data AllData
+if err: = json.Unmarshal ([] byte (b), & data); err! = nil {
+ log.Fatal ("Error unmarshal JSON:", err)
+ }
+
+ fmt.Println ("Type command:")
+ fmt.Println ("\ t0 - Change To Sending Message")
+ fmt.Println ("\ t1 - Change Subject Sending Message")
+ fmt.Println ("\ t2 - Change Body Sending Message")
+ fmt.Println ("\ t3 - Send Message")
+ fmt.Println ("\ t4 - Save Changes Message In File")
+
+ for {
+ fmt.Println ()
+ data.Print ()
+ fmt.Println ()
+ var command string
+ fmt.Print ("Print command: \ t")
+ fmt.Scanf ("% s", & command)
+ switch command {
+ case "0":
+ data.ChangeToMessage ()
+ case "1":
+ data.ChangeSubjectMessage ()
+ case "2":
+ data.ChangeBodyMessage ()
+ case "3":
+ data.SendMessage ()
+ case "4":
+ data.SaveChanges ()
+ default:
+ fmt.Println ("Error command!")
+ }
+ }
+}
+
+info.json
+
+{
+ "host": "smtp.gmail.com",
+ "port": "587",
+"from": " zhukdo@gmail.com ",
+ "to": [
+" zhukdo@yandex.ru ",
+" danila@posevin.com "
+ ],
+ "subject": "lab3-zhuk",
+ "message": "Beetle IU9-32B"
+}
+
+
+ 
+
+
+3. Execution results
+ 
