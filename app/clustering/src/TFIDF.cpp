@@ -1,7 +1,7 @@
 #include "TFIDF.h"
 #include <math.h> // log
 
-TFIDF::TFIDF(const std::vector<FileInfo> &filesInfo)
+TFIDF::TFIDF(const std::vector<FileInfo> &filesInfo) : countWordInFiles(filesInfo)
 {
     for (const auto &fileInfo : filesInfo)
     {
@@ -10,16 +10,16 @@ TFIDF::TFIDF(const std::vector<FileInfo> &filesInfo)
         for (const auto &[word, count] : fileInfo.getAllMetric())
         {
             TFMetrics.back().setMetric(word, count / fileInfo.getAmountOfWords());
-            IDFMetrics[word] += 1;
+            countFilesWithWord[word] += 1;
         }
     }
 
-    for (auto &[word, count] : IDFMetrics)
+    for (const auto &[word, count] : countFilesWithWord)
     {
-        count = std::log(filesInfo.size() / count);
+        IDFMetrics[word] = std::log(filesInfo.size() / count);
     }
 
-    for (auto &[word, count] : IDFMetrics)
+    for (const auto &[word, count] : IDFMetrics)
     {
         setUnicWords.insert(word);
     }
@@ -35,11 +35,23 @@ std::set<std::string> TFIDF::getSetUnicWords() const
     return setUnicWords;
 }
 
-double TFIDF::calculate(const std::string &word, const std::string &path) const
+double TFIDF::calculateTFIDFMetric(const std::string &word, const std::string &path) const
 {
     try
     {
         return TFMetrics.at(pathToIndex.at(path)).getAllMetric().at(word) * IDFMetrics.at(word);
+    }
+    catch (const std::out_of_range &e)
+    {
+        return 0;
+    }
+}
+
+size_t TFIDF::getNumberFilesWithWord(const std::string &word) const
+{
+    try
+    {
+        return countFilesWithWord.at(word);
     }
     catch (const std::out_of_range &e)
     {
