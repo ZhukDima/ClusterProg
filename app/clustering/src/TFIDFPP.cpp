@@ -3,9 +3,9 @@
 
 TFIDFPP::TFIDFPP(const std::vector<FileInfo> &filesInfo) : TFIDF(filesInfo) {}
 
-std::set<std::string> TFIDFPP::getSetUsefulUnicWords() const
+std::set<std::wstring> TFIDFPP::getSetUsefulUnicWords() const
 {
-    std::set<std::string> setUsefulUnicWords(getSetUnicWords());
+    std::set<std::wstring> setUsefulUnicWords(getSetUnicWords());
     for (auto it = setUsefulUnicWords.begin(); it != setUsefulUnicWords.end();)
     {
         if (getNumberFilesWithWord(*it) == 1)
