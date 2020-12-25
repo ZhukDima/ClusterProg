@@ -42,7 +42,7 @@ void SettingsDialog::on_saveSettingsButton_clicked()
 
 void SettingsDialog::on_clearChoosenFiles_clicked()
 {
-    QMessageBox msgBox;
+    QMessageBox msgBox(this);
     msgBox.setInformativeText("Do you really want to discard settings?");
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setIcon(QMessageBox::Warning);
