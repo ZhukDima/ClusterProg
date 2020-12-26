@@ -8,11 +8,11 @@
 class FileReaderImpl {
 public:
     std::string pathToFile;
-    std::fstream in;
-    explicit FileReaderImpl(std::string _pathToFile);
+    std::wfstream in;
+    FileReaderImpl(std::string _pathToFile, std::string localization = "ru_RU.UTF8");
     ~FileReaderImpl();
     bool hasNextWord();
-    std::string readAccepted(std::function<bool(char)> accept);
+    std::wstring readAccepted(const std::function<bool(wchar_t)>& accept);
 };
 
 #endif

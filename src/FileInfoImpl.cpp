@@ -5,12 +5,12 @@
 
 FileInfoImpl::FileInfoImpl(): pathToFile(""), amountOfWords(0) {}
 
-FileInfoImpl::FileInfoImpl(std::string _pathToFile, const std::map<std::string, double>& _metric): pathToFile(_pathToFile) {
+FileInfoImpl::FileInfoImpl(std::string _pathToFile, const std::map<std::wstring, double>& _metric): pathToFile(_pathToFile) {
     metric = _metric;
     FileReader file(pathToFile);
     while (file.hasNextWord()) {
-        std::string word = file.getNextWord();
-        if (word != "") {
+        std::wstring word = file.getNextWord();
+        if (!word.empty()) {
             ++amountOfWords;
         }
     }
@@ -38,8 +38,8 @@ FileInfoImpl& FileInfoImpl::operator=(const FileInfoImpl& obj) {
 FileInfoImpl::FileInfoImpl(std::string _pathToFile): pathToFile(_pathToFile) {
     FileReader file(pathToFile);
     while (file.hasNextWord()) {
-        std::string word = file.getNextWord();
-        if (word != "") {
+        std::wstring word = file.getNextWord();
+        if (!word.empty()) {
             metric[word]++;
             ++amountOfWords;
         }
@@ -54,10 +54,10 @@ int FileInfoImpl::getAmountOfWords() const {
     return amountOfWords;
 }
 
-const std::map<std::string, double>& FileInfoImpl::getAllMetric() const {
+const std::map<std::wstring, double>& FileInfoImpl::getAllMetric() const {
     return metric;
 }
 
-void FileInfoImpl::setMetric(std::string key, double value) {
+void FileInfoImpl::setMetric(std::wstring key, double value) {
     metric[key] = value;
 }
