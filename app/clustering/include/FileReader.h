@@ -9,7 +9,7 @@ public:
     FileReader(const FileReader &obj) = delete;
     FileReader& operator=(const FileReader &obj) = delete;
     bool hasNextWord();
-    std::string getNextWord();
+    std::wstring getNextWord();
     ~FileReader();
 private:
     FileReaderImpl* impl = nullptr;

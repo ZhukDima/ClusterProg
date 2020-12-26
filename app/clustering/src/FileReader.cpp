@@ -3,13 +3,15 @@
 #include <functional>
 #include "FileReader.h"
 #include "FileReaderImpl.h"
+#include <cctype>
+#include <iostream>
 
-bool isLetter(char symbol) {
-    return symbol >= 'a' && symbol <= 'z';
+bool isLetter(wchar_t symbol) {
+    return std::isalpha(symbol, std::locale(""));
 }
 
-bool isSpecialCharacter(char symbol) {
-    return symbol == '-' || symbol == '\'';
+bool isSpecialCharacter(wchar_t symbol) {
+    return symbol == L'-' || symbol == L'\'';
 }
 
 
@@ -19,12 +21,12 @@ bool FileReader::hasNextWord() {
     return impl->hasNextWord();
 }
 
-std::string FileReader::getNextWord() {
+std::wstring FileReader::getNextWord() {
     if (!hasNextWord()) {
         throw "Unable to read next word";
     }
-    impl->readAccepted(std::function<bool(char)>(isLetter));
-    std::string word = impl->readAccepted(std::function<bool(char)>([](char symbol){
+    impl->readAccepted(std::function<bool(wchar_t)>(isLetter));
+    std::wstring word = impl->readAccepted(std::function<bool(wchar_t)>([](wchar_t symbol){
         return !isLetter(symbol) && !isSpecialCharacter(symbol);
     }));
     return word;
