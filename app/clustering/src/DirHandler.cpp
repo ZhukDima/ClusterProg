@@ -20,7 +20,7 @@ public:
             throw "Directory does not exist";
         }
         for (auto &p : fs::directory_iterator(pathToDir)) {
-            if (!p.is_directory()) {
+            if (p.is_character_file()) {
                 std::string path = p.path().string();
                 FileInfo file;
                 try {
