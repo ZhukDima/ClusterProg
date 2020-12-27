@@ -12,7 +12,7 @@ std::vector<SimilarFilesGroup> Analizer::categorize() {
     return impl->categorize();
 }
 
-void Analizer::filesMoving() {
+int Analizer::filesMoving() {
     impl->filesMoving();
 }
 

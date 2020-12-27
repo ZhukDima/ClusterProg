@@ -41,10 +41,14 @@ std::vector<std::vector<std::string>> AnalizerImpl::getClusteringData(const std:
 
 std::vector<SimilarFilesGroup> AnalizerImpl::categorize() {
     DirHandler *directory = nullptr;
-    if (pathsToFiles.empty()) {
-        directory = new DirHandler(pathToDirectory);
-    } else {
-        directory = new DirHandler(pathsToFiles);
+    try {
+        if (pathsToFiles.empty()) {
+            directory = new DirHandler(pathToDirectory);
+        } else {
+            directory = new DirHandler(pathsToFiles);
+        }
+    } catch (const char *exception) {
+        throw exception;
     }
     auto filesInfo = directory->getFiles();
     std::vector<SimilarFilesGroup> result;
@@ -66,12 +70,26 @@ std::vector<SimilarFilesGroup> AnalizerImpl::categorize() {
     return result;
 }
 
-void AnalizerImpl::filesMoving() {
-    std::vector<SimilarFilesGroup> groups = categorize();
+int AnalizerImpl::filesMoving() {
+    std::vector<SimilarFilesGroup> groups;
+    try {
+        groups = categorize();
+    } catch (const char *) {
+        return -1;
+    }
     for (const auto &group : groups) {
-        FileManager::createDir(pathToResult + "/" + group.getGroupName());
+        try {
+            FileManager::createDir(pathToResult + "/" + group.getGroupName());
+        } catch (const std::runtime_error &) {
+            return -1;
+        }
         for (const auto &filename : group.getFiles()) {
-            FileManager::moveFile(filename, pathToResult + "/" + group.getGroupName() + "/" + cutName(filename));
+            try {
+                FileManager::moveFile(filename, pathToResult + "/" + group.getGroupName() + "/" + cutName(filename));
+            } catch (const std::exception &) {
+                return -1;
+            }
         }
     }
+    return 0;
 }
