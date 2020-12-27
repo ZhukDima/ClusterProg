@@ -1,0 +1,19 @@
+Zhuk Dmitry IU9-32B
+№0.1 Describe semidirect products of cyclic groups 〈a〉 _4 and 〈b〉 _5 up to isomorphism.
+In total, there are 4 automorphisms for 〈b〉 _5: 
+φ_k: b↦b ^ k, where k = (1,4) ̅ ⇔a ^ 4 = 1, b ^ 5 = 1, a ^ (- 1) ba = b ^ k.
+ φ_1: 〈a〉 _4 × 〈b〉 _5≅Z_20 is a cyclic (abelian) group.
+ φ_2: a ^ (- 1) ba = b ^ 2⇒a ^ (- 1) b ^ 2 a = b ^ 4⇒a 〖(b〗 ^ 4) a ^ (- 1) = b ^ 2 = (b ^ 4) ^ 3⇒φ_2 (〈b〉 _5) ≅φ_3 (〈b〉 _5).
+φ_4: O (a ^ 2 b) = 10, but before. the group has orders: 1, 2, 4, 5.
+
+№0.4 Find all non-trivial decompositions of the group {± 2 ^ n | nϵZ} ⊂Q ^ * into a direct product of subgroups.
+Let G = {± 2 ^ n | nϵZ}. If G∋ ± 2 ^ n, then 〈± 2 ^ n〉 ⊆G. Consider all such ± 2 ^ n (we will take only natural n in order to avoid duplication and taking inverse elements by generators).
+ If n = 1, then:
+〈-2〉 = {1; -2 ^ 1; -2 ^ (- 1); 2 ^ 2; 2 ^ (- 2); - 2 ^ 3; -2 ^ (- 3);…}. Then before G is not enough for the numbers to have the opposite sign. It turns out that G = 〈-2〉 × 〈-1〉.
+〈2〉 = {1; 2 ^ 1; 2 ^ (- 1); 2 ^ 2; 2 ^ (- 2); 2 ^ 3; 2 ^ (- 3);…}. Then before G is not enough for the numbers to have the opposite sign. It turns out that G = 〈2〉 × 〈-1〉.
+If n> 1, then ∃2 ^ (n-1) ∉⟨ ± 2 ^ n⟩. Then (due to the direct product) we add ⟨2 ^ (n-1)⟩, but ∃2 ^ n (n-1) ∶2 ^ n (n-1) ∈⟨2 ^ (n-1)⟩ and 2 ^ n (n-1) ∈⟨ ± 2 ^ n⟩ - a contradiction.
+Answer: {± 2 ^ n | nϵZ} = 〈-2〉 × 〈-1〉 = 〈2〉 × 〈-1〉.
+
+№0.19 Prove that for any element a of an abelian group A = (A, +) of order n = O (A) <∞ the equation mx = a is solvable in A for all m, (n, m) = 1. 
+If (n, m) = 1, then ∃m ^ (- 1) (mod n). Then m ^ (- 1) * mx = m ^ (- 1) * a⇔x = m ^ (- 1) a. h.t.d.
+
