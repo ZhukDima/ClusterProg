@@ -14,21 +14,17 @@ void FileManager::moveFile(std::string_view pathToSource, std::string pathToDest
         pathToDestination = getNewFilePathIfExists(pathToDestination);
         fs::rename(pathToSource, pathToDestination);
     }
-    catch(const fs::filesystem_error& e)
+    catch (const fs::filesystem_error &e)
     {
-        std::cerr << e.what() << '\n';
+        throw e;
     }
 }
 
 void FileManager::createDir(std::string_view path)
 {
-    try
+    if (!fs::create_directories(path))
     {
-        fs::create_directories(path);
-    }
-    catch(const fs::filesystem_error& e)
-    {
-        std::cerr << e.what() << '\n';
+        throw std::runtime_error("Can't create directory on this path");
     }
 }
 
@@ -49,6 +45,6 @@ std::string FileManager::getNewFilePathIfExists(std::string_view path, const int
 std::string FileManager::constructNewPath(std::string_view path, const int idx)
 {
     fs::path oldPath(path);
-    fs::path newPath = oldPath.parent_path() / ( fs::path( oldPath.stem().string() + (idx == FileManager::SAME_FILE_INDEX ? "" : "_" + std::to_string(idx)) + oldPath.extension().string() ) );
+    fs::path newPath = oldPath.parent_path() / (fs::path(oldPath.stem().string() + (idx == FileManager::SAME_FILE_INDEX ? "" : "_" + std::to_string(idx)) + oldPath.extension().string()));
     return newPath.string();
 }
