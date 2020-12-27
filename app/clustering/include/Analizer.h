@@ -1,5 +1,5 @@
-#ifndef CLUSTERPROG_ANALIZER_HPP
-#define CLUSTERPROG_ANALIZER_HPP
+#ifndef CLUSTERPROG_ANALIZER_H
+#define CLUSTERPROG_ANALIZER_H
 
 #include "DirHandler.h"
 #include "KMeans.hpp"
@@ -35,4 +35,4 @@ private:
     AnalizerImpl *impl = nullptr;
 };
 
-#endif //CLUSTERPROG_ANALIZER_HPP
+#endif //CLUSTERPROG_ANALIZER_H

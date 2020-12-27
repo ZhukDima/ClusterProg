@@ -1,5 +1,5 @@
-#ifndef CLUSTERPROG_ANALIZERIMPL_HPP
-#define CLUSTERPROG_ANALIZERIMPL_HPP
+#ifndef CLUSTERPROG_ANALIZERIMPL_H
+#define CLUSTERPROG_ANALIZERIMPL_H
 
 #include "Analizer.h"
 
@@ -25,4 +25,4 @@ private:
     size_t countDirectory{};
 };
 
-#endif //CLUSTERPROG_ANALIZERIMPL_HPP
+#endif //CLUSTERPROG_ANALIZERIMPL_H

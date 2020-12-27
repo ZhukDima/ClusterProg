@@ -16,15 +16,15 @@ std::vector<SimilarFilesGroup> AnalizerImpl::categorize() {
     } else {
         directory = new DirHandler(pathsToFiles);
     }
-    auto filesInfo = directory->getFiles();
+    auto filesInfo = directory->getFiles(); // получаем vector<FileInfo>
     TFIDFPP tfidf(filesInfo);
-    auto setUnicWords = tfidf.getSetUsefulUnicWords();
-    std::vector<VectorSpace<double>> vectorsSpace;
+    auto setUnicWords = tfidf.getSetUsefulUnicWords(); // set уникальных слов в директории
+    std::vector<VectorSpace<double>> vectorsSpace; // создаем вектор векторных простарнств
     for (const auto &fileInfo : filesInfo) {
         vectorsSpace.emplace_back(setUnicWords.size());
         size_t i = 0;
         for (const auto &word : setUnicWords) {
-            vectorsSpace.back()[i++] = tfidf.calculateTFIDFMetric(word, fileInfo.getPath());
+            vectorsSpace.back()[i++] = tfidf.calculateTFIDFMetric(word, fileInfo.getPath()); // метрика для каждого уникального слова в директории
         }
     }
     KMeans<VectorSpace<double>> kMeans(vectorsSpace);
