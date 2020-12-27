@@ -2,10 +2,12 @@
 #include <string>
 #include "FileInfoImpl.h"
 #include "FileReader.h"
+#include "LevenshteinDistance.hpp"
 
-FileInfoImpl::FileInfoImpl(): pathToFile(""), amountOfWords(0) {}
+FileInfoImpl::FileInfoImpl() : pathToFile(""), amountOfWords(0) {}
 
-FileInfoImpl::FileInfoImpl(std::string _pathToFile, const std::map<std::wstring, double>& _metric): pathToFile(_pathToFile) {
+FileInfoImpl::FileInfoImpl(std::string _pathToFile, const std::map<std::wstring, double> &_metric) : pathToFile(
+        _pathToFile) {
     metric = _metric;
     FileReader file(pathToFile);
     while (file.hasNextWord()) {
@@ -16,7 +18,7 @@ FileInfoImpl::FileInfoImpl(std::string _pathToFile, const std::map<std::wstring,
     }
 }
 
-FileInfoImpl::FileInfoImpl(const FileInfoImpl& obj) {
+FileInfoImpl::FileInfoImpl(const FileInfoImpl &obj) {
     swap(obj);
 }
 
@@ -26,7 +28,7 @@ void FileInfoImpl::swap(const FileInfoImpl &obj) noexcept {
     metric = obj.getAllMetric();
 }
 
-FileInfoImpl& FileInfoImpl::operator=(const FileInfoImpl& obj) {
+FileInfoImpl &FileInfoImpl::operator=(const FileInfoImpl &obj) {
     if (this == &obj) {
         return *this;
     }
@@ -35,12 +37,24 @@ FileInfoImpl& FileInfoImpl::operator=(const FileInfoImpl& obj) {
     return *this;
 }
 
-FileInfoImpl::FileInfoImpl(std::string _pathToFile): pathToFile(_pathToFile) {
+FileInfoImpl::FileInfoImpl(std::string _pathToFile) : pathToFile(_pathToFile) {
     FileReader file(pathToFile);
     while (file.hasNextWord()) {
         std::wstring word = file.getNextWord();
+        bool updated = false;
         if (!word.empty()) {
-            metric[word]++;
+            for (const auto&[key, value] : metric) {
+                size_t temp = LevenshteinDistance<std::wstring>::calculate(word, key);
+                if (temp <= MaxLevenshteinDistance &&
+                    std::max(word.size(), key.size()) * coefOfLength >= static_cast<double>(temp)) {
+                    ++metric[key];
+                    updated = true;
+                    break;
+                }
+            }
+            if (!updated) {
+                metric[word]++;
+            }
             ++amountOfWords;
         }
     }
@@ -54,7 +68,7 @@ int FileInfoImpl::getAmountOfWords() const {
     return amountOfWords;
 }
 
-const std::map<std::wstring, double>& FileInfoImpl::getAllMetric() const {
+const std::map<std::wstring, double> &FileInfoImpl::getAllMetric() const {
     return metric;
 }
 
