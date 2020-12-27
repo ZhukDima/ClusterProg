@@ -1,0 +1,29 @@
+dist:   focal
+sudo:   required
+
+language:   c++
+
+compiler:
+  - gcc
+
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install -y cmake
+
+env:
+  global:
+    secure: "qay6Q4jO6LpxVgbYvH772VobmsZSr3FCksLroIbvrna8g9p3Fb/QWZQqeHF8A38SXZxMSyE2druax7oG3sNUKAd7gxdU3u91eYnkQ+CjOzdFoCQmEIBsnc215TbX4mvtwO8emNL3ScIQzGPhWXFHXXHMG/wz0SJMSCUE/R5nF8hnM+St5Ci/HX2Ag4uTkY/rYs+Bqity/9gmvqA15hU+8MQRPw7297o2Ie87HdJzNqZgRI93kdPIG2HMiyTz1Gd9mWxVb75p/TOs5GX6ELjmBgY+Z13ZY7NxmDSb0hxm2Uesz0hv6L9VQRMzstE1hWQ4nLnRhQQBF3zbuLWSdenhmsJ0DgeKgSFcGHg3NvsPRWEXVAlTFzMget6QkzSs37UYmaFdZKQaI7gUU/M0f0/jBxEpOJqgEwcv7QtcF0m3etvV+Odyhc1ChMh5MvuBG6HnFMYqOjgge7ncG/QfIQYHHCRNg+VTPgsp6iAzAmi4DyJ967XRcQHcsQBfqYA7PQRzR83tSlPBrfr9o89NtrJwTdKutJ/5Qc1w8FQLk5ZtiXEFq45HyWcQu/xVOu+GL3HRhrL4c+fUs+GK5u5bGaiEhEhHIHKg6DH3pI/VvaR9SjN0ar/drrOtUHJEVS68H/aXhUm/LISSIk85/ZbMZOQJbdLxsXup669fnN45iUYpV4g="
+
+matrix:
+  include:
+    - os: linux
+      env:
+        - TEST="run tests"
+      script:
+        - mkdir build
+        - cd build/
+        - cmake ..
+        - make
+        - ctest
+        - cd ..
+        - rm -rf build/
