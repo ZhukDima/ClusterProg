@@ -7,7 +7,7 @@ FileInfo::FileInfo(): impl(new FileInfoImpl()) {}
 
 FileInfo::FileInfo(std::string _pathToFile): impl(new FileInfoImpl(_pathToFile)) {}
 
-FileInfo::FileInfo(std::string _pathToFile, const std::map<std::string, double>& _metric):
+FileInfo::FileInfo(std::string _pathToFile, const std::map<std::wstring, double>& _metric):
         impl(new FileInfoImpl(_pathToFile, _metric)) {}
 
 FileInfo::FileInfo(const FileInfo& obj): impl(new FileInfoImpl(obj.getImpl())) {}
@@ -32,11 +32,11 @@ int FileInfo::getAmountOfWords() const {
     return impl->getAmountOfWords();
 }
 
-const std::map<std::string, double>& FileInfo::getAllMetric() const {
+const std::map<std::wstring, double>& FileInfo::getAllMetric() const {
     return impl->getAllMetric();
 }
 
-void FileInfo::setMetric(std::string key, double value) {
+void FileInfo::setMetric(std::wstring key, double value) {
     impl->setMetric(key, value);
 }
 
