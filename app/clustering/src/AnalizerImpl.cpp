@@ -9,25 +9,22 @@ std::string cutName(const std::string &path) {
     return std::filesystem::path(path).filename();
 }
 
-std::vector<SimilarFilesGroup> AnalizerImpl::categorize() {
-    DirHandler *directory = nullptr;
-    if (pathsToFiles.empty()) {
-        directory = new DirHandler(pathToDirectory);
-    } else {
-        directory = new DirHandler(pathsToFiles);
-    }
-    auto filesInfo = directory->getFiles(); // получаем vector<FileInfo>
+std::vector<VectorSpace<double>> AnalizerImpl::getFileInfo(const std::vector<FileInfo> &filesInfo) const {
     TFIDFPP tfidf(filesInfo);
-    auto setUnicWords = tfidf.getSetUsefulUnicWords(); // set уникальных слов в директории
-    std::vector<VectorSpace<double>> vectorsSpace; // создаем вектор векторных простарнств
+    auto setUnicWords = tfidf.getSetUsefulUnicWords();
+    std::vector<VectorSpace<double>> vectorsSpace;
     for (const auto &fileInfo : filesInfo) {
         vectorsSpace.emplace_back(setUnicWords.size());
         size_t i = 0;
         for (const auto &word : setUnicWords) {
-            vectorsSpace.back()[i++] = tfidf.calculateTFIDFMetric(word, fileInfo.getPath()); // метрика для каждого уникального слова в директории
+            vectorsSpace.back()[i++] = tfidf.calculateTFIDFMetric(word, fileInfo.getPath());
         }
     }
-    KMeans<VectorSpace<double>> kMeans(vectorsSpace);
+    return vectorsSpace;
+}
+
+std::vector<std::vector<std::string>> AnalizerImpl::getClusteringData(const std::vector<FileInfo> &filesInfo) const {
+    KMeans<VectorSpace<double>> kMeans(getFileInfo(filesInfo));
     auto clusters = kMeans.calculate(countDirectory, std::vector<VectorSpace<double>>());
     std::vector<std::string> allPath;
     allPath.reserve(filesInfo.size());
@@ -39,8 +36,24 @@ std::vector<SimilarFilesGroup> AnalizerImpl::categorize() {
     for (const auto &cluster : clusters) {
         clusteringData.push_back(cluster.getClusteringDataByData(allPath));
     }
+    return clusteringData;
+}
+
+std::vector<SimilarFilesGroup> AnalizerImpl::categorize() {
+    DirHandler *directory = nullptr;
+    try {
+        if (pathsToFiles.empty()) {
+            directory = new DirHandler(pathToDirectory);
+        } else {
+            directory = new DirHandler(pathsToFiles);
+        }
+    } catch (const char *exception) {
+        throw exception;
+    }
+    auto filesInfo = directory->getFiles();
     std::vector<SimilarFilesGroup> result;
     size_t count = 0;
+    auto clusteringData = getClusteringData(filesInfo);
     for (const auto &group : clusteringData) {
         if (group.empty()) {
             continue;
@@ -57,12 +70,26 @@ std::vector<SimilarFilesGroup> AnalizerImpl::categorize() {
     return result;
 }
 
-void AnalizerImpl::filesMoving() {
-    std::vector<SimilarFilesGroup> groups = categorize();
+int AnalizerImpl::filesMoving() {
+    std::vector<SimilarFilesGroup> groups;
+    try {
+        groups = categorize();
+    } catch (const char *) {
+        return -1;
+    }
     for (const auto &group : groups) {
-        FileManager::createDir(pathToResult + "/" + group.getGroupName());
+        try {
+            FileManager::createDir(pathToResult + "/" + group.getGroupName());
+        } catch (const std::runtime_error &) {
+            return -1;
+        }
         for (const auto &filename : group.getFiles()) {
-            FileManager::moveFile(filename, pathToResult + "/" + group.getGroupName() + "/" + cutName(filename));
+            try {
+                FileManager::moveFile(filename, pathToResult + "/" + group.getGroupName() + "/" + cutName(filename));
+            } catch (const std::exception &) {
+                return -1;
+            }
         }
     }
+    return 0;
 }

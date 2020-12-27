@@ -12,11 +12,15 @@ public:
 
     ~AnalizerImpl() = default;
 
+    [[nodiscard]] std::vector<VectorSpace<double>> getFileInfo(const std::vector<FileInfo> &filesInfo) const;
+
+    [[nodiscard]] std::vector<std::vector<std::string>> getClusteringData(const std::vector<FileInfo> &filesInfo) const;
+
     // распределение файлов по группам
     std::vector<SimilarFilesGroup> categorize();
 
     // создание папок перемещение файлов по папкам согласно их группам
-    void filesMoving();
+    int filesMoving();
 
 private:
     std::string pathToDirectory;

@@ -10,9 +10,9 @@ constexpr double coefOfLength = 0.2;
 template<typename T>
 class LevenshteinDistance {
 public:
-    LevenshteinDistance() = default;
+    LevenshteinDistance() = delete;
 
-    ~LevenshteinDistance() = default;
+    ~LevenshteinDistance() = delete;
 
     LevenshteinDistance(const LevenshteinDistance &rhs) = delete;
 
@@ -28,29 +28,30 @@ size_t LevenshteinDistance<T>::calculate(const T &source, const T &target) {
         return calculate(target, source);
     }
 
-    const size_t min_size = source.size(), max_size = target.size();
-    std::vector<size_t> lev_dist(min_size + 1);
+    const size_t minSize = source.size();
+    std::vector<size_t> levDist(minSize + 1);
 
-    for (size_t i = 0; i <= min_size; ++i) {
-        lev_dist[i] = i;
+    for (size_t i = 0; i <= minSize; ++i) {
+        levDist[i] = i;
     }
 
-    for (size_t j = 1; j <= max_size; ++j) {
-        size_t previous_diagonal = lev_dist[0], previous_diagonal_save;
-        ++lev_dist[0];
+    const size_t maxSize = target.size();
+    for (size_t j = 1; j <= maxSize; ++j) {
+        size_t previousDiagonal = levDist[0], previousDiagonalSave;
+        ++levDist[0];
 
-        for (size_t i = 1; i <= min_size; ++i) {
-            previous_diagonal_save = lev_dist[i];
+        for (size_t i = 1; i <= minSize; ++i) {
+            previousDiagonalSave = levDist[i];
             if (source[i - 1] == target[j - 1]) {
-                lev_dist[i] = previous_diagonal;
+                levDist[i] = previousDiagonal;
             } else {
-                lev_dist[i] = std::min(std::min(lev_dist[i - 1], lev_dist[i]), previous_diagonal) + 1;
+                levDist[i] = std::min(std::min(levDist[i - 1], levDist[i]), previousDiagonal) + 1;
             }
-            previous_diagonal = previous_diagonal_save;
+            previousDiagonal = previousDiagonalSave;
         }
     }
 
-    return lev_dist[min_size];
+    return levDist[minSize];
 }
 
 #endif //LEVENSHTEIN_DISTANCE_HPP
