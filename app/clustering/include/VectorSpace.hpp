@@ -90,13 +90,25 @@ template <class T>
 double VectorSpace<T>::operator-(const VectorSpace<T> &obj) const
 {
     assert(Size() == obj.Size());
-    double ans = 0;
+    double sqrX = 0, sqrY = 0, X_Y = 0;
     size_t i = 0;
     for (const T &elem : vec)
     {
-        ans += std::pow(elem - obj.vec[i++], 2);
+        X_Y += elem * obj.vec[i];
+        sqrX += elem * elem;
+        sqrY += obj.vec[i] * obj.vec[i];
+        i++;
     }
-    return std::sqrt(ans); 
+    return 1 - X_Y / std::sqrt(sqrX) / std::sqrt(sqrY);
+
+    // assert(Size() == obj.Size());
+    // double ans = 0;
+    // size_t i = 0;
+    // for (const T &elem : vec)
+    // {
+    //     ans += std::pow(elem - obj.vec[i++], 2);
+    // }
+    // return std::sqrt(ans);
     
     //assert(Size() == obj.Size());
 

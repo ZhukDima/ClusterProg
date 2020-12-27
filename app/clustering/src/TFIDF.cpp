@@ -30,12 +30,12 @@ int TFIDF::countUnicWords() const
     return setUnicWords.size();
 }
 
-std::set<std::string> TFIDF::getSetUnicWords() const
+std::set<std::wstring> TFIDF::getSetUnicWords() const
 {
     return setUnicWords;
 }
 
-double TFIDF::calculateTFIDFMetric(const std::string &word, const std::string &path) const
+double TFIDF::calculateTFIDFMetric(const std::wstring &word, const std::string &path) const
 {
     try
     {
@@ -47,7 +47,7 @@ double TFIDF::calculateTFIDFMetric(const std::string &word, const std::string &p
     }
 }
 
-size_t TFIDF::getNumberFilesWithWord(const std::string &word) const
+size_t TFIDF::getNumberFilesWithWord(const std::wstring &word) const
 {
     try
     {

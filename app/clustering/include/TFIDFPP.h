@@ -8,7 +8,7 @@ class TFIDFPP : public TFIDF
 public:
     TFIDFPP(const std::vector<FileInfo> &filesInfo);
 
-    std::set<std::string> getSetUsefulUnicWords() const;
+    std::set<std::wstring> getSetUsefulUnicWords() const;
 };
 
 #endif

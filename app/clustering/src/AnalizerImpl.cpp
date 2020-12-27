@@ -50,7 +50,7 @@ std::vector<Group> AnalizerImpl::categorize()
     // std::cout << std::endl;
 
     TFIDFPP tfidf(filesInfo);
-    std::set<std::string> setUnicWords = tfidf.getSetUsefulUnicWords();
+    std::set<std::wstring> setUnicWords = tfidf.getSetUnicWords();
     //std::cout << " > " << setUnicWords.size() << std::endl;
 
     // std::cout << std::endl;
