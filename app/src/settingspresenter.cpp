@@ -19,7 +19,7 @@ QStringList SettingsPresenter::getChoosenFilesFromFileDialog() const
     QStringList files = QFileDialog::getOpenFileNames(nullptr,
                                                       "Choose files",
                                                       settings.startDir,
-                                                      "Text files (*.txt *.md);;XML files (*.xml);; HTML files (*.html)");
+                                                      "Text files (*.txt)");
     return files;
 }
 
