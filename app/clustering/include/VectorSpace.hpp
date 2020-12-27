@@ -96,42 +96,10 @@ double VectorSpace<T>::operator-(const VectorSpace<T> &obj) const
     {
         X_Y += elem * obj.vec[i];
         sqrX += elem * elem;
-        sqrY += obj.vec[i] * obj.vec[i++];
+        sqrY += obj.vec[i] * obj.vec[i];
+        i++;
     }
     return 1 - X_Y / std::sqrt(sqrX) / std::sqrt(sqrY);
-
-    // assert(Size() == obj.Size());
-    // double ans = 0;
-    // size_t i = 0;
-    // for (const T &elem : vec)
-    // {
-    //     ans += std::pow(elem - obj.vec[i++], 2);
-    // }
-    // return std::sqrt(ans);
-    
-    //assert(Size() == obj.Size());
-
-    // std::priority_queue<double> priorQue;
-    // size_t i = 0;
-    // for (const T &elem : vec)
-    // {
-    //     if (elem == 0 && obj.vec[i++] == 0) {
-    //         continue;
-    //     }
-    //     priorQue.push(std::pow(elem - obj.vec[i], 2));
-    //     while (priorQue.size() > obj.Size() * 10 / 100)
-    //     {
-    //         priorQue.pop();
-    //     }
-    // }
-
-    // double ans = 0;
-    // for (; !priorQue.empty(); priorQue.pop())
-    // {
-    //     ans += priorQue.top();
-    // }
-
-    // return ans;
 }
 
 #endif
