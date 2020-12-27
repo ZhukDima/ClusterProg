@@ -1,10 +1,13 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <set>
 #include "FileInfo.h"
 #include "DirHandler.h"
 
 namespace fs = std::filesystem;
+
+std::set <std::string> extensions = {".txt"};
 
 class DirHandlerImpl {
 private:
@@ -20,7 +23,7 @@ public:
             throw "Directory does not exist";
         }
         for (auto &p : fs::directory_iterator(pathToDir)) {
-            if (p.is_character_file()) {
+            if (!p.is_directory() && extensions.find(p.path().extension()) != extensions.end()) {
                 std::string path = p.path().string();
                 FileInfo file;
                 try {
