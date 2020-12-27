@@ -15,3 +15,11 @@ std::vector<SimilarFilesGroup> Analizer::categorize() {
 void Analizer::filesMoving() {
     impl->filesMoving();
 }
+
+std::vector<VectorSpace<double>> Analizer::getFileInfo(const std::vector<FileInfo> &filesInfo) const {
+    return impl->getFileInfo(filesInfo);
+}
+
+std::vector<std::vector<std::string>> Analizer::getClusteringData(const std::vector<FileInfo> &filesInfo) const {
+    return impl->getClusteringData(filesInfo);
+}

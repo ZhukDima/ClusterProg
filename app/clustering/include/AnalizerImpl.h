@@ -1,5 +1,5 @@
-#ifndef CLUSTERPROG_ANALIZERIMPL_HPP
-#define CLUSTERPROG_ANALIZERIMPL_HPP
+#ifndef CLUSTERPROG_ANALIZERIMPL_H
+#define CLUSTERPROG_ANALIZERIMPL_H
 
 #include "Analizer.h"
 
@@ -11,6 +11,10 @@ public:
                  std::string inputPathToResult, size_t inputCountDirectory);
 
     ~AnalizerImpl() = default;
+
+    [[nodiscard]] std::vector<VectorSpace<double>> getFileInfo(const std::vector<FileInfo> &filesInfo) const;
+
+    [[nodiscard]] std::vector<std::vector<std::string>> getClusteringData(const std::vector<FileInfo> &filesInfo) const;
 
     // распределение файлов по группам
     std::vector<SimilarFilesGroup> categorize();
@@ -25,4 +29,4 @@ private:
     size_t countDirectory{};
 };
 
-#endif //CLUSTERPROG_ANALIZERIMPL_HPP
+#endif //CLUSTERPROG_ANALIZERIMPL_H

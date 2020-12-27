@@ -1,5 +1,5 @@
-#ifndef CLUSTERPROG_ANALIZER_HPP
-#define CLUSTERPROG_ANALIZER_HPP
+#ifndef CLUSTERPROG_ANALIZER_H
+#define CLUSTERPROG_ANALIZER_H
 
 #include "DirHandler.h"
 #include "KMeans.hpp"
@@ -32,7 +32,11 @@ public:
     void filesMoving();
 
 private:
+    [[nodiscard]] std::vector<VectorSpace<double>> getFileInfo(const std::vector<FileInfo> &filesInfo) const;
+
+    [[nodiscard]] std::vector<std::vector<std::string>> getClusteringData(const std::vector<FileInfo> &filesInfo) const;
+
     AnalizerImpl *impl = nullptr;
 };
 
-#endif //CLUSTERPROG_ANALIZER_HPP
+#endif //CLUSTERPROG_ANALIZER_H
