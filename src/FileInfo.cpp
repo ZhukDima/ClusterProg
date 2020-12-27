@@ -5,12 +5,12 @@
 
 FileInfo::FileInfo(): impl(new FileInfoImpl()) {}
 
-FileInfo::FileInfo(std::string _pathToFile): impl(new FileInfoImpl(_pathToFile)) {}
+FileInfo::FileInfo(std::string _pathToFile): impl(std::make_unique<FileInfoImpl>(_pathToFile)) {}
 
 FileInfo::FileInfo(std::string _pathToFile, const std::map<std::wstring, double>& _metric):
-        impl(new FileInfoImpl(_pathToFile, _metric)) {}
+        impl(std::make_unique<FileInfoImpl>(_pathToFile, _metric)) {}
 
-FileInfo::FileInfo(const FileInfo& obj): impl(new FileInfoImpl(obj.getImpl())) {}
+FileInfo::FileInfo(const FileInfo& obj): impl(std::make_unique<FileInfoImpl>(obj.getImpl())) {}
 
 FileInfo& FileInfo::operator=(const FileInfo& obj) {
     if (this == &obj) {
@@ -41,5 +41,6 @@ void FileInfo::setMetric(std::wstring key, double value) {
 }
 
 FileInfo::~FileInfo() {
-    delete impl;
+    FileInfoImpl *p = impl.release();
+    delete p;
 }

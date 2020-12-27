@@ -15,7 +15,7 @@ bool isSpecialCharacter(wchar_t symbol) {
 }
 
 
-FileReader::FileReader(std::string _pathToFile): impl(new FileReaderImpl(_pathToFile)) {}
+FileReader::FileReader(std::string _pathToFile): impl(std::make_unique<FileReaderImpl>(_pathToFile)) {}
 
 bool FileReader::hasNextWord() {
     return impl->hasNextWord();
@@ -33,5 +33,6 @@ std::wstring FileReader::getNextWord() {
 }
 
 FileReader::~FileReader() {
-    delete impl;
+    FileReaderImpl *p = impl.release();
+    delete p;
 }

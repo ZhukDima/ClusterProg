@@ -1,10 +1,13 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <set>
 #include "FileInfo.h"
 #include "DirHandler.h"
 
 namespace fs = std::filesystem;
+
+std::set <std::string> extensions = {".txt"};
 
 class DirHandlerImpl {
 private:
@@ -20,7 +23,7 @@ public:
             throw "Directory does not exist";
         }
         for (auto &p : fs::directory_iterator(pathToDir)) {
-            if (!p.is_directory()) {
+            if (!p.is_directory() && extensions.find(p.path().extension()) != extensions.end()) {
                 std::string path = p.path().string();
                 FileInfo file;
                 try {
@@ -51,9 +54,9 @@ public:
     }
 };
 
-DirHandler::DirHandler(std::string _pathToDir): impl(new DirHandlerImpl(_pathToDir)) {}
+DirHandler::DirHandler(std::string _pathToDir): impl(std::make_unique<DirHandlerImpl>(_pathToDir)) {}
 
-DirHandler::DirHandler(const std::vector<std::string> &pathsToFiles): impl(new DirHandlerImpl(pathsToFiles)) {}
+DirHandler::DirHandler(const std::vector<std::string> &pathsToFiles): impl(std::make_unique<DirHandlerImpl>(pathsToFiles)) {}
 
 std::string DirHandler::getPath() const {
     return impl->getPath();
@@ -64,5 +67,6 @@ std::vector<FileInfo>& DirHandler::getFiles() {
 }
 
 DirHandler::~DirHandler() {
-    delete impl;
+    DirHandlerImpl *p = impl.release();
+    delete p;
 }

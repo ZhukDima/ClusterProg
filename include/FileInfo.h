@@ -1,12 +1,13 @@
 #ifndef FILEINFO_H
 #define FILEINFO_H
 #include <map>
+#include <memory>
 
 class FileInfoImpl;
 
 class FileInfo {
 private:
-    FileInfoImpl *impl = nullptr;
+    std::unique_ptr<FileInfoImpl> impl;
 public:
     FileInfo();
     FileInfo(std::string _pathToFile, const std::map<std::wstring, double>& _metric);

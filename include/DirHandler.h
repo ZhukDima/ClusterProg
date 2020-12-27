@@ -3,12 +3,13 @@
 
 #include <vector>
 #include "FileInfo.h"
+#include <memory>
 
 class DirHandlerImpl;
 
 class DirHandler {
 private:
-    DirHandlerImpl *impl;
+    std::unique_ptr <DirHandlerImpl> impl;
 public:
     DirHandler() = delete;
     DirHandler(std::string _pathToDir);
