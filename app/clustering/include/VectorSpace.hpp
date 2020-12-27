@@ -96,7 +96,8 @@ double VectorSpace<T>::operator-(const VectorSpace<T> &obj) const
     {
         X_Y += elem * obj.vec[i];
         sqrX += elem * elem;
-        sqrY += obj.vec[i] * obj.vec[i++];
+        sqrY += obj.vec[i] * obj.vec[i];
+        ++i;
     }
     return 1 - X_Y / std::sqrt(sqrX) / std::sqrt(sqrY);
 
