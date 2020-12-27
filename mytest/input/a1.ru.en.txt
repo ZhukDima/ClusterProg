@@ -1,0 +1,13 @@
+Zhuk Dmitry IU9-32B
+№0.3 Prove that an element of a free group of finite order is equal to its unity.
+That is, we need to prove that: aϵF_S: O (a) = n <∞⇒a = ⅇ. MOS: because a ≠ ⅇ, then let a = s_1 b, where s_1 is a generator from S. Then 〖e = a〗 ^ n = s_1 bs_1 b… s_1 b (n times), it is easy to see that s_1 is “inside” a ^ n should be reduced, it turns out that b = cs_1 ^ (- 1), a = s_1 cs_1 ^ (- 1) and e = a ^ n = s_1 cs_1 ^ (- 1) s_1 cs_1 ^ (- 1) ... s_1 cs_1 ^ ( -1) = s_1 c ^ n s_1 ^ (- 1). It turns out that c ^ n = e. There are two possible outcomes:
+or the element will be equal to e, but then the previous one will "collapse" (s_m es_m ^ (- 1) = e), followed by the next, and the next, and so on. until we get that a = ⅇ, a contradiction.
+ or, repeating the reasoning, in order to maintain that a ≠ ⅇ, we obtain that c = s_2 ds_2 ^ (- 1) and that d ^ n = e, (and so on, etc.) we will come to the conclusion that a contains an infinite number of elements - which is not possible;
+MOP: it turns out that our assumption is not true and a = ⅇ h.t.d.
+
+# 0.4 Prove that any two permutation elements of a free group belong to the same cyclic subgroup.
+That is, it is necessary to prove that: f_1, f_2 ϵF_S: f_1 f_2 = f_2 f_1⇒∃f_0: f_1, f_2∈ 〈f_0〉.
+1) If f_1 or f_2 are equal to ⅇ, then they both belong to 〈f_2〉 or 〈f_1〉, respectively, or, which is the same, f_0 is equal to f_2 or f_1, respectively. 
+2) If f_1 and f_2 are not equal ⅇ, then let the number of elements from S to f_1 (denoted as size (f_1)) equal n, and size (f_2) = m and n≤m. Also let f_ (2k + 1) be f_1 without k elements at the beginning and f_ (2k + 2) be f_2 without k elements at the beginning. Let g_0 = e (the meaning of the subsequent indices will be introduced later).
+f_1 f_2 = f_2 f_1⇒ (*) f_1 g_0 f_2 = f_2 g_0 f_1⇒ [e ≠ f_1 = s_1 f_3, s_1∈S] s_1 f_3 〖g_0 f〗 _2 = f_2 g_0 s_1 f_3⇒ [e_1 f_4] s f_3 g_0 s_1 f_4 = f_4 g_0 s_1 f_3⇒ [g_1 = 〖g_0 s〗 _1] f_3 g_1 f_4 = f_4 g_1 f_3
+It turns out that f_1 and f_2 have the same elements at the beginning, as well as all subsequent non-empty f_ (2k + 1) and f_ (2k + 2). We will "save" them: g_k are the first k elements from f_1 and f_2. Repeating the reasoning from (*) n times, we get that: g_n = f_1, f_ (2n + 1) = e, size (f_ (2n + 2)) = mn and f_ (2n + 1) g_n f_ (2n + 2 ) = f_ (2n + 2) g_n f_ (2n + 1) ⇔g_n f_ (2n + 2) = f_ (2n + 2) g_n. Let f_1 ^ '= g_n, f_2 ^' = f_ (2n + 2) and repeat all the reasoning for these two new variables starting from 1). It is easy to see that f_0 obtained after all iterations will have size (f_0) = (n, m) (even the proof move “repeats” the logic of Euclid's algorithm). This will be our desired f_0 for which f_1, f_2∈ 〈f_0〉 ch.d.

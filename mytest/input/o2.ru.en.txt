@@ -1,0 +1,216 @@
+Federal State Budgetary Educational Institution
+higher professional education
+"Moscow State Technical University named after N. E. Bauman"
+(MSTU. Bauman)
+
+
+
+Faculty: Computer Science and Control Systems
+
+Department: Theoretical Informatics and Computer Technologies
+
+
+
+
+
+
+
+Laboratory work No. 8
+"Developing a class template"
+on the course: "LANGUAGES AND PROGRAMMING METHODS"
+
+
+
+
+
+
+
+Completed:
+Student of group IU9-22B
+Zhuk D.O.
+
+Checked: 
+Posevin D.P.
+
+
+ 
+1. Purpose.
+The purpose of this work is to study the templates of classes of the C ++ language.
+2. Problem conditions.
+Implement a class template in C ++, which is an "immutable" queue with elements of type T and maximum size N, which has the usual operations for the queue.
+The "immutability" of a queue is that the operations Enqueue and Dequeue, instead of changing the queue for which they are called, create and return a new queue that differs from the original one by one element. In this case, the original queue completely retains its state and performance. The Enqueue and Dequeue operations must be implemented so that they run in amortized constant time. This requires two stacks of size N. The Enqueue operation writes a new item onto the first stack, and the Dequeue operation pops an item from the second stack. The trick is that stacks are allocated in heap and are shared between the queue that the operation fired on and the queue that was created as a result of the operation. Note that a new pair of stacks is created at the time of creating a new empty queue, and also then,
+To free the memory occupied by a pair of stacks, which can potentially be shared by several queues at once, you need to use reference counting to this pair of stacks (you can use the shared_ptr template).
+Important note: if the number of any elements is specified in the template of a certain class, then a regular array of a fixed size at the compile time should be used as a storage for these elements. In other cases, it is preferable to use container class templates from the C ++ standard library (because of this condition, you had to implement your own stack).
+ 
+3. Solution.
+MyStack.h
+#pragma once
+
+using namespace std;
+
+template <typename T, int N>
+class MyStack {
+ T * arr = new T [N];
+ int size = 0;
+
+public:
+ MyStack ();
+ ~ MyStack ();
+
+ void push (T val);
+ T pop ();
+
+ // Copies the elements from the from stack to the given one in reverse order
+ void copyFromWithFlip (const MyStack & from);
+ bool empty ();
+};
+
+MyStack.cpp
+
+#include "MyStack.h"
+
+template <typename T, int N>
+MyStack <T, N> :: MyStack () {}
+
+template <typename T, int N>
+MyStack <T, N> :: ~ MyStack () {delete [] arr; }
+
+template <typename T, int N>
+void MyStack <T, N> :: push (T val) {
+ if (size> = N) throw '1';
+ arr [size ++] = val;
+}
+
+template <typename T, int N>
+T MyStack <T, N> :: pop () {
+ if (size <= 0) throw '1';
+ return arr [- size];
+}
+
+template <typename T, int N>
+void MyStack <T, N> :: copyFromWithFlip (const MyStack & from) {
+ size = from.size;
+ for (int i = 0; i <size; i ++)
+ arr [i] = from.arr [size - i - 1];
+}
+
+template <typename T, int N>
+bool MyStack <T, N> :: empty () {return size == 0; }
+
+ 
+Queue.h
+#pragma once
+#include <memory>
+#include "MyStack.h"
+
+template <typename T, int N>
+class Queue {
+ shared_ptr <MyStack <T, N >> first, second;
+
+public:
+ Queue ();
+ Queue (const Queue <T, N> & father);
+
+ Queue <T, N> & operator = (const Queue <T, N> & father);
+
+ // Adds a val element to the beginning of the queue
+ Queue <T, N> Enqueue (T val);
+
+ // Picks up an item from the end of the queue and writes it to retVal
+ Queue <T, N> Dequeue (T & retVal);
+};
+
+Queue.cpp
+#include "Queue.h"
+
+template <typename T, int N>
+Queue <T, N> :: Queue () {
+ first = make_shared <MyStack <T, N >> ();
+ second = make_shared <MyStack <T, N >> ();
+}
+
+template <typename T, int N>
+Queue <T, N> :: Queue (const Queue <T, N> & father) {
+ first = father.first;
+ second = father.second;
+}
+
+template <typename T, int N>
+Queue <T, N> & Queue <T, N> :: operator = (const Queue <T, N> & father) {
+ first = father.first;
+ second = father.second;
+ return * this;
+}
+
+template <typename T, int N>
+Queue <T, N> Queue <T, N> :: Enqueue (T val) {
+ Queue <T, N> ans (* this);
+ ans.first-> push (val);
+ return ans;
+}
+
+template <typename T, int N>
+Queue <T, N> Queue <T, N> :: Dequeue (T & retVal) {
+ if (second-> empty ()) {
+ Queue <T, N> ans;
+ ans.second-> copyFromWithFlip (* first);
+ retVal = ans.second-> pop ();
+ return ans;
+ }
+ else {
+ Queue <T, N> ans (* this);
+ retVal = ans.second-> pop ();
+ return ans;
+ }
+}
+main.cpp
+
+#include <iostream>
+#include "Queue.h"
+#include "Queue.cpp"
+#include "MyStack.cpp"
+
+void CheckValue (int value, int trueValue) {
+ cout << "value =" << value 
+ << (value == trueValue? "true": "FALSE") 
+ << endl;
+}
+
+int main ()
+{
+ int value = -1;
+ Queue <int, 10> a, a1, b, b1, c;
+
+a1 = a.Enqueue (1); // a is empty, b = 1
+ a1 = a1.Enqueue (2) .Enqueue (3);
+ 
+a1.Dequeue (value); // value = 1
+ CheckValue (value, 1);
+a1.Dequeue (value) .Dequeue (value); // value = 2
+ CheckValue (value, 2);
+a1.Dequeue (value) .Dequeue (value) .Dequeue (value); // value = 3
+ CheckValue (value, 3);
+
+a1.Dequeue (value); // value = 1
+ CheckValue (value, 1);
+
+ b1 = b.Enqueue (2);
+
+b1.Dequeue (value); // value = 2
+ CheckValue (value, 2);
+b1.Dequeue (value); // value = 2
+ CheckValue (value, 2);
+
+ int val1, val2, val3;
+
+ c.Enqueue (1) .Enqueue (2) .Dequeue (val1) .Enqueue (3) .Dequeue (val2) .Dequeue (val3);
+ CheckValue (val1, 1);
+ CheckValue (val2, 2);
+ CheckValue (val3, 3);
+}
+ 
+4. Results of execution
+ 
+5. Server
+Path to the program executable file on the lab2.posevin.com server:
+ /home/zhuk/lab8/prog.exe

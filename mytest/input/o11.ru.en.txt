@@ -1,0 +1,98 @@
+Federal State Budgetary Educational Institution
+higher professional education
+"Moscow State Technical University named after N. E. Bauman"
+(MSTU. Bauman)
+
+
+
+Faculty: Computer Science and Control Systems
+
+Department: Theoretical Informatics and Computer Technologies
+
+
+
+
+
+
+
+Laboratory work No. 6.1
+"Development of http proxies"
+at the rate: "COMPUTER NETWORKS"
+
+
+
+
+
+
+Completed:
+Student of group IU9-32B
+Zhuk D.O.
+
+Checked: 
+Posevin D.P.
+
+
+ 
+1. Purpose.
+The goal of this lab is to develop a GO http proxy based on the net / html (main.go) package.
+2. Problem conditions.
+Implement an http proxy on GO and run it on the server.
+main.go
+package main
+
+import (
+ "flag"
+ "io"
+ "log"
+ "net / http"
+)
+
+func copyHeader (dst, src http.Header) {
+ for k, vv: = range src {
+ for _, v: = range vv {
+ dst.Add (k, v)
+ }
+ }
+}
+
+type proxy struct {
+}
+
+func (p * proxy) ServeHTTP (wr http.ResponseWriter, req * http.Request) {
+ if req.URL.Scheme! = "http" && req.URL.Scheme! = "https" {
+ msg: = "unsupported protocal scheme" + req.URL.Scheme
+ http.Error (wr, msg, http.StatusBadRequest) 
+ return
+ }
+
+ client: = & http.Client {}
+
+ req.RequestURI = ""
+
+ resp, err: = client.Do (req)
+ if err! = nil {
+ http.Error (wr, "Server Error", http.StatusInternalServerError)
+ log.Fatal ("ServeHTTP:", err)
+ }
+ defer resp.Body.Close ()
+
+ log.Println (resp.Status, req.URL)
+
+ copyHeader (wr.Header (), resp.Header)
+ wr.WriteHeader (resp.StatusCode)
+ io.Copy (wr, resp.Body)
+}
+
+func main () {
+ var addr = flag.String ("addr", "127.0.0.1:80", "")
+ flag.Parse ()
+
+ handler: = & proxy {}
+
+ log.Println ("Starting proxy server on", * addr)
+if err: = http.ListenAndServe (* addr, handler); err! = nil {
+ log.Fatal ("ListenAndServe:", err)
+ }
+}
+3. Execution results
+ 

@@ -1,0 +1,274 @@
+
+Ministry of Education and Science of the Russian Federation
+Federal State Budgetary Educational Institution 
+higher education
+"Moscow State Technical University
+named after N.E. Bauman
+(national research university) "
+(MSTU. Bauman)
+
+
+FACULTY ___________________________________________________________________
+
+CHAIR ______________________________________________________________________
+
+
+
+TRAINING REPORT 
+PRACTICE
+
+
+Student_____________________________________________________________
+Full Name
+
+Group___________________
+
+Practice type ________________________________________________________
+
+Company name _________________________________________________________
+
+
+
+Student _________________ ____________________ 
+ signature, date surname, acting 
+
+Practice leader _________________ ____________________ 
+ signature, date surname, acting 
+
+
+
+Assessment __________________________________ 
+
+
+
+
+
+
+
+20 g
+
+Table of contents
+Introduction 2
+Practice goals 2
+Assigned tasks 3
+Practice Report 3
+Organization profile 3
+Practices applied 4
+Version control system 4
+Code coverage by tests 4
+Code style 4
+CI / CD 4
+Technology stack 5
+Developed system of formulas 5
+Parsing formulas 5
+How to determine formula 6
+Operators 6
+Math 6
+Logic 6
+Functions 6
+Math 6
+Logic 7
+Transition 7
+Intervals 7
+Interval functions 7
+Functions supporting 7 intervals
+My contribution 7
+Parsing formulas 7
+Planning 7
+Code 8
+Calculation module 8
+Planning 8
+Code 9
+Computation Dependency 9
+Planning 9
+Code 9
+Conclusion 9
+Completed tasks 9
+Backlog 9
+Further development of the project 10
+
+Introduction
+Practice goals
+During the practice, the following goals were set:
+1. Develop teamwork skills
+2. Get an understanding of version control systems in general and git in particular
+3. Become familiar with the process of building modern web-based client and client-server applications
+4. In practice, gain skills in working with the JavaScript language and its ecosystem
+5. Gain development experience using a version control system and code review
+Assigned tasks
+All participants in the practice were assigned the task of developing a client or client-server application of the selected topic. JavaScript was required as the implementation language. When developing the server side, the Node.js platform.
+Our team chose a spreadsheet system as the subject of the project. 
+Here are the main features that should have been present in the resulting application:
+1. The presence of an interface that allows you to edit the values ​​in the cells of the spreadsheet
+2. Ability to change parameters of cells, such as text font, fill color
+3. The presence of a system of formulas that allows you to perform various computational operations based on data from cells
+4. Ability to store tables on the server
+
+Practice progress report
+Organization characteristics
+Below is a list of team members and the roles they played.
+Contributor Team Role GitHub Profile
+Abdulzagir Shakhmanaev Designer, frontend developer https://github.com/shehamane
+
+Alexey Egorov Backend developer https://github.com/AlexisOMG
+
+Artyom Belousov Team captain, backend developer https://github.com/flygrounder
+
+Dinara Abdramanova Designer, frontend developer https://github.com/avonamardba
+
+Dmitry Zhuk Developer of the computational module https://github.com/ZhukDima
+
+Milana Kondakova Backend developer https://github.com/MKondakova
+
+Practices applied
+Version control system
+During development, the Github flow approach was used. When developing a new feature, a new branch was created. One developer could work on it, or several. After the developers believed that the developed function was ready, a Pull Request was opened and a Code Review was conducted. The captain would usually lead it, but other participants could also participate. The merger decision was made by the captain based on the Code Review.
+Code coverage with tests
+To reduce the number of errors in the developed program and to check the correctness of its work, Unit testing was used. In order to check the completeness of testing, the coverage was measured using the c8 library. Below is the test coverage of the master branch as of 09/27/2020.
+------------------------------- | --------- | -------- - | --------- | --------- | -------
+File | % Stmts | % Branch | % Funcs | % Lines |
+------------------------------- | --------- | -------- - | --------- | --------- | -------
+All files | 75.5 | 97.2 | 91.58 | 75.5 |
+Code style
+The JavaScript code style is based on the Airbnb guidelines. Some of the rules have been changed for practical reasons. The ESlint program was used to check the code for compliance with the style.
+To check the style of the CSS code, we used the stylelint program with standard settings.
+CI / CD
+CI / CD practice was used to speed up the feedback loop. Continuous integration was handled by the Github Actions service, which performed code style checks and unit tests. If any of the checks failed, then the merge Pull Request was blocked until the problems were fixed.
+Jenkins was used to build the project and deploy it to the server. The build result is available at https://unitables.flygrounder.ru/
+Technology stack
+The technologies used are listed below with an explanation of the appropriateness of their application:
+1. JavaScript is a programming language for both the client side and the server side. Was selected in accordance with the conditions of the internship.
+2. Node.js was used as a software platform both for the server side and for building the client side.
+3. Express - a framework for writing the server side. Was chosen due to its minimalism and expandability.
+4. Sqlite3 - file database. Chosen for ease of setup and deployment.
+5. Docker is a containerization technology. It is used because it is possible to install new versions of Node.js without conflicts with old ones. In addition, with this technology, assemblies are reproducible and errors found after deployment are easier to detect.
+6. Webpack is a program for building JavaScript applications. Thanks to its use, it became possible to reuse code between client and server. In addition, the client side now has the ability to use node modules.
+Developed system of formulas
+In accordance with task 3, a system of formulas was developed that allows performing various computational operations based on the data in the table cells.
+Parsing formulas
+An LL (1) grammar was developed for parsing formulas and a top-down parser was developed.
+Below is the grammar:
+<Block> :: = = <Equals> | value.
+<Equals> :: = <Exrp> <_Equals> 
+<_Equals> :: = EqOp <Expr> | ...
+<Expr> :: = <Term> <_Expr>.
+<_Expr> :: = AddOp <Term> <_Expr> | ...
+<Term> :: = <Factor> <_Term>.
+<_Term> :: = MulOp <Factor> <_Term> | ...
+<Factor> :: = <Power> <_Factor>.
+<_Factor> :: = PowOp <Power> <_Factor> | ...
+<Power> :: = value | (<Expr>) | unaryMinus Power | NameFunc (<Args>.
+<Args> :: = <Expr> <_Args> | ).
+<_Args> :: =; <Expr> <_Args> | ).
+
+EqOp :: = == | > = | > | <= | <| ! =
+AddOp :: = + | -.
+MulOp :: = * | / | %.
+PowOp :: = ^.
+unaryMinus :: = -.
+NameFunc :: = function name.
+value :: = numbers, strings, addresses, intervals.
+number: [0-9 *]
+string: "..."
+address: ($) [AZ *] ($) [0-9 *]
+interval: address: address
+How to define a formula
+Any expression beginning with "=" is considered a formula.
+Operators
+Mathematical
+a + b sum of numbers a and b
+a - b difference of numbers a and b
+- a is the opposite of a
+a * b product of numbers a and b
+a / b quotient of a and b
+a ^ b number a to power b
+a% b remainder when dividing a by b
+brain teaser
+a == b a equals b
+a> = b a is greater than or equal to b
+a> b a is greater than b
+a <= b a less than or equal to b
+a <b a less than b
+a! = b a not equal to b
+Functions
+Mathematical
+SUM (a1; a2; ...) the sum of numbers a1, a2, ...
+PRODUCT (a1; a2; ...) product of numbers a1, a2, ...
+MOD (a) modulus of the number a
+MIN (a1; a2; ...) minimum of numbers a1, a2, ...
+MAX (a1; a2; ...) maximum of numbers a1, a2, ...
+ROOT (a) square root of a
+
+brain teaser
+NOT (a) - logical negation of expression a
+And (a1; a2; ...) - logical "and" expressions a1, a2, ...
+OR (a1; a2; ...) - logical "or" expressions a1, a2, ...
+EXCLUDED (a; b) - logical exclusive or expressions a and b
+Transition
+IF (a; b; c) - returns b if condition a is true, otherwise returns c
+Intervals
+Spacing is a rectangle of cells specified by its corner cells. For example, C4: F9 is a rectangle with corners in cells C4 and F9.
+Interval functions
+COUNT (a) - number of non-empty cells from interval a
+COUNTIF (a; b) - number of cells from interval a with value b
+Functions that support intervals
+The arguments of the following functions described earlier can be intervals:
+• AMOUNT
+• PRODUCT
+• MIN
+• MAKS
+My contribution
+While developing the computing apparatus of our application, I solved many problems and subtasks.
+Parsing formulas
+Planning
+It was decided to take the syntax of expressions in the likeness of Microsoft Excel - the name of the functions consists of large Russian letters, the arguments are written after in parentheses, separated from each other by a semicolon, the syntax of mathematical expressions is classic: the first argument, operator, second argument. I developed the BNF grammar, which is described above.
+The code
+When writing the code to solve this problem, two executable files were created: Parser.js and ExpressionWrapper.js. The first task is to deal with the direct decomposition of a formula string into a parse tree by calling functions from the second file, and the second is to concretize the concept of a parse tree.
+Calculation module
+Planning
+Having the ability to parse expressions, it was necessary to teach the program to obtain the values ​​of this expression using the parse tree. It was decided until recently to support the possibility of not just scaling, but namely "simple" scaling - so that adding a new value type or a new function does not lead to an exponential increase in the code length. It was decided that the idea of ​​storing all functions in Map would be used for this, for variables to refuse auto-conversion of one type to another and standard operations between different types of variables (there is no multiplication of a string by a number).
+
+A piece of code from the TreeRunner.js file
+const libFunc = new Map ([
+ // ...
+
+ ['+', (treeRunner) => {
+ const res1 = treeRunner.makeTreeRunner (treeRunner.tree [1]). run ();
+ const res2 = treeRunner.makeTreeRunner (treeRunner.tree [2]). run ();
+ return res1.sum (res2);
+ }],
+
+ // ...
+]);
+
+export default class TreeRunner {
+ // ...
+
+ run () {
+ if (! libFunc.has (this.tree [0])) {
+ throw new FormatError (`undefined function $ {this.tree [0]}`);
+ }
+ return libFunc.get (this.tree [0]) (this);
+ }
+}
+The code
+When writing the code to solve this problem, the following files were created: to call each function through the parse tree and calculate their arguments (TreeRunner.js), an "add-on" for the general call of the first file (Calculator.js), files that create variable types , besides the values ​​themselves, they know how mathematical operations should (or should not) occur between them (BooleanType.js, NumberType.js, StringType.js, IntervalType.js). Thanks to this implementation of the solution to the problem: to add a new function, it is enough to add its functionality to Map, and to add a new type of variable - create a new file with a class and describe the necessary functionality for operators.
+Computing dependency
+Planning
+Having implemented the calculation, all that remained was to improve the Tables class so that it began to support the recalculation of values ​​in cells when one of them changed. To improve performance, it was decided to change not the entire table when changing one of the cells, but only those cells that might have changed.
+The code
+The file with the table was partially rewritten - the Maps were added to it, which stored the adjacency tables of the dependencies of each cell both in one direction and the other (Spreadsheet.js). The changes also affected the file responsible for calculating the values, so that it finds the dependencies in the cells in the formula and updates them (TreeRunner.js).
+Conclusion
+Completed tasks
+1. The client part allows you to perform operations with cells described in tasks 1, 2, 3
+2. The back-end has been completely designed and implemented to fulfill task 4.
+Unfulfilled tasks
+Although the front-end and back-end were developed, they have not been linked, so there is currently no way to save tables to the server. However, it is possible to register, log in and create empty tables.
+Further development of the project
+A possible way of further development of the project is described below:
+1. Linking the client side with the already implemented server side
+2. Adding functions that distinguish the product from competitors (Google Sheets, Microsoft Excel). One of such functions can be merging several tables into one. This function is present in relational databases, and given the possibility of using spreadsheets as such a storage, such a function would be quite appropriate. How it works can be borrowed from the JOIN construct from SQL.
+3. Development of a project monetization model. The following can serve as a model:
+1. Paid features available by subscription
+2. Paid support for business clients
+4. Deployment of an advertising campaign in accordance with the chosen monetization model.
