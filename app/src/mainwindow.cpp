@@ -63,7 +63,7 @@ void MainWindow::on_runButton_clicked()
     ui->statusbar->showMessage("Processing");
 
     int res = settingsPresenter->useAnalizer();
-    if (res < 0)
+    if (res != 0)
     {
         ui->statusbar->showMessage("ERROR");
         showClusteringErrorCriticalMsg();

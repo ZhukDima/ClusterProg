@@ -108,6 +108,5 @@ int SettingsPresenter::useAnalizer()
 {
     Analizer analizer(getStartDirToOperate(), getChoosenFilesToOperate(),
                       getStartDirToOperate(), getClusterCountToOperate());
-    analizer.filesMoving();
-    return 0;
+    return analizer.filesMoving();
 }
