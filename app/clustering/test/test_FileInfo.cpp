@@ -4,6 +4,7 @@
 #include <map>
 #include "FileInfo.h"
 #include "FileInfoImpl.h"
+#include "LevenshteinDistance.hpp"
 
 TEST(constructor, incorrect_path) {
     EXPECT_THROW(FileInfo("vabalabadabdab.txt"), const char*);
@@ -69,7 +70,21 @@ TEST(getAllMetric, lorem) {
     for (auto c : lorem) {
         if (c == L' ') {
             if (!word.empty() && word != L" ") {
-                metric[word]++;
+                bool updated = false;
+                if (!word.empty()) {
+                    for (const auto&[key, value] : metric) {
+                        size_t temp = LevenshteinDistance<std::wstring>::calculate(word, key);
+                        if (temp <= MaxLevenshteinDistance &&
+                            std::max(word.size(), key.size()) * coefOfLength >= static_cast<double>(temp)) {
+                            ++metric[key];
+                            updated = true;
+                            break;
+                        }
+                    }
+                    if (!updated) {
+                        metric[word]++;
+                    }
+                }
             }
             word = L"";
         } else {
@@ -81,22 +96,8 @@ TEST(getAllMetric, lorem) {
 }
 TEST(getImpl, FileInfoImpl) {
     FileInfo a("../test.txt");
-    std::string path = "../test.txt";
-    int amountOfWords = 69;
-    std::map<std::wstring, double> metric;
-    std::wstring word = L"", lorem = L"lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum ";
-    for (auto c : lorem) {
-        if (c == ' ') {
-            if (!word.empty() && word != L" ") {
-                metric[word]++;
-            }
-            word = L"";
-        } else {
-            word += c;
-        }
-    }
     FileInfoImpl impl = a.getImpl();
-    EXPECT_EQ(impl.getPath(), path);
-    EXPECT_EQ(impl.getAmountOfWords(), amountOfWords);
-    EXPECT_EQ(impl.getAllMetric(), metric);
+    EXPECT_EQ(impl.getPath(), a.getPath());
+    EXPECT_EQ(impl.getAmountOfWords(), a.getAmountOfWords());
+    EXPECT_EQ(impl.getAllMetric(), a.getAllMetric());
 }
