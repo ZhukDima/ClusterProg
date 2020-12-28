@@ -22,7 +22,7 @@ void FileManager::moveFile(std::string_view pathToSource, std::string pathToDest
 
 void FileManager::createDir(std::string_view path)
 {
-    if (!fs::create_directories(path))
+    if (!fs::create_directories(path) && !fs::exists(path))
     {
         throw std::runtime_error("Can't create directory on this path");
     }
