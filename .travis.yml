@@ -11,6 +11,7 @@ before_script:
   - sudo apt-get install -y cmake
   - sudo apt-get install -y python3-pip cppcheck
   - sudo pip3 install cpplint
+  - sudo apt-get install --yes valgrind
 
 env:
   global:
@@ -28,7 +29,6 @@ matrix:
         - cmake ..
         - make
         - ctest
-        - apt-get install --yes valgrind
         - valgrind -q ctest
         - cd ..
         - rm -rf build/
