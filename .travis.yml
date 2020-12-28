@@ -24,6 +24,7 @@ matrix:
         - TEST="run tests"
       script:
         - cd ./app/clustering/ && bash ./utils/linter.sh
+        - cd ../../
         - mkdir build
         - cd build/
         - cmake ..
