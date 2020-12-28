@@ -13,6 +13,7 @@
 #include <vector>
 #include <set>
 #include <filesystem>
+#include <memory>
 
 class AnalizerImpl;
 

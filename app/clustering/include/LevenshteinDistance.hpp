@@ -37,9 +37,10 @@ size_t LevenshteinDistance<T>::calculate(const T &source, const T &target) {
 
     const size_t maxSize = target.size();
     for (size_t j = 1; j <= maxSize; ++j) {
-        size_t previousDiagonal = levDist[0], previousDiagonalSave;
+        size_t previousDiagonal = levDist[0];
         ++levDist[0];
 
+        size_t previousDiagonalSave;
         for (size_t i = 1; i <= minSize; ++i) {
             previousDiagonalSave = levDist[i];
             if (source[i - 1] == target[j - 1]) {

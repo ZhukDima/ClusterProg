@@ -13,7 +13,7 @@ std::vector<SimilarFilesGroup> Analizer::categorize() {
 }
 
 int Analizer::filesMoving() {
-    impl->filesMoving();
+    return impl->filesMoving();
 }
 
 std::vector<VectorSpace<double>> Analizer::getFileInfo(const std::vector<FileInfo> &filesInfo) const {

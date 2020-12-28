@@ -40,12 +40,12 @@ std::vector<std::vector<std::string>> AnalizerImpl::getClusteringData(const std:
 }
 
 std::vector<SimilarFilesGroup> AnalizerImpl::categorize() {
-    DirHandler *directory = nullptr;
+    std::unique_ptr<DirHandler> directory;
     try {
         if (pathsToFiles.empty()) {
-            directory = new DirHandler(pathToDirectory);
+            directory = std::make_unique<DirHandler>(pathToDirectory);
         } else {
-            directory = new DirHandler(pathsToFiles);
+            directory = std::make_unique<DirHandler>(pathsToFiles);
         }
     } catch (const char *exception) {
         throw exception;
@@ -66,7 +66,6 @@ std::vector<SimilarFilesGroup> AnalizerImpl::categorize() {
         result[count].setGroupName("group_" + std::to_string(count));
         ++count;
     }
-    delete directory;
     return result;
 }
 
