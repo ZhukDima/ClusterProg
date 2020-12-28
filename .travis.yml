@@ -20,7 +20,6 @@ matrix:
       env:
         - TEST="run tests"
       script:
-        - apt-get update
         - apt-get install -y python3-pip cppcheck
         - pip3 install cpplint
         - cd ./app/clustering/ && bash ./utils/linter.sh
