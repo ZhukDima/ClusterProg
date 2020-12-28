@@ -9,6 +9,8 @@ compiler:
 before_script:
   - sudo apt-get update
   - sudo apt-get install -y cmake
+  - sudo apt-get install -y python3-pip cppcheck
+  - sudo pip3 install cpplint
 
 env:
   global:
@@ -20,8 +22,6 @@ matrix:
       env:
         - TEST="run tests"
       script:
-        - apt-get install -y python3-pip cppcheck
-        - pip3 install cpplint
         - cd ./app/clustering/ && bash ./utils/linter.sh
         - mkdir build
         - cd build/
