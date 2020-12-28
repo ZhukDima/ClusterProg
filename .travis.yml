@@ -8,6 +8,9 @@ compiler:
 
 before_script:
     - sudo apt-get install -y cmake
+    - sudo apt-get install -y python3-pip cppcheck
+    - sudo pip3 install cpplint
+    - sudo apt-get install --yes valgrind
 
 
 env:
@@ -34,3 +37,9 @@ matrix:
         - rm -rf build/
         - rm -rf test_files/
         - rm -rf output/
+
+    - os: linux
+      env:
+        - TEST="run cppcheck"
+      script:
+        - bash ./utils/linter.sh
