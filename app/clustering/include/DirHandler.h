@@ -3,16 +3,17 @@
 
 #include <vector>
 #include "FileInfo.h"
+#include <memory>
 
 class DirHandlerImpl;
 
 class DirHandler {
 private:
-    DirHandlerImpl *impl;
+    std::unique_ptr <DirHandlerImpl> impl;
 public:
     DirHandler() = delete;
-    DirHandler(std::string _pathToDir);
-    DirHandler(const std::vector<std::string>& pathsToFiles);
+    explicit DirHandler(std::string _pathToDir);
+    explicit DirHandler(const std::vector<std::string>& pathsToFiles);
     DirHandler(const DirHandler& obj) = delete;
     DirHandler& operator=(const DirHandler& obj) = delete;
     ~DirHandler();

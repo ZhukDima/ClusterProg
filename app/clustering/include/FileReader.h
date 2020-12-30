@@ -1,6 +1,6 @@
 #ifndef FILEREADER_H
 #define FILEREADER_H
-
+#include <memory>
 class FileReaderImpl;
 
 class FileReader {
@@ -12,7 +12,7 @@ public:
     std::wstring getNextWord();
     ~FileReader();
 private:
-    FileReaderImpl* impl = nullptr;
+    std::unique_ptr<FileReaderImpl> impl;
 };
 
 #endif

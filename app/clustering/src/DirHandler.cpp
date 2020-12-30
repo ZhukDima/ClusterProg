@@ -54,9 +54,9 @@ public:
     }
 };
 
-DirHandler::DirHandler(std::string _pathToDir): impl(new DirHandlerImpl(_pathToDir)) {}
+DirHandler::DirHandler(std::string _pathToDir): impl(std::make_unique<DirHandlerImpl>(_pathToDir)) {}
 
-DirHandler::DirHandler(const std::vector<std::string> &pathsToFiles): impl(new DirHandlerImpl(pathsToFiles)) {}
+DirHandler::DirHandler(const std::vector<std::string> &pathsToFiles): impl(std::make_unique<DirHandlerImpl>(pathsToFiles)) {}
 
 std::string DirHandler::getPath() const {
     return impl->getPath();
@@ -67,5 +67,6 @@ std::vector<FileInfo>& DirHandler::getFiles() {
 }
 
 DirHandler::~DirHandler() {
-    delete impl;
+    DirHandlerImpl *p = impl.release();
+    delete p;
 }
