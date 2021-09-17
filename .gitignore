@@ -1,0 +1,7 @@
+.idea
+build
+cmake-build-debug
+.vscode
+*.txt.user
+test_files
+output
